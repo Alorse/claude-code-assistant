@@ -1,0 +1,30 @@
+node_modules/**
+**/node_modules/**
+src/**
+webview-ui/**
+
+# Root lockfiles
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Misc
+.gitignore
+vsc-extension-quickstart.md
+**/tsconfig.json
+**/.eslintrc.json
+**/*.ts
+**/*.map
+
+# Allow built outputs
+!out/**
+!webview-ui/dist/**
+
+# Re-exclude sourcemaps from built outputs
+out/**/*.map
+
+# Allow top-level essentials
+!LICENSE
+!icon.png
+!package.json
+!README.md

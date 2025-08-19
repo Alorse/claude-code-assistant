@@ -1,0 +1,50 @@
+# Node & package managers
+node_modules/
+**/node_modules/
+.pnpm-store/
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+npm-debug.log*
+lerna-debug.log*
+
+# Build outputs (extension & webview)
+out/
+dist/
+build/
+coverage/
+.nyc_output/
+
+# Webview (Vite)
+.vite/
+**/.vite/
+.cache/
+**/.cache/
+webview-ui/dist/
+
+# TypeScript
+*.tsbuildinfo
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# Editor/OS cruft
+.vscode/
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+
+# ESLint/Tools caches
+.eslintcache
+
+# VS Code Extension artifacts
+*.vsix
+.vscode-test/
+
+# Temporary files
+tmp/
+temp/
+

@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* VS Code specific styles that integrate with Tailwind */
+@layer base {
+  :root {
+    /* Ensure VS Code CSS variables are available */
+    color-scheme: var(--vscode-editor-background, light);
+  }
+  
+  body {
+    font-family: var(--vscode-font-family, system-ui, sans-serif);
+    background-color: var(--vscode-editor-background, #1e1e1e);
+    color: var(--vscode-editor-foreground, #d4d4d4);
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  #root {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@layer components {
+  .vscode-button {
+    @apply bg-button-background text-button-foreground border border-border px-3 py-1.5 rounded text-xs font-normal transition-all duration-200 flex items-center gap-1;
+  }
+  
+  .vscode-button:hover {
+    @apply bg-button-hover border-focus;
+  }
+  
+  .vscode-button-outlined {
+    @apply bg-transparent text-foreground border-border;
+  }
+  
+  .vscode-button-outlined:hover {
+    @apply bg-[var(--vscode-list-hoverBackground)] border-focus;
+  }
+  
+  .vscode-input {
+    @apply bg-input-background text-input-foreground border border-input-border rounded px-3 py-2 text-sm;
+  }
+  
+  .vscode-input:focus {
+    @apply outline-none border-focus;
+  }
+}
+
+/* Custom scrollbar for VS Code theme compatibility */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--vscode-scrollbarSlider-background, rgba(121, 121, 121, 0.1));
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--vscode-scrollbarSlider-background, rgba(121, 121, 121, 0.4));
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--vscode-scrollbarSlider-hoverBackground, rgba(121, 121, 121, 0.6));
+}

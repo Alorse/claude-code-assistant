@@ -1,0 +1,234 @@
+{
+  "name": "claude-code-assistant",
+  "displayName": "Claude Code Assistant",
+  "description": "Integrated Claude Code Assistant for VS Code with React UI",
+  "version": "1.0.0",
+  "publisher": "Alorse",
+  "author": "Alorse",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alorse/claude-code-assistant"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "engines": {
+    "vscode": "^1.94.0"
+  },
+  "categories": [
+    "Other",
+    "AI",
+    "Chat",
+    "Machine Learning",
+    "Snippets",
+    "Programming Languages",
+    "Education",
+    "Testing",
+    "Formatters",
+    "Linters"
+  ],
+  "keywords": [
+    "claude code",
+    "code explanation",
+    "code generation",
+    "code summary",
+    "code transform",
+    "vibe coding",
+    "prompt language",
+    "copilot",
+    "claude",
+    "ai",
+    "assistant",
+    "chatbot",
+    "chat",
+    "anthropic",
+    "code",
+    "programming",
+    "development",
+    "productivity"
+  ],
+  "icon": "icon.png",
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "claude-code-assistant.openChat",
+        "title": "Open Claude Code Assistant",
+        "category": "Claude Code Assistant",
+        "icon": "icon.png"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "claude-code-assistant.openChat",
+        "key": "ctrl+shift+c",
+        "mac": "cmd+shift+c"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "claude-code-assistant.openChat"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "claude-code-assistant.openChat",
+          "group": "claude@1",
+          "when": "editorTextFocus"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "claude-code-assistant.openChat",
+          "group": "navigation@1",
+          "when": "true"
+        }
+      ],
+      "editor/title/context": [
+        {
+          "command": "claude-code-assistant.openChat",
+          "group": "claude@1"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "claude-code-assistant.openChat",
+          "group": "claude@1"
+        }
+      ],
+      "scm/title": [
+        {
+          "command": "claude-code-assistant.openChat",
+          "group": "navigation@1",
+          "when": "true"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "claude-code-assistant.openChat",
+          "group": "navigation@1",
+          "when": "view == workbench.explorer.fileView"
+        }
+      ],
+      "touchBar": [
+        {
+          "command": "claude-code-assistant.openChat",
+          "group": "editing",
+          "when": "true"
+        }
+      ],
+      "menuBar/file": [
+        {
+          "command": "claude-code-assistant.openChat",
+          "group": "1_new@1"
+        }
+      ]
+    },
+    "views": {
+      "claude-code-assistant": [
+        {
+          "id": "claude-code-assistant.chat",
+          "type": "webview",
+          "name": "Claude Code Assistant",
+          "when": "true",
+          "icon": "icon.png",
+          "contextualTitle": "Claude Code Assistant"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "claude-code-assistant",
+          "title": "Claude Code Assistant",
+          "icon": "icon.png"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Claude Code Assistant",
+      "properties": {
+        "claudeCodeAssistant.wsl.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable WSL integration for running Claude"
+        },
+        "claudeCodeAssistant.wsl.distro": {
+          "type": "string",
+          "default": "Ubuntu",
+          "description": "WSL distribution name (e.g., Ubuntu, Debian)"
+        },
+        "claudeCodeAssistant.wsl.nodePath": {
+          "type": "string",
+          "default": "/usr/bin/node",
+          "description": "Path to Node.js in the WSL distribution"
+        },
+        "claudeCodeAssistant.wsl.claudePath": {
+          "type": "string",
+          "default": "/usr/local/bin/claude",
+          "description": "Path to Claude executable in the WSL distribution"
+        },
+        "claudeCodeAssistant.thinking.intensity": {
+          "type": "string",
+          "enum": [
+            "think",
+            "think-hard",
+            "think-harder",
+            "ultrathink"
+          ],
+          "default": "think",
+          "description": "Thinking mode intensity level. Higher levels provide more detailed reasoning but consume more tokens."
+        },
+        "claudeCodeAssistant.permissions.yoloMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable Yolo Mode to skip all permission checks. Use with caution as Claude can execute any command without asking."
+        },
+        "claudeCodeAssistant.claudeCommand": {
+          "type": "string",
+          "enum": [
+            "claude",
+            "ccr code"
+          ],
+          "default": "ccr code",
+          "description": "Select which Claude command to use. Choose 'claude' for the original Claude CLI or 'ccr code' for Claude Code Router."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "echo Already built",
+    "build": "pnpm run build:extension && pnpm run build:webview",
+    "build:extension": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --minify",
+    "build:webview": "cd webview-ui && pnpm run build",
+    "watch": "pnpm run watch:extension & pnpm run watch:webview",
+    "watch:extension": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --watch",
+    "watch:webview": "cd webview-ui && pnpm run dev",
+    "dev": "pnpm run watch",
+    "pretest": "pnpm run build && pnpm run lint",
+    "lint": "eslint src/**/*.ts",
+    "format": "prettier --write .",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.94.0",
+    "@typescript-eslint/eslint-plugin": "^8.31.1",
+    "@typescript-eslint/parser": "^8.31.1",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.5.0",
+    "esbuild": "^0.19.12",
+    "eslint": "^9.25.1",
+    "prettier": "^3.1.1",
+    "typescript": "^5.8.3",
+    "vitest": "^1.2.1"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.30.1"
+  },
+  "packageManager": "pnpm@10.12.1+sha512.f0dda8580f0ee9481c5c79a1d927b9164f2c478e90992ad268bbb2465a736984391d6333d2c327913578b2804af33474ca554ba29c04a8b13060a717675ae3ac"
+}
