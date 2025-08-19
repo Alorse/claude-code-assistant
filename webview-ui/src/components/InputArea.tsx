@@ -28,6 +28,33 @@ const InputArea: React.FC<InputAreaProps> = ({
   const { postMessage } = useVSCode();
   const [localValue, setLocalValue] = useState(value);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  // Dynamic placeholder hint logic for input area
+  // ${G} is the current file name, fallback to "this file" if not available
+  const getCurrentFileName = () => {
+    // Try to get from VSCode context if available, fallback to "this file"
+    // You can wire this up to your context/provider if you have file info
+    if ((window as any).vscodeCurrentFile) {
+      return (window as any).vscodeCurrentFile;
+    }
+    return "this file";
+  };
+
+  const getRandomHint = () => {
+    const G = getCurrentFileName();
+    const hints = [
+      "fix lint errors",
+      "fix typecheck errors",
+      `how does ${G} work?`,
+      `refactor ${G}`,
+      "how do I log an error?",
+      `edit ${G} to...`,
+      `write a test for ${G}`,
+      "create a util logging.py that...",
+    ];
+    return hints[Math.floor(Math.random() * hints.length)];
+  };
+
+  const [placeholderHint] = useState(getRandomHint());
 
   // Sync with parent value
   useEffect(() => {
@@ -138,7 +165,7 @@ const InputArea: React.FC<InputAreaProps> = ({
             value={localValue}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            placeholder="Type your message to Claude Code Assistant..."
+            placeholder={`Try "${placeholderHint}"`}
             className="w-full bg-transparent text-input-foreground p-3 resize-none outline-none min-h-[68px] leading-relaxed"
             disabled={disabled}
             rows={1}
