@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface HeaderProps {
   onNewSession: () => void;
@@ -6,7 +6,11 @@ interface HeaderProps {
   onOpenHistory: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onNewSession, onOpenSettings, onOpenHistory }) => {
+const Header: React.FC<HeaderProps> = ({
+  onNewSession,
+  onOpenSettings,
+  onOpenHistory,
+}) => {
   return (
     <div className="flex justify-between items-center p-4 border-b border-border bg-panel-background">
       <div className="flex items-center">
@@ -14,7 +18,7 @@ const Header: React.FC<HeaderProps> = ({ onNewSession, onOpenSettings, onOpenHis
           Claude Code Assistant
         </h2>
       </div>
-      
+
       <div className="flex items-center gap-2">
         <button
           onClick={onOpenSettings}
@@ -23,7 +27,7 @@ const Header: React.FC<HeaderProps> = ({ onNewSession, onOpenSettings, onOpenHis
         >
           ⚙️
         </button>
-        
+
         <button
           onClick={onOpenHistory}
           className="vscode-button-outlined"
@@ -31,7 +35,7 @@ const Header: React.FC<HeaderProps> = ({ onNewSession, onOpenSettings, onOpenHis
         >
           📚 History
         </button>
-        
+
         <button
           onClick={onNewSession}
           className="vscode-button"

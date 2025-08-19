@@ -1,7 +1,7 @@
-import React from 'react';
-import { ThemeProvider } from './context/ThemeContext';
-import { VSCodeProvider } from './context/VSCodeContext';
-import ChatContainer from './components/ChatContainer';
+import React from "react";
+import { ThemeProvider } from "./context/ThemeContext";
+import { VSCodeProvider } from "./context/VSCodeContext";
+import ChatContainer from "./components/ChatContainer";
 
 function App() {
   return (

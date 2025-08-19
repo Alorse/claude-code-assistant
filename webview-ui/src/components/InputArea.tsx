@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useVSCode } from '../context/VSCodeContext';
+import React, { useState, useRef, useEffect } from "react";
+import { useVSCode } from "../context/VSCodeContext";
+import ModelDropdown from "./ModelDropdown";
 
 interface InputAreaProps {
   value: string;
@@ -22,7 +23,7 @@ const InputArea: React.FC<InputAreaProps> = ({
   thinkingMode,
   selectedModel,
   onTogglePlanMode,
-  onToggleThinkingMode
+  onToggleThinkingMode,
 }) => {
   const { postMessage } = useVSCode();
   const [localValue, setLocalValue] = useState(value);
@@ -36,8 +37,9 @@ const InputArea: React.FC<InputAreaProps> = ({
   // Auto-resize textarea
   useEffect(() => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 120) + 'px';
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height =
+        Math.min(textareaRef.current.scrollHeight, 120) + "px";
     }
   }, [localValue]);
 
@@ -48,7 +50,7 @@ const InputArea: React.FC<InputAreaProps> = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
@@ -57,17 +59,16 @@ const InputArea: React.FC<InputAreaProps> = ({
   const handleSend = () => {
     if (localValue.trim() && !disabled) {
       onSend(localValue.trim());
-      setLocalValue('');
+      setLocalValue("");
     }
   };
 
-  const handleModelSelector = () => {
-    postMessage({ type: 'selectModel' });
-    // TODO: Implement model selector modal
+  const handleModelChange = (newModel: string) => {
+    postMessage({ type: "selectModel", model: newModel });
   };
 
   const handleMCPModal = () => {
-    postMessage({ type: 'loadMCPServers' });
+    postMessage({ type: "loadMCPServers" });
     // TODO: Implement MCP modal
   };
 
@@ -76,48 +77,51 @@ const InputArea: React.FC<InputAreaProps> = ({
   };
 
   const handleFilePicker = () => {
-    postMessage({ type: 'getWorkspaceFiles' });
+    postMessage({ type: "getWorkspaceFiles" });
     // TODO: Implement file picker modal
   };
 
   const handleImageSelect = () => {
-    postMessage({ type: 'selectImageFile' });
+    postMessage({ type: "selectImageFile" });
   };
 
   return (
-    <div className="border-t border-border bg-panel-background p-3">
+    <div
+      className="border-t border-border bg-panel-background p-3"
+      style={{ borderColor: "#DE7356" }}
+    >
       {/* Mode Toggles */}
       <div className="flex items-center gap-4 mb-2 text-xs">
         <div className="flex items-center gap-2">
           <label className="flex items-center gap-2 cursor-pointer text-foreground/80 hover:text-foreground">
             <span onClick={onTogglePlanMode}>Plan First</span>
-            <div 
+            <div
               className={`relative w-7 h-4 rounded-full cursor-pointer transition-colors ${
-                planMode ? 'bg-button-background' : 'bg-border'
+                planMode ? "bg-button-background" : "bg-border"
               }`}
               onClick={onTogglePlanMode}
             >
-              <div 
+              <div
                 className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-transform ${
-                  planMode ? 'translate-x-3' : 'translate-x-0.5'
+                  planMode ? "translate-x-3" : "translate-x-0.5"
                 }`}
               />
             </div>
           </label>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <label className="flex items-center gap-2 cursor-pointer text-foreground/80 hover:text-foreground">
             <span onClick={onToggleThinkingMode}>Thinking Mode</span>
-            <div 
+            <div
               className={`relative w-7 h-4 rounded-full cursor-pointer transition-colors ${
-                thinkingMode ? 'bg-button-background' : 'bg-border'
+                thinkingMode ? "bg-button-background" : "bg-border"
               }`}
               onClick={onToggleThinkingMode}
             >
-              <div 
+              <div
                 className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-transform ${
-                  thinkingMode ? 'translate-x-3' : 'translate-x-0.5'
+                  thinkingMode ? "translate-x-3" : "translate-x-0.5"
                 }`}
               />
             </div>
@@ -139,22 +143,17 @@ const InputArea: React.FC<InputAreaProps> = ({
             disabled={disabled}
             rows={1}
           />
-          
+
           {/* Controls */}
           <div className="flex justify-between items-center p-1 border-t border-border bg-input-background">
             <div className="flex items-center gap-2">
               {/* Model Selector */}
-              <button
-                onClick={handleModelSelector}
-                className="flex items-center gap-1 px-2 py-1 bg-gray-500/15 text-foreground rounded text-xs font-medium transition-colors hover:bg-gray-500/25"
-                title="Select model"
-              >
-                <span>{selectedModel.charAt(0).toUpperCase() + selectedModel.slice(1)}</span>
-                <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor">
-                  <path d="M1 2.5l3 3 3-3"></path>
-                </svg>
-              </button>
-              
+              <ModelDropdown
+                selectedModel={selectedModel}
+                onModelChange={handleModelChange}
+                disabled={disabled}
+              />
+
               {/* MCP Button */}
               <button
                 onClick={handleMCPModal}
@@ -167,7 +166,7 @@ const InputArea: React.FC<InputAreaProps> = ({
                 </svg>
               </button>
             </div>
-            
+
             <div className="flex items-center gap-2">
               {/* Slash Commands */}
               <button
@@ -177,7 +176,7 @@ const InputArea: React.FC<InputAreaProps> = ({
               >
                 /
               </button>
-              
+
               {/* File Picker */}
               <button
                 onClick={handleFilePicker}
@@ -186,7 +185,7 @@ const InputArea: React.FC<InputAreaProps> = ({
               >
                 @
               </button>
-              
+
               {/* Image Button */}
               <button
                 onClick={handleImageSelect}
@@ -204,7 +203,7 @@ const InputArea: React.FC<InputAreaProps> = ({
                   <path d="M1.5 2A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2zm13 1a.5.5 0 0 1 .5.5v6l-3.775-1.947a.5.5 0 0 0-.577.093l-3.71 3.71l-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12v.54L1 12.5v-9a.5.5 0 0 1 .5-.5z"></path>
                 </svg>
               </button>
-              
+
               {/* Send Button */}
               <button
                 onClick={handleSend}

@@ -1,5 +1,5 @@
 export function getUIStyles(): string {
-	return `
+  return `
 <style>
     body {
         font-family: var(--vscode-font-family);

@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useVSCode } from '../context/VSCodeContext';
-import Header from './Header';
-import MessageList from './MessageList';
-import InputArea from './InputArea';
-import StatusBar from './StatusBar';
+import React, { useState, useEffect, useRef } from "react";
+import { useVSCode } from "../context/VSCodeContext";
+import Header from "./Header";
+import MessageList from "./MessageList";
+import InputArea from "./InputArea";
+import StatusBar from "./StatusBar";
 
 interface Message {
   id: string;
-  type: 'user' | 'claude' | 'error' | 'system';
+  type: "user" | "claude" | "error" | "system";
   content: string;
   timestamp: string;
 }
@@ -28,104 +28,106 @@ const ChatContainer: React.FC = () => {
     messages: [],
     isProcessing: false,
     currentSessionId: null,
-    selectedModel: 'default',
+    selectedModel: "default",
     planMode: false,
     thinkingMode: false,
-    draftMessage: ''
+    draftMessage: "",
   });
-  
-  const [statusText, setStatusText] = useState('Initializing...');
-  const [statusType, setStatusType] = useState<'ready' | 'processing' | 'error'>('processing');
+
+  const [statusText, setStatusText] = useState("Initializing...");
+  const [statusType, setStatusType] = useState<
+    "ready" | "processing" | "error"
+  >("processing");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Scroll to bottom when new messages arrive
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatState.messages]);
 
   // Message handler for VS Code communication
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       const message = event.data;
-      
+
       switch (message.type) {
-        case 'ready':
+        case "ready":
           setStatusText(message.data);
-          setStatusType('ready');
+          setStatusType("ready");
           break;
-          
-        case 'userInput':
-          addMessage('user', message.data);
+
+        case "userInput":
+          addMessage("user", message.data);
           break;
-          
-        case 'output':
-          addMessage('claude', message.data);
+
+        case "output":
+          addMessage("claude", message.data);
           break;
-          
-        case 'error':
-          addMessage('error', message.data);
-          setStatusType('error');
+
+        case "error":
+          addMessage("error", message.data);
+          setStatusType("error");
           break;
-          
-        case 'loading':
+
+        case "loading":
           setStatusText(message.data);
-          setStatusType('processing');
+          setStatusType("processing");
           break;
-          
-        case 'clearLoading':
-          setStatusText('Ready to chat with Claude Code Assistant!');
-          setStatusType('ready');
+
+        case "clearLoading":
+          setStatusText("Ready to chat with Claude Code Assistant!");
+          setStatusType("ready");
           break;
-          
-        case 'setProcessing':
-          setChatState(prev => ({
+
+        case "setProcessing":
+          setChatState((prev) => ({
             ...prev,
-            isProcessing: message.data.isProcessing
+            isProcessing: message.data.isProcessing,
           }));
           break;
-          
-        case 'modelSelected':
-          setChatState(prev => ({
+
+        case "modelSelected":
+          setChatState((prev) => ({
             ...prev,
-            selectedModel: message.model
+            selectedModel: message.model,
           }));
           break;
-          
-        case 'restoreInputText':
-          setChatState(prev => ({
+
+        case "restoreInputText":
+          setChatState((prev) => ({
             ...prev,
-            draftMessage: message.data
+            draftMessage: message.data,
           }));
           break;
-          
-        case 'sessionCleared':
-          setChatState(prev => ({
+
+        case "sessionCleared":
+          setChatState((prev) => ({
             ...prev,
             messages: [],
-            currentSessionId: null
+            currentSessionId: null,
           }));
           break;
-          
+
         default:
-          console.log('Unhandled message type:', message.type);
+          console.log("Unhandled message type:", message.type);
       }
     };
 
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
   }, []);
 
-  const addMessage = (type: Message['type'], content: string) => {
+  const addMessage = (type: Message["type"], content: string) => {
     const newMessage: Message = {
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
       type,
       content,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
-    setChatState(prev => ({
+    setChatState((prev) => ({
       ...prev,
-      messages: [...prev.messages, newMessage]
+      messages: [...prev.messages, newMessage],
     }));
   };
 
@@ -133,49 +135,49 @@ const ChatContainer: React.FC = () => {
     if (!text.trim() || chatState.isProcessing) return;
 
     postMessage({
-      type: 'sendMessage',
+      type: "sendMessage",
       text,
       planMode: chatState.planMode,
-      thinkingMode: chatState.thinkingMode
+      thinkingMode: chatState.thinkingMode,
     });
 
-    setChatState(prev => ({
+    setChatState((prev) => ({
       ...prev,
-      draftMessage: ''
+      draftMessage: "",
     }));
   };
 
   const newSession = () => {
-    postMessage({ type: 'newSession' });
-    setStatusText('Starting new session...');
-    setStatusType('processing');
+    postMessage({ type: "newSession" });
+    setStatusText("Starting new session...");
+    setStatusType("processing");
   };
 
   const togglePlanMode = () => {
-    setChatState(prev => ({
+    setChatState((prev) => ({
       ...prev,
-      planMode: !prev.planMode
+      planMode: !prev.planMode,
     }));
   };
 
   const toggleThinkingMode = () => {
-    setChatState(prev => ({
+    setChatState((prev) => ({
       ...prev,
-      thinkingMode: !prev.thinkingMode
+      thinkingMode: !prev.thinkingMode,
     }));
   };
 
   const handleDraftChange = (text: string) => {
-    setChatState(prev => ({
+    setChatState((prev) => ({
       ...prev,
-      draftMessage: text
+      draftMessage: text,
     }));
 
     // Debounce saving draft message
     const timeoutId = setTimeout(() => {
       postMessage({
-        type: 'saveInputText',
-        text
+        type: "saveInputText",
+        text,
       });
     }, 500);
 
@@ -183,12 +185,12 @@ const ChatContainer: React.FC = () => {
   };
 
   const openSettings = () => {
-    postMessage({ type: 'getSettings' });
+    postMessage({ type: "getSettings" });
     // TODO: Implement settings modal
   };
 
   const openHistory = () => {
-    postMessage({ type: 'getConversationList' });
+    postMessage({ type: "getConversationList" });
     // TODO: Implement history modal
   };
 
@@ -205,17 +207,17 @@ const ChatContainer: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col bg-background text-foreground font-vscode">
-      <Header 
+      {/* <Header 
         onNewSession={newSession}
         onOpenSettings={openSettings}
         onOpenHistory={openHistory}
-      />
-      
+      /> */}
+
       <div className="flex-1 flex flex-col overflow-hidden">
         <MessageList messages={chatState.messages} />
         <div ref={messagesEndRef} />
       </div>
-      
+
       <InputArea
         value={chatState.draftMessage}
         onChange={handleDraftChange}
@@ -227,11 +229,11 @@ const ChatContainer: React.FC = () => {
         onTogglePlanMode={togglePlanMode}
         onToggleThinkingMode={toggleThinkingMode}
       />
-      
-      <StatusBar 
+
+      {/* <StatusBar 
         text={statusText}
         type={statusType}
-      />
+      /> */}
     </div>
   );
 };

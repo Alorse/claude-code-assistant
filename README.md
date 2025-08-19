@@ -33,17 +33,20 @@ claude-code-assistant/
 ## 🚀 Tecnologías
 
 ### Extensión Principal
+
 - **TypeScript**: Lenguaje principal
 - **ESBuild**: Bundling rápido y eficiente
 - **VS Code API**: Integración nativa
 
 ### Webview UI
+
 - **React 18**: Framework de UI
 - **TypeScript**: Type safety completo
 - **Tailwind CSS**: Framework de CSS utility-first
 - **Vite**: Build tool moderno y rápido
 
 ### Herramientas de Desarrollo
+
 - **pnpm**: Gestor de paquetes eficiente
 - **ESLint + Prettier**: Calidad y formato de código
 - **Vitest**: Framework de testing unitario
@@ -51,11 +54,13 @@ claude-code-assistant/
 ## 🔧 Desarrollo
 
 ### Prerequisitos
+
 - Node.js 18+
 - pnpm
 - VS Code
 
 ### Instalación
+
 ```bash
 # Clonar el repositorio
 git clone <repo-url>
@@ -69,6 +74,7 @@ cd webview-ui && pnpm install
 ```
 
 ### Scripts de Desarrollo
+
 ```bash
 # Build completo del proyecto
 pnpm run build
@@ -93,6 +99,7 @@ pnpm run test
 ```
 
 ### Debugging
+
 1. Abrir el proyecto en VS Code
 2. Presionar `F5` para lanzar una nueva ventana de VS Code con la extensión
 3. El webview React soporta hot reload durante el desarrollo
@@ -100,6 +107,7 @@ pnpm run test
 ## 📁 Estructura de Componentes
 
 ### Componentes Principales
+
 - **ChatContainer**: Componente principal que maneja el estado del chat
 - **Header**: Barra superior con controles de sesión
 - **MessageList**: Lista de mensajes con scroll automático
@@ -108,10 +116,12 @@ pnpm run test
 - **StatusBar**: Barra de estado con indicadores visuales
 
 ### Contextos
+
 - **VSCodeContext**: Maneja la comunicación con la extensión
 - **ThemeContext**: Gestiona el theming automático de VS Code
 
 ### Hooks Personalizados
+
 - **useVSCodeMessages**: Manejo tipado de mensajes VS Code
 - Adicionales según necesidades
 
@@ -139,7 +149,7 @@ La comunicación entre la extensión y el webview React está tipada y estructur
 ```typescript
 // Tipos de mensaje definidos
 interface SendMessageRequest {
-  type: 'sendMessage';
+  type: "sendMessage";
   text: string;
   planMode?: boolean;
   thinkingMode?: boolean;
@@ -147,7 +157,7 @@ interface SendMessageRequest {
 
 // Hook para manejo de mensajes
 const { postMessage } = useVSCode();
-postMessage({ type: 'sendMessage', text: 'Hello Claude!' });
+postMessage({ type: "sendMessage", text: "Hello Claude!" });
 ```
 
 ## 🧪 Testing
@@ -181,6 +191,7 @@ pnpm run publish
 Esta extensión es una migración completa de la extensión original `claude-code-router-chat` con las siguientes mejoras:
 
 ### ✅ Completado
+
 - [x] Arquitectura modular y escalable
 - [x] UI React con componentes reutilizables
 - [x] Sistema de theming automático
@@ -189,11 +200,13 @@ Esta extensión es una migración completa de la extensión original `claude-cod
 - [x] Comunicación tipada extensión-webview
 
 ### 🚧 En Progreso
+
 - [ ] Migración completa de todas las funcionalidades
 - [ ] Testing comprehensivo
 - [ ] Documentación de API
 
 ### 📋 Funcionalidades Migradas
+
 - ✅ Chat básico con Claude
 - ✅ Gestión de sesiones
 - ✅ Modos Plan y Thinking

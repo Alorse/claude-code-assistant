@@ -8,36 +8,36 @@ export interface VSCodeMessage {
 
 // Extension to webview messages
 export interface ReadyMessage extends VSCodeMessage {
-  type: 'ready';
+  type: "ready";
   data: string;
 }
 
 export interface UserInputMessage extends VSCodeMessage {
-  type: 'userInput';
+  type: "userInput";
   data: string;
 }
 
 export interface OutputMessage extends VSCodeMessage {
-  type: 'output';
+  type: "output";
   data: string;
 }
 
 export interface ErrorMessage extends VSCodeMessage {
-  type: 'error';
+  type: "error";
   data: string;
 }
 
 export interface LoadingMessage extends VSCodeMessage {
-  type: 'loading';
+  type: "loading";
   data: string;
 }
 
 export interface ClearLoadingMessage extends VSCodeMessage {
-  type: 'clearLoading';
+  type: "clearLoading";
 }
 
 export interface ProcessingMessage extends VSCodeMessage {
-  type: 'setProcessing';
+  type: "setProcessing";
   data: {
     isProcessing: boolean;
     requestStartTime?: number;
@@ -45,21 +45,21 @@ export interface ProcessingMessage extends VSCodeMessage {
 }
 
 export interface ModelSelectedMessage extends VSCodeMessage {
-  type: 'modelSelected';
+  type: "modelSelected";
   model: string;
 }
 
 export interface RestoreInputMessage extends VSCodeMessage {
-  type: 'restoreInputText';
+  type: "restoreInputText";
   data: string;
 }
 
 export interface SessionClearedMessage extends VSCodeMessage {
-  type: 'sessionCleared';
+  type: "sessionCleared";
 }
 
 export interface PlatformInfoMessage extends VSCodeMessage {
-  type: 'platformInfo';
+  type: "platformInfo";
   data: {
     platform: string;
     isWindows: boolean;
@@ -69,59 +69,59 @@ export interface PlatformInfoMessage extends VSCodeMessage {
 }
 
 export interface SettingsDataMessage extends VSCodeMessage {
-  type: 'settingsData';
+  type: "settingsData";
   data: Record<string, any>;
 }
 
 // Webview to extension messages
 export interface SendMessageRequest extends VSCodeMessage {
-  type: 'sendMessage';
+  type: "sendMessage";
   text: string;
   planMode?: boolean;
   thinkingMode?: boolean;
 }
 
 export interface NewSessionRequest extends VSCodeMessage {
-  type: 'newSession';
+  type: "newSession";
 }
 
 export interface SaveInputTextRequest extends VSCodeMessage {
-  type: 'saveInputText';
+  type: "saveInputText";
   text: string;
 }
 
 export interface GetSettingsRequest extends VSCodeMessage {
-  type: 'getSettings';
+  type: "getSettings";
 }
 
 export interface GetConversationListRequest extends VSCodeMessage {
-  type: 'getConversationList';
+  type: "getConversationList";
 }
 
 export interface SelectImageFileRequest extends VSCodeMessage {
-  type: 'selectImageFile';
+  type: "selectImageFile";
 }
 
 export interface GetWorkspaceFilesRequest extends VSCodeMessage {
-  type: 'getWorkspaceFiles';
+  type: "getWorkspaceFiles";
   searchTerm?: string;
 }
 
 export interface LoadMCPServersRequest extends VSCodeMessage {
-  type: 'loadMCPServers';
+  type: "loadMCPServers";
 }
 
 export interface DismissWSLAlertRequest extends VSCodeMessage {
-  type: 'dismissWSLAlert';
+  type: "dismissWSLAlert";
 }
 
 export interface SelectModelRequest extends VSCodeMessage {
-  type: 'selectModel';
+  type: "selectModel";
   model?: string;
 }
 
 // Union types for type safety
-export type ExtensionToWebviewMessage = 
+export type ExtensionToWebviewMessage =
   | ReadyMessage
   | UserInputMessage
   | OutputMessage
@@ -135,7 +135,7 @@ export type ExtensionToWebviewMessage =
   | PlatformInfoMessage
   | SettingsDataMessage;
 
-export type WebviewToExtensionMessage = 
+export type WebviewToExtensionMessage =
   | SendMessageRequest
   | NewSessionRequest
   | SaveInputTextRequest

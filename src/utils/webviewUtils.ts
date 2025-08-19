@@ -1,43 +1,52 @@
-import * as path from 'path';
-import * as fs from 'fs';
-import * as vscode from 'vscode';
+import * as path from "path";
+import * as fs from "fs";
+import * as vscode from "vscode";
 
-export function getHtmlForWebview(isTelemetryEnabled?: boolean, extensionPath?: string, webview?: vscode.Webview): string {
-	// Try to load the built React app
-	if (extensionPath && webview) {
-		try {
-			const webviewDistPath = path.join(extensionPath, 'webview-ui', 'dist');
-			const indexPath = path.join(webviewDistPath, 'index.html');
-			
-			if (fs.existsSync(indexPath)) {
-				let htmlContent = fs.readFileSync(indexPath, 'utf8');
-				
-				// Get the proper URI for webview resources
-				const assetsUri = webview.asWebviewUri(vscode.Uri.file(path.join(webviewDistPath, 'assets')));
-				
-				// Replace relative paths with webview-safe URIs
-				htmlContent = htmlContent.replace(
-					/src="\/assets\//g,
-					`src="${assetsUri}/`
-				);
-				htmlContent = htmlContent.replace(
-					/href="\/assets\//g,
-					`href="${assetsUri}/`
-				);
-				
-				return htmlContent;
-			}
-		} catch (error) {
-			console.error('Failed to load React webview, falling back to simple HTML:', error);
-		}
-	}
-	
-	// Fallback to simple HTML implementation
-	return getSimpleHtmlForWebview(isTelemetryEnabled);
+export function getHtmlForWebview(
+  isTelemetryEnabled?: boolean,
+  extensionPath?: string,
+  webview?: vscode.Webview,
+): string {
+  // Try to load the built React app
+  if (extensionPath && webview) {
+    try {
+      const webviewDistPath = path.join(extensionPath, "webview-ui", "dist");
+      const indexPath = path.join(webviewDistPath, "index.html");
+
+      if (fs.existsSync(indexPath)) {
+        let htmlContent = fs.readFileSync(indexPath, "utf8");
+
+        // Get the proper URI for webview resources
+        const assetsUri = webview.asWebviewUri(
+          vscode.Uri.file(path.join(webviewDistPath, "assets")),
+        );
+
+        // Replace relative paths with webview-safe URIs
+        htmlContent = htmlContent.replace(
+          /src="\/assets\//g,
+          `src="${assetsUri}/`,
+        );
+        htmlContent = htmlContent.replace(
+          /href="\/assets\//g,
+          `href="${assetsUri}/`,
+        );
+
+        return htmlContent;
+      }
+    } catch (error) {
+      console.error(
+        "Failed to load React webview, falling back to simple HTML:",
+        error,
+      );
+    }
+  }
+
+  // Fallback to simple HTML implementation
+  return getSimpleHtmlForWebview(isTelemetryEnabled);
 }
 
 function getSimpleHtmlForWebview(isTelemetryEnabled?: boolean): string {
-	return `<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">

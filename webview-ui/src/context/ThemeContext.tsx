@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from "react";
 
-type Theme = 'light' | 'dark' | 'auto';
+type Theme = "light" | "dark" | "auto";
 
 interface ThemeContextType {
   theme: Theme;
@@ -13,7 +13,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    throw new Error("useTheme must be used within a ThemeProvider");
   }
   return context;
 };
@@ -23,7 +23,7 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>('auto');
+  const [theme, setTheme] = useState<Theme>("auto");
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
@@ -32,8 +32,10 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       // Check if we're in VS Code webview
       const body = document.body;
       const computedStyle = getComputedStyle(body);
-      const backgroundColor = computedStyle.getPropertyValue('--vscode-editor-background');
-      
+      const backgroundColor = computedStyle.getPropertyValue(
+        "--vscode-editor-background",
+      );
+
       if (backgroundColor) {
         // Parse the background color to determine if it's dark
         const rgb = backgroundColor.match(/\d+/g);
@@ -44,7 +46,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         }
       } else {
         // Fallback: check for dark class or prefer dark media query
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const prefersDark = window.matchMedia(
+          "(prefers-color-scheme: dark)",
+        ).matches;
         setIsDark(prefersDark);
       }
     };
@@ -59,50 +63,48 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['class', 'data-theme']
+      attributeFilter: ["class", "data-theme"],
     });
 
     // Listen for system theme changes
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleMediaChange = () => {
-      if (theme === 'auto') {
+      if (theme === "auto") {
         detectVSCodeTheme();
       }
     };
 
-    mediaQuery.addEventListener('change', handleMediaChange);
+    mediaQuery.addEventListener("change", handleMediaChange);
 
     return () => {
       observer.disconnect();
-      mediaQuery.removeEventListener('change', handleMediaChange);
+      mediaQuery.removeEventListener("change", handleMediaChange);
     };
   }, [theme]);
 
   useEffect(() => {
     // Update CSS variables based on theme
     const root = document.documentElement;
-    root.classList.toggle('dark', isDark);
-    
+    root.classList.toggle("dark", isDark);
+
     // Update the theme color meta tag
-    const themeColor = isDark ? '#1e1e1e' : '#ffffff';
+    const themeColor = isDark ? "#1e1e1e" : "#ffffff";
     let metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (!metaThemeColor) {
-      metaThemeColor = document.createElement('meta');
-      metaThemeColor.setAttribute('name', 'theme-color');
+      metaThemeColor = document.createElement("meta");
+      metaThemeColor.setAttribute("name", "theme-color");
       document.head.appendChild(metaThemeColor);
     }
-    metaThemeColor.setAttribute('content', themeColor);
+    metaThemeColor.setAttribute("content", themeColor);
   }, [isDark]);
 
   const value: ThemeContextType = {
     theme,
     setTheme,
-    isDark
+    isDark,
   };
 
   return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 };

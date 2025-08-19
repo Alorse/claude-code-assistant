@@ -7,12 +7,14 @@ This document outlines a simplified but well-structured architecture for the Cla
 ## Core Technologies
 
 ### Main Technologies
+
 - **TypeScript**: Main programming language
 - **React**: For webview UI components
 - **ESBuild**: Fast and efficient bundling
 - **Tailwind CSS**: Utility-first CSS framework for styling
 
 ### Development Tools
+
 - **pnpm**: Package manager (faster and more efficient than npm)
 - **ESLint + Prettier**: Code quality and formatting
 - **Vitest**: Unit testing framework
@@ -44,14 +46,17 @@ claude-code-assistant/
 ### 1. Extension Core (`src/`)
 
 #### Extension Entry Point (`extension.ts`)
+
 - Manages extension activation/deactivation
 - Registers commands and providers
 - Initializes webview panels
 
 #### Core Business Logic (`core/`)
+
 - **Assistant Integration**: Claude Code communication
 
 ### 2. Webview UI (`webview-ui/`)
+
 - React-based user interface
 - Component-driven architecture
 - State management using React hooks
@@ -60,17 +65,20 @@ claude-code-assistant/
 ## Key Features
 
 ### 1. Claude Integration
+
 - Direct integration with Claude Code API
 - Secure API key management
 - Request/response handling
 - Error management
 
 ### 2. Code Intelligence
+
 - Code analysis and understanding
 - Context-aware suggestions
 - Code modification proposals
 
 ### 3. User Interface
+
 - Clean and intuitive interface
 - Real-time feedback
 - VS Code native-like experience
@@ -79,6 +87,7 @@ claude-code-assistant/
 ## Development Setup
 
 ### Required Extensions
+
 ```json
 {
   "recommendations": [
@@ -90,6 +99,7 @@ claude-code-assistant/
 ```
 
 ### Build System
+
 - ESBuild for fast bundling
 - Watch mode for development
 - Production optimization
@@ -97,11 +107,13 @@ claude-code-assistant/
 ## Testing Strategy
 
 ### Unit Tests
+
 - Component testing with Vitest
 - Integration tests for Claude API
 - Mocking VS Code API
 
 ### E2E Tests
+
 - VS Code extension testing
 - UI interaction testing
 - API integration testing
@@ -109,18 +121,21 @@ claude-code-assistant/
 ## Best Practices
 
 ### 1. Code Organization
+
 - Clear separation of concerns
 - Modular architecture
 - TypeScript strict mode
 - Comprehensive documentation
 
 ### 2. Performance
+
 - Lazy loading of components
 - Efficient state management
 - Optimized Claude API calls
 - Caching when appropriate
 
 ### 3. Security
+
 - Secure API key storage
 - Input validation
 - Safe code execution
@@ -129,18 +144,20 @@ claude-code-assistant/
 ## Configuration
 
 ### Extension Settings
+
 ```typescript
 interface ClaudeCodeSettings {
   apiKey: string;
   model: string;
   maxTokens: number;
   temperature: number;
-  responseFormat: 'json' | 'text';
+  responseFormat: "json" | "text";
   contextWindow: number;
 }
 ```
 
 ### VS Code Integration
+
 - Commands registration
 - Keybinding support
 - Context menu integration
@@ -149,6 +166,7 @@ interface ClaudeCodeSettings {
 ## Build and Package
 
 ### Development Build
+
 ```json
 {
   "scripts": {
@@ -162,12 +180,14 @@ interface ClaudeCodeSettings {
 ```
 
 ### Production Build
+
 - Minification and optimization
 - Source map generation
 - Asset bundling
 - Extension packaging
 
 ## Deployment
+
 - VSIX package generation
 - VS Code marketplace publishing
 - Update management
@@ -266,7 +286,7 @@ const ThemeContext = createContext({ theme: 'light', setTheme: (theme: string) =
 // Basic theme provider
 const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState('light');
-  
+
   // Update theme variables when theme changes
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
@@ -282,7 +302,7 @@ const ThemeProvider = ({ children }) => {
 // Using the theme in a component
 const MyComponent = () => {
   const { theme, setTheme } = useContext(ThemeContext);
-  
+
   return (
     <div className="bg-background text-text p-4">
       <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
@@ -294,13 +314,13 @@ const MyComponent = () => {
 ```
 
 This approach allows you to:
+
 - Easily switch between light and dark themes
 - Add new themes by just defining new CSS variables
 - Use consistent colors across your components
 - Take advantage of Tailwind's utility classes while maintaining theme support
 
 You can extend this system based on your needs, adding more variables, transitions, or even theme customization options. The key is keeping it flexible and maintainable.
-
 
 ## Future Considerations
 
