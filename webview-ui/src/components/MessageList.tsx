@@ -24,8 +24,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages }) => {
             </span>
           </h3>
           <p className="text-sm">
-            Start a conversation by typing a message below. I can help you with
-            code analysis, generation, debugging, and much more!
+            /help for help, /status for your current setup, ? for shortcuts
           </p>
         </div>
       </div>
