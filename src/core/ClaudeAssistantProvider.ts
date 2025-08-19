@@ -4,6 +4,9 @@ import * as util from "util";
 import * as path from "path";
 import { getHtmlForWebview } from "../utils/webviewUtils";
 import { getValidModelValues, getModelByValue } from "../utils/models";
+import { ClaudeService, ClaudeMessage } from "../services/ClaudeService";
+import { ConversationService } from "../services/ConversationService";
+import { BackupService } from "../services/BackupService";
 
 const exec = util.promisify(cp.exec);
 
@@ -67,6 +70,11 @@ export class ClaudeAssistantProvider {
   private selectedModel: string = "default";
   private isProcessing: boolean | undefined;
   private draftMessage: string = "";
+  
+  // Services
+  private claudeService?: ClaudeService;
+  private conversationService?: ConversationService;
+  private backupService?: BackupService;
 
   constructor(
     private readonly extensionUri: vscode.Uri,
@@ -89,9 +97,31 @@ export class ClaudeAssistantProvider {
       "default",
     );
 
+    // Initialize services
+    this.initializeServices();
+
     // Resume session from latest conversation
     const latestConversation = this.getLatestConversation();
     this.currentSessionId = latestConversation?.sessionId;
+  }
+
+  private initializeServices(): void {
+    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+    const workspacePath = workspaceFolder ? workspaceFolder.uri.fsPath : process.cwd();
+    const conversationsDir = path.join(workspacePath, '.claude', 'conversations');
+
+    // Initialize conversation service
+    this.conversationService = new ConversationService(this.context, conversationsDir);
+
+    // Initialize backup service
+    this.backupService = new BackupService(workspacePath, (message) => {
+      this.sendAndSaveMessage(message);
+    });
+
+    // Initialize Claude service
+    this.claudeService = new ClaudeService((message) => {
+      this.sendAndSaveMessage(message);
+    }, workspacePath);
   }
 
   public getPanel(): vscode.WebviewPanel | undefined {
@@ -272,8 +302,10 @@ export class ClaudeAssistantProvider {
   }
 
   private handleWebviewMessage(message: any) {
+    console.log('Extension received message:', message);
     switch (message.type) {
       case "sendMessage":
+        console.log('Handling sendMessage:', message.text);
         this.sendMessageToClaude(
           message.text,
           message.planMode,
@@ -371,27 +403,98 @@ export class ClaudeAssistantProvider {
     }
   }
 
-  // Placeholder methods - these will be migrated from the original implementation
+  private sendAndSaveMessage(message: { type: string; data: any }): void {
+    // Send to UI
+    this.postMessage(message);
+    
+    // Save to conversation
+    this.conversationService?.addMessage(message);
+  }
+
   private async sendMessageToClaude(
     message: string,
     planMode?: boolean,
     thinkingMode?: boolean,
-  ) {
-    console.log("Sending message to Claude:", message, {
-      planMode,
-      thinkingMode,
-    });
-    // TODO: Implement full Claude communication logic
+  ): Promise<void> {
+    if (!this.claudeService) {
+      throw new Error('Claude service not initialized');
+    }
+
+    try {
+      // Create backup commit before sending
+      if (this.backupService) {
+        await this.backupService.createBackupCommit(message);
+      }
+
+      // Clear draft message
+      this.draftMessage = '';
+      this.conversationService?.setDraftMessage('');
+
+      // Send message through Claude service
+      await this.claudeService.sendMessage(message, {
+        planMode,
+        thinkingMode,
+        selectedModel: this.selectedModel
+      });
+
+      // Update session ID if we got one
+      const sessionId = this.claudeService.getCurrentSessionId();
+      if (sessionId && sessionId !== this.currentSessionId) {
+        this.currentSessionId = sessionId;
+      }
+
+      // Save conversation with session ID
+      this.conversationService?.saveConversation(this.currentSessionId, message);
+
+    } catch (error: any) {
+      console.error('Error sending message to Claude:', error);
+      this.sendAndSaveMessage({
+        type: 'error',
+        data: `Failed to send message: ${error.message}`
+      });
+    }
   }
 
-  private newSession() {
+  private newSession(): void {
     console.log("Starting new session");
-    // TODO: Implement new session logic
+    
+    // Clear current session
+    this.currentSessionId = undefined;
+    
+    // Clear conversation
+    this.conversationService?.clearCurrentConversation();
+    
+    // Stop any current Claude process
+    this.claudeService?.stopCurrentProcess();
+    
+    // Send session cleared message to UI
+    this.postMessage({
+      type: 'sessionCleared'
+    });
+    
+    // Send ready message
+    this.sendReadyMessage();
   }
 
-  private async restoreToCommit(commitSha: string) {
+  private async restoreToCommit(commitSha: string): Promise<void> {
     console.log("Restoring to commit:", commitSha);
-    // TODO: Implement restore logic
+    
+    try {
+      if (!this.backupService) {
+        throw new Error('Backup service not initialized');
+      }
+      
+      await this.backupService.restoreFromCommit(commitSha);
+      
+    } catch (error: any) {
+      console.error('Failed to restore commit:', error);
+      vscode.window.showErrorMessage(`Failed to restore commit: ${error.message}`);
+      
+      this.sendAndSaveMessage({
+        type: 'error',
+        data: `Failed to restore: ${error.message}`
+      });
+    }
   }
 
   private sendConversationList() {
@@ -594,8 +697,9 @@ export class ClaudeAssistantProvider {
     }
   }
 
-  private saveInputText(text: string) {
+  private saveInputText(text: string): void {
     this.draftMessage = text || "";
+    this.conversationService?.setDraftMessage(text || "");
   }
 
   private closeSidebar() {
@@ -664,30 +768,7 @@ export class ClaudeAssistantProvider {
     }
   }
 
-  private sendAndSaveMessage(message: { type: string; data: any }): void {
-    // Initialize conversation if this is the first message
-    if (this.currentConversation.length === 0) {
-      this.conversationStartTime = new Date().toISOString();
-    }
 
-    // Send to UI using the helper method
-    this.postMessage(message);
-
-    // Save to conversation
-    this.currentConversation.push({
-      timestamp: new Date().toISOString(),
-      messageType: message.type,
-      data: message.data,
-    });
-
-    // Persist conversation
-    void this.saveCurrentConversation();
-  }
-
-  private async saveCurrentConversation(): Promise<void> {
-    console.log("Saving current conversation");
-    // TODO: Implement conversation saving logic
-  }
 
   private getLatestConversation(): any | undefined {
     return this.conversationIndex.length > 0

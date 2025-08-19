@@ -132,8 +132,21 @@ const ChatContainer: React.FC = () => {
   };
 
   const sendMessage = (text: string) => {
-    if (!text.trim() || chatState.isProcessing) return;
-
+    console.log("sendMessage called with:", text);
+    console.log("Current chatState:", { 
+      isProcessing: chatState.isProcessing, 
+      trimmedText: text.trim() 
+    });
+    
+    if (!text.trim() || chatState.isProcessing) {
+      console.log("Message send blocked:", {
+        hasText: !!text.trim(),
+        notProcessing: !chatState.isProcessing
+      });
+      return;
+    }
+    
+    console.log("Sending message via postMessage:", text);
     postMessage({
       type: "sendMessage",
       text,
@@ -207,11 +220,11 @@ const ChatContainer: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col bg-editor-background text-foreground font-vscode">
-      {/* <Header 
+      <Header 
         onNewSession={newSession}
         onOpenSettings={openSettings}
         onOpenHistory={openHistory}
-      /> */}
+      />
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <MessageList messages={chatState.messages} />
