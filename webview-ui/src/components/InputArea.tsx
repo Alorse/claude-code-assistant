@@ -114,7 +114,7 @@ const InputArea: React.FC<InputAreaProps> = ({
 
   return (
     <div
-      className="border-t border-border bg-panel-background p-3"
+      className="border-t border-border p-3 pb-2"
       style={{ borderColor: "#DE7356" }}
     >
       {/* Mode Toggles */}
@@ -158,7 +158,7 @@ const InputArea: React.FC<InputAreaProps> = ({
 
       {/* Input Container */}
       <div className="flex gap-3 items-end">
-        <div className="flex-1 bg-input-background border border-input-border rounded-md overflow-hidden focus-within:border-focus">
+        <div className="flex-1 bg-input-background border border-border rounded-md overflow-hidden">
           {/* Textarea */}
           <textarea
             ref={textareaRef}
@@ -166,13 +166,14 @@ const InputArea: React.FC<InputAreaProps> = ({
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             placeholder={`Try "${placeholderHint}"`}
-            className="w-full bg-transparent text-input-foreground p-3 resize-none outline-none min-h-[68px] leading-relaxed"
+            className="w-full bg-transparent text-input-foreground p-3 resize-none outline-none min-h-[48px] leading-relaxed focus:outline-none focus:ring-0 focus:border-none focus:shadow-none focus:box-shadow-none"
+            style={{ outline: 'none', border: 'none', boxShadow: 'none' }}
             disabled={disabled}
             rows={1}
           />
 
           {/* Controls */}
-          <div className="flex justify-between items-center p-1 border-t border-border bg-input-background">
+          <div className="flex justify-between items-center bg-input-background px-2 py-0.5">
             <div className="flex items-center gap-2">
               {/* Model Selector */}
               <ModelDropdown
@@ -184,7 +185,7 @@ const InputArea: React.FC<InputAreaProps> = ({
               {/* MCP Button */}
               <button
                 onClick={handleMCPModal}
-                className="flex items-center gap-1 px-2 py-1 bg-gray-500/15 text-foreground rounded text-xs font-medium transition-colors hover:bg-gray-500/25"
+                className="flex items-center gap-1 px-2 py-0.5 bg-gray-500/15 text-foreground rounded text-xs font-medium transition-colors hover:bg-gray-500/25"
                 title="Configure MCP servers"
               >
                 MCP

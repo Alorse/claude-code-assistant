@@ -55,7 +55,7 @@ function getSimpleHtmlForWebview(isTelemetryEnabled?: boolean): string {
 	<style>
 		body {
 			font-family: var(--vscode-font-family);
-			background-color: var(--vscode-editor-background);
+			background-color: transparent;
 			color: var(--vscode-editor-foreground);
 			margin: 0;
 			padding: 20px;

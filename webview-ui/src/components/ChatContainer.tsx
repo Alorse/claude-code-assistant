@@ -206,7 +206,7 @@ const ChatContainer: React.FC = () => {
   }
 
   return (
-    <div className="h-full flex flex-col bg-background text-foreground font-vscode">
+    <div className="h-full flex flex-col bg-editor-background text-foreground font-vscode">
       {/* <Header 
         onNewSession={newSession}
         onOpenSettings={openSettings}
@@ -230,10 +230,10 @@ const ChatContainer: React.FC = () => {
         onToggleThinkingMode={toggleThinkingMode}
       />
 
-      {/* <StatusBar 
+      <StatusBar 
         text={statusText}
         type={statusType}
-      /> */}
+      />
     </div>
   );
 };

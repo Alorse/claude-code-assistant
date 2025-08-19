@@ -20,7 +20,7 @@ const StatusBar: React.FC<StatusBarProps> = ({ text, type }) => {
   };
 
   return (
-    <div className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-gray-800 to-gray-900 border-t border-border text-sm font-medium text-gray-200">
+    <div className="flex items-center gap-2 px-3 text-xs">
       <div
         className={`w-2 h-2 rounded-full shadow-md ${getIndicatorColor()}`}
       />
