@@ -70,7 +70,7 @@ export class ClaudeAssistantProvider {
   private selectedModel: string = "default";
   private isProcessing: boolean | undefined;
   private draftMessage: string = "";
-  
+
   // Services
   private claudeService?: ClaudeService;
   private conversationService?: ConversationService;
@@ -107,11 +107,20 @@ export class ClaudeAssistantProvider {
 
   private initializeServices(): void {
     const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-    const workspacePath = workspaceFolder ? workspaceFolder.uri.fsPath : process.cwd();
-    const conversationsDir = path.join(workspacePath, '.claude', 'conversations');
+    const workspacePath = workspaceFolder
+      ? workspaceFolder.uri.fsPath
+      : process.cwd();
+    const conversationsDir = path.join(
+      workspacePath,
+      ".claude",
+      "conversations",
+    );
 
     // Initialize conversation service
-    this.conversationService = new ConversationService(this.context, conversationsDir);
+    this.conversationService = new ConversationService(
+      this.context,
+      conversationsDir,
+    );
 
     // Initialize backup service
     this.backupService = new BackupService(workspacePath, (message) => {
@@ -302,10 +311,10 @@ export class ClaudeAssistantProvider {
   }
 
   private handleWebviewMessage(message: any) {
-    console.log('Extension received message:', message);
+    console.log("Extension received message:", message);
     switch (message.type) {
       case "sendMessage":
-        console.log('Handling sendMessage:', message.text);
+        console.log("Handling sendMessage:", message.text);
         this.sendMessageToClaude(
           message.text,
           message.planMode,
@@ -406,7 +415,7 @@ export class ClaudeAssistantProvider {
   private sendAndSaveMessage(message: { type: string; data: any }): void {
     // Send to UI
     this.postMessage(message);
-    
+
     // Save to conversation
     this.conversationService?.addMessage(message);
   }
@@ -417,7 +426,7 @@ export class ClaudeAssistantProvider {
     thinkingMode?: boolean,
   ): Promise<void> {
     if (!this.claudeService) {
-      throw new Error('Claude service not initialized');
+      throw new Error("Claude service not initialized");
     }
 
     try {
@@ -427,14 +436,14 @@ export class ClaudeAssistantProvider {
       }
 
       // Clear draft message
-      this.draftMessage = '';
-      this.conversationService?.setDraftMessage('');
+      this.draftMessage = "";
+      this.conversationService?.setDraftMessage("");
 
       // Send message through Claude service
       await this.claudeService.sendMessage(message, {
         planMode,
         thinkingMode,
-        selectedModel: this.selectedModel
+        selectedModel: this.selectedModel,
       });
 
       // Update session ID if we got one
@@ -444,55 +453,58 @@ export class ClaudeAssistantProvider {
       }
 
       // Save conversation with session ID
-      this.conversationService?.saveConversation(this.currentSessionId, message);
-
+      this.conversationService?.saveConversation(
+        this.currentSessionId,
+        message,
+      );
     } catch (error: any) {
-      console.error('Error sending message to Claude:', error);
+      console.error("Error sending message to Claude:", error);
       this.sendAndSaveMessage({
-        type: 'error',
-        data: `Failed to send message: ${error.message}`
+        type: "error",
+        data: `Failed to send message: ${error.message}`,
       });
     }
   }
 
   private newSession(): void {
     console.log("Starting new session");
-    
+
     // Clear current session
     this.currentSessionId = undefined;
-    
+
     // Clear conversation
     this.conversationService?.clearCurrentConversation();
-    
+
     // Stop any current Claude process
     this.claudeService?.stopCurrentProcess();
-    
+
     // Send session cleared message to UI
     this.postMessage({
-      type: 'sessionCleared'
+      type: "sessionCleared",
     });
-    
+
     // Send ready message
     this.sendReadyMessage();
   }
 
   private async restoreToCommit(commitSha: string): Promise<void> {
     console.log("Restoring to commit:", commitSha);
-    
+
     try {
       if (!this.backupService) {
-        throw new Error('Backup service not initialized');
+        throw new Error("Backup service not initialized");
       }
-      
+
       await this.backupService.restoreFromCommit(commitSha);
-      
     } catch (error: any) {
-      console.error('Failed to restore commit:', error);
-      vscode.window.showErrorMessage(`Failed to restore commit: ${error.message}`);
-      
+      console.error("Failed to restore commit:", error);
+      vscode.window.showErrorMessage(
+        `Failed to restore commit: ${error.message}`,
+      );
+
       this.sendAndSaveMessage({
-        type: 'error',
-        data: `Failed to restore: ${error.message}`
+        type: "error",
+        data: `Failed to restore: ${error.message}`,
       });
     }
   }
@@ -767,8 +779,6 @@ export class ClaudeAssistantProvider {
       this.webview.postMessage(message);
     }
   }
-
-
 
   private getLatestConversation(): any | undefined {
     return this.conversationIndex.length > 0

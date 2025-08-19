@@ -1,4 +1,5 @@
 import React from "react";
+import LoadingVerb from "./LoadingVerb";
 import MessageItem from "./MessageItem";
 
 interface Message {
@@ -10,9 +11,10 @@ interface Message {
 
 interface MessageListProps {
   messages: Message[];
+  isProcessing?: boolean;
 }
 
-const MessageList: React.FC<MessageListProps> = ({ messages }) => {
+const MessageList: React.FC<MessageListProps> = ({ messages, isProcessing }) => {
   if (messages.length === 0) {
     return (
       <div className="flex-1 flex items-center justify-center p-8">
@@ -36,6 +38,11 @@ const MessageList: React.FC<MessageListProps> = ({ messages }) => {
       {messages.map((message) => (
         <MessageItem key={message.id} message={message} />
       ))}
+      {isProcessing && (
+        <div className="px-2">
+          <LoadingVerb running verb={undefined} />
+        </div>
+      )}
     </div>
   );
 };

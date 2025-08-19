@@ -38,6 +38,7 @@ const ChatContainer: React.FC = () => {
   const [statusType, setStatusType] = useState<
     "ready" | "processing" | "error"
   >("processing");
+  const [showLoadingVerb, setShowLoadingVerb] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Scroll to bottom when new messages arrive
@@ -72,11 +73,13 @@ const ChatContainer: React.FC = () => {
         case "loading":
           setStatusText(message.data);
           setStatusType("processing");
+          setShowLoadingVerb(true);
           break;
 
         case "clearLoading":
           setStatusText("Ready to chat with Claude Code Assistant!");
           setStatusType("ready");
+          setShowLoadingVerb(false);
           break;
 
         case "setProcessing":
@@ -133,19 +136,19 @@ const ChatContainer: React.FC = () => {
 
   const sendMessage = (text: string) => {
     console.log("sendMessage called with:", text);
-    console.log("Current chatState:", { 
-      isProcessing: chatState.isProcessing, 
-      trimmedText: text.trim() 
+    console.log("Current chatState:", {
+      isProcessing: chatState.isProcessing,
+      trimmedText: text.trim(),
     });
-    
+
     if (!text.trim() || chatState.isProcessing) {
       console.log("Message send blocked:", {
         hasText: !!text.trim(),
-        notProcessing: !chatState.isProcessing
+        notProcessing: !chatState.isProcessing,
       });
       return;
     }
-    
+
     console.log("Sending message via postMessage:", text);
     postMessage({
       type: "sendMessage",
@@ -220,14 +223,14 @@ const ChatContainer: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col bg-editor-background text-foreground font-vscode">
-      <Header 
+      <Header
         onNewSession={newSession}
         onOpenSettings={openSettings}
         onOpenHistory={openHistory}
       />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <MessageList messages={chatState.messages} />
+        <MessageList messages={chatState.messages} isProcessing={statusType === "processing"} />
         <div ref={messagesEndRef} />
       </div>
 
@@ -243,10 +246,7 @@ const ChatContainer: React.FC = () => {
         onToggleThinkingMode={toggleThinkingMode}
       />
 
-      <StatusBar 
-        text={statusText}
-        type={statusType}
-      />
+      <StatusBar text={statusText} type={statusType} />
     </div>
   );
 };

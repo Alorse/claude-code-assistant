@@ -167,7 +167,7 @@ const InputArea: React.FC<InputAreaProps> = ({
             onKeyDown={handleKeyDown}
             placeholder={`Try "${placeholderHint}"`}
             className="w-full bg-transparent text-input-foreground p-3 resize-none outline-none min-h-[48px] leading-relaxed focus:outline-none focus:ring-0 focus:border-none focus:shadow-none focus:box-shadow-none"
-            style={{ outline: 'none', border: 'none', boxShadow: 'none' }}
+            style={{ outline: "none", border: "none", boxShadow: "none" }}
             disabled={disabled}
             rows={1}
           />
