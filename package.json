@@ -2,7 +2,7 @@
   "name": "claude-code-assistant",
   "displayName": "Claude Code Assistant",
   "description": "Integrated Claude Code Assistant for VS Code with React UI",
-  "version": "1.0.0",
+  "version": "0.0.3",
   "publisher": "Alorse",
   "author": "Alorse",
   "repository": {
