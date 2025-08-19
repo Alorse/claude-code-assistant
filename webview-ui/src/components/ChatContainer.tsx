@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useVSCode } from "../context/VSCodeContext";
-import Header from "./Header";
+// Header removed in favor of view/title commands
 import MessageList from "./MessageList";
 import InputArea from "./InputArea";
 import StatusBar from "./StatusBar";
+import ChatHistoryModal from "./ChatHistoryModal";
 
 interface Message {
   id: string;
@@ -40,6 +41,16 @@ const ChatContainer: React.FC = () => {
   >("processing");
   const [showLoadingVerb, setShowLoadingVerb] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyOptions, setHistoryOptions] = useState<Array<{
+    filename: string;
+    startTime?: string;
+    messageCount?: number;
+    totalCost?: number;
+    firstUserMessage?: string;
+    lastUserMessage?: string;
+  }>>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
 
   // Scroll to bottom when new messages arrive
   useEffect(() => {
@@ -88,6 +99,22 @@ const ChatContainer: React.FC = () => {
             isProcessing: message.data.isProcessing,
           }));
           break;
+
+        case "conversationList": {
+          console.log("conversationList", message);
+          const items = (message.data || []).map((c: any) => ({
+            filename: c.filename,
+            startTime: c.startTime,
+            messageCount: c.messageCount,
+            totalCost: c.totalCost,
+            firstUserMessage: c.firstUserMessage,
+            lastUserMessage: c.lastUserMessage,
+          }));
+          setHistoryOptions(items);
+          setHistoryLoading(false);
+          setHistoryOpen(true);
+          break;
+        }
 
         case "modelSelected":
           setChatState((prev) => ({
@@ -206,8 +233,14 @@ const ChatContainer: React.FC = () => {
   };
 
   const openHistory = () => {
+    setHistoryLoading(true);
     postMessage({ type: "getConversationList" });
-    // TODO: Implement history modal
+    setHistoryOpen(true);
+  };
+
+  const handleSelectHistory = (filename: string) => {
+    postMessage({ type: "loadConversation", filename });
+    setHistoryOpen(false);
   };
 
   if (!isReady) {
@@ -223,14 +256,21 @@ const ChatContainer: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col bg-editor-background text-foreground font-vscode">
-      <Header
-        onNewSession={newSession}
-        onOpenSettings={openSettings}
-        onOpenHistory={openHistory}
+      {/* Top actions moved to view/title commands */}
+
+      <ChatHistoryModal
+        open={historyOpen}
+        loading={historyLoading}
+        items={historyOptions}
+        onClose={() => setHistoryOpen(false)}
+        onSelect={handleSelectHistory}
       />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <MessageList messages={chatState.messages} isProcessing={statusType === "processing"} />
+        <MessageList
+          messages={chatState.messages}
+          isProcessing={statusType === "processing"}
+        />
         <div ref={messagesEndRef} />
       </div>
 

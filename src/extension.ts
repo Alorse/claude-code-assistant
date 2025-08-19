@@ -28,6 +28,23 @@ export function activate(context: vscode.ExtensionContext) {
     },
   );
 
+  // Title bar commands
+  const newChatCmd = vscode.commands.registerCommand(
+    "claude-code-assistant.newChat",
+    () => assistantProvider.startNewSession(),
+  );
+  const historyCmd = vscode.commands.registerCommand(
+    "claude-code-assistant.openHistory",
+    () => assistantProvider.showHistory(),
+  );
+  const settingsCmd = vscode.commands.registerCommand(
+    "claude-code-assistant.openSettings",
+    () => vscode.commands.executeCommand(
+      "workbench.action.openSettings",
+      "@ext:alorse.claude-code-assistant",
+    ),
+  );
+
   // Register webview view provider for sidebar chat
   const webviewProvider = new ClaudeAssistantWebviewProvider(
     context.extensionUri,
@@ -62,6 +79,9 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     openChatDisposable,
     loadConversationDisposable,
+    newChatCmd,
+    historyCmd,
+    settingsCmd,
     configChangeDisposable,
     statusBarItem,
   );

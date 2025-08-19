@@ -12,7 +12,10 @@ const PREFIX_CHARS = ["·", "✢", "*", "✶", "✻", "✽"];
 export const pickVerb = () =>
   LOADING_VERBS[Math.floor(Math.random() * LOADING_VERBS.length)];
 
-const LoadingVerb: React.FC<LoadingVerbProps> = ({ running, verb: fixedVerb }) => {
+const LoadingVerb: React.FC<LoadingVerbProps> = ({
+  running,
+  verb: fixedVerb,
+}) => {
   const [verb, setVerb] = useState<string>(fixedVerb || pickVerb());
   const [highlightIndex, setHighlightIndex] = useState<number>(0);
   const indexRef = useRef<number>(0);

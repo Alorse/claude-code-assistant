@@ -510,10 +510,31 @@ export class ClaudeAssistantProvider {
   }
 
   private sendConversationList() {
-    this.postMessage({
-      type: "conversationList",
-      data: this.conversationIndex,
-    });
+    // Ensure entries include startTime, firstUserMessage, lastUserMessage
+    const data = this.conversationIndex.map((c) => ({
+      filename: c.filename,
+      sessionId: c.sessionId,
+      startTime: c.startTime,
+      endTime: c.endTime,
+      messageCount: c.messageCount,
+      totalCost: c.totalCost,
+      firstUserMessage: c.firstUserMessage,
+      lastUserMessage: c.lastUserMessage,
+    }));
+    this.postMessage({ type: "conversationList", data });
+  }
+
+  // Public wrappers for commands
+  public startNewSession(): void {
+    this.newSession();
+  }
+
+  public showHistory(): void {
+    this.sendConversationList();
+  }
+
+  public showSettings(): void {
+    this.sendCurrentSettings();
   }
 
   private async sendWorkspaceFiles(searchTerm?: string) {
@@ -527,8 +548,29 @@ export class ClaudeAssistantProvider {
   }
 
   private async loadConversationHistory(filename: string): Promise<void> {
-    console.log("Loading conversation history:", filename);
-    // TODO: Implement conversation loading logic
+    try {
+      if (!this.conversationService) {
+        console.error("Conversation service not initialized");
+        return;
+      }
+
+      await this.conversationService.loadConversation(filename);
+
+      // Clear current UI and push loaded messages
+      this.postMessage({ type: "sessionCleared" });
+
+      const messages = this.conversationService.getCurrentConversation();
+      for (const msg of messages) {
+        // legacy format: { type, data }
+        this.postMessage({ type: msg.type, data: msg.data });
+      }
+
+      // Send ready
+      this.sendReadyMessage();
+    } catch (e) {
+      console.error("Failed to load conversation:", e);
+      this.postMessage({ type: "error", data: "Failed to load conversation" });
+    }
   }
 
   private stopClaudeProcess() {

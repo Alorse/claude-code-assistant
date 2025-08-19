@@ -15,7 +15,10 @@ interface MessageListProps {
   isProcessing?: boolean;
 }
 
-const MessageList: React.FC<MessageListProps> = ({ messages, isProcessing }) => {
+const MessageList: React.FC<MessageListProps> = ({
+  messages,
+  isProcessing,
+}) => {
   if (messages.length === 0) {
     return (
       <div className="flex-1 flex items-center justify-center p-8">

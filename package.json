@@ -57,6 +57,21 @@
         "title": "Open Claude Code Assistant",
         "category": "Claude Code Assistant",
         "icon": "icon.png"
+      },
+      {
+        "command": "claude-code-assistant.newChat",
+        "title": "New Chat",
+        "icon": "$(add)"
+      },
+      {
+        "command": "claude-code-assistant.openHistory",
+        "title": "Conversation History",
+        "icon": "$(history)"
+      },
+      {
+        "command": "claude-code-assistant.openSettings",
+        "title": "Settings",
+        "icon": "$(gear)"
       }
     ],
     "keybindings": [
@@ -107,9 +122,19 @@
       ],
       "view/title": [
         {
-          "command": "claude-code-assistant.openChat",
+          "command": "claude-code-assistant.newChat",
           "group": "navigation@1",
-          "when": "view == workbench.explorer.fileView"
+          "when": "view == claude-code-assistant.chat"
+        },
+        {
+          "command": "claude-code-assistant.openHistory",
+          "group": "navigation@2",
+          "when": "view == claude-code-assistant.chat"
+        },
+        {
+          "command": "claude-code-assistant.openSettings",
+          "group": "navigation@3",
+          "when": "view == claude-code-assistant.chat"
         }
       ],
       "touchBar": [
