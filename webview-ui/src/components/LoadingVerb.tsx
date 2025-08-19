@@ -7,6 +7,7 @@ interface LoadingVerbProps {
 }
 
 const ANIMATION_INTERVAL_MS = 90;
+const PREFIX_CHARS = ["·", "✢", "*", "✶", "✻", "✽"];
 
 export const pickVerb = () =>
   LOADING_VERBS[Math.floor(Math.random() * LOADING_VERBS.length)];
@@ -47,6 +48,17 @@ const LoadingVerb: React.FC<LoadingVerbProps> = ({ running, verb: fixedVerb }) =
 
   return (
     <div className="text-xs" style={{ color: CLAUDE_CODE_COLOR }}>
+      {/* rotating single prefix symbol with fixed width to avoid layout shift */}
+      <span
+        style={{
+          display: "inline-block",
+          width: "1.2em",
+          textAlign: "center",
+          marginRight: 6,
+        }}
+      >
+        {PREFIX_CHARS[highlightIndex % PREFIX_CHARS.length]}
+      </span>
       {letters.map((ch, i) => {
         const isHighlight = running && i === highlightIndex;
         return (

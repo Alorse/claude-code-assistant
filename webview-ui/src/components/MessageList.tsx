@@ -1,6 +1,7 @@
 import React from "react";
 import LoadingVerb from "./LoadingVerb";
 import MessageItem from "./MessageItem";
+import { CLAUDE_CODE_COLOR } from "../utils/constants";
 
 interface Message {
   id: string;
@@ -39,8 +40,8 @@ const MessageList: React.FC<MessageListProps> = ({ messages, isProcessing }) => 
         <MessageItem key={message.id} message={message} />
       ))}
       {isProcessing && (
-        <div className="px-2">
-          <LoadingVerb running verb={undefined} />
+        <div className="px-2" style={{ color: CLAUDE_CODE_COLOR }}>
+          <LoadingVerb running />
         </div>
       )}
     </div>

@@ -89,3 +89,14 @@ export const LOADING_VERBS: string[] = [
   "Working",
   "Wrangling",
 ];
+
+export const HINT_TEMPLATES: string[] = [
+  "fix lint errors",
+  "fix typecheck errors",
+  "how do I log an error?",
+  "create a util logging.py that...",
+  "how does ${G} work?",
+  "refactor ${G}",
+  "edit ${G} to...",
+  "write a test for ${G}",
+];
