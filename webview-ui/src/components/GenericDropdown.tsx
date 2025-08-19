@@ -160,13 +160,21 @@ const GenericDropdown: React.FC<GenericDropdownProps> = ({
             {/* Description tooltip */}
             {hoveredOption &&
               options.find((o) => o.value === hoveredOption)?.description && (
-                <div className="px-3 py-2 border-t border-border bg-gray-500/10 absolute top-0 left-0 z-50">
+                <div
+                  className="px-3 py-2 border-t bg-background border border-border rounded shadow-lg absolute top-0 left-0 z-50"
+                  style={{
+                    position: "fixed",
+                    top: `${dropdownPosition.top - 40}px`,
+                    left: `${dropdownPosition.left}px`,
+                    minWidth: `200px`,
+                    zIndex: 99999,
+                  }}
+                >
                   <p className="text-xs text-foreground/80 leading-relaxed">
                     {(() => {
                       const desc = options.find(
                         (o) => o.value === hoveredOption,
                       )?.description;
-                      console.log("Rendering description:", desc);
                       return desc;
                     })()}
                   </p>
@@ -191,19 +199,13 @@ const GenericDropdown: React.FC<GenericDropdownProps> = ({
                   key={option.value}
                   onClick={() => handleOptionSelect(option.value)}
                   onMouseEnter={() => {
-                    console.log(
-                      "Hovering option:",
-                      option.value,
-                      option.description,
-                    );
                     setHoveredOption(option.value);
                   }}
                   onMouseLeave={() => {
-                    console.log("Leaving hover");
                     setHoveredOption(null);
                   }}
                   className={`
-                  w-full flex items-center justify-between px-3 py-2 text-left text-sm 
+                  w-full flex items-center justify-between px-3 py-2 text-left 
                   transition-colors hover:bg-gray-500/15 border-none outline-none cursor-pointer
                   ${option.value === selectedValue ? "bg-gray-500/10" : ""}
                 `}
