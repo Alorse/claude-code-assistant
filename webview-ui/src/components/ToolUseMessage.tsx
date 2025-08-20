@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { createHighlighter } from "shiki";
+import { renderMarkdown } from "../utils/markdown";
 
 interface ToolUseMessageProps {
   data: any;
@@ -9,41 +9,20 @@ const ToolUseMessage: React.FC<ToolUseMessageProps> = ({ data }) => {
   const toolInfo = data.toolInfo || data.toolName || "Tool";
   const rawInput = data.rawInput || null;
 
-  const [highlighted, setHighlighted] = useState<string | null>(null);
+  const [renderedContent, setRenderedContent] = useState<string | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
-
-    const loadAndHighlight = async (code: string, lang = "javascript") => {
-      try {
-        const highlighter = await createHighlighter({
-          themes: ["nord"],
-          langs: [lang],
-        });
-        // use the bundled helper codeToHtml which operates on the singleton
-        const html = highlighter.codeToHtml(code, { lang, theme: "nord" });
-        if (!cancelled) setHighlighted(html as string);
-      } catch (err) {
-        console.error("Shiki highlight failed in ToolUseMessage:", err);
-      }
-    };
-
     if (rawInput && typeof rawInput.content === "string") {
-      const match = rawInput.content.match(/```(\w+)?\n([\s\S]*?)```/);
-      if (match) {
-        const lang = match[1] || "plaintext";
-        const code = match[2];
-        loadAndHighlight(code, lang);
-        return () => {
-          cancelled = true;
-        };
+      try {
+        const html = renderMarkdown(rawInput.content);
+        setRenderedContent(html);
+      } catch (err) {
+        console.error("Markdown rendering failed in ToolUseMessage:", err);
+        setRenderedContent(null);
       }
+    } else {
+      setRenderedContent(null);
     }
-
-    setHighlighted(null);
-    return () => {
-      cancelled = true;
-    };
   }, [rawInput]);
 
   const copyContent = async (content: string) => {
@@ -81,13 +60,13 @@ const ToolUseMessage: React.FC<ToolUseMessageProps> = ({ data }) => {
       {rawInput?.content && (
         <div className="mb-2">
           <div className="font-semibold text-sm">Content</div>
-          {highlighted ? (
+          {renderedContent ? (
             <div
-              className="mt-1 p-2 bg-white rounded border text-xs overflow-auto max-h-48"
-              dangerouslySetInnerHTML={{ __html: highlighted }}
+              className="mt-1 p-2 rounded border border-border text-xs overflow-auto max-h-48 markdown-content"
+              dangerouslySetInnerHTML={{ __html: renderedContent }}
             />
           ) : (
-            <pre className="mt-1 p-2 bg-white rounded border text-xs overflow-auto max-h-48">
+            <pre className="mt-1 p-2 rounded border border-border text-xs overflow-auto max-h-48">
               {typeof rawInput.content === "string"
                 ? rawInput.content
                 : JSON.stringify(rawInput.content, null, 2)}
@@ -97,7 +76,7 @@ const ToolUseMessage: React.FC<ToolUseMessageProps> = ({ data }) => {
       )}
 
       {!rawInput && data.toolInput && (
-        <pre className="mt-1 p-2 bg-white rounded border text-xs overflow-auto max-h-48">
+        <pre className="mt-1 p-2 rounded border border-border text-xs overflow-auto max-h-48">
           {typeof data.toolInput === "string"
             ? data.toolInput
             : JSON.stringify(data.toolInput, null, 2)}

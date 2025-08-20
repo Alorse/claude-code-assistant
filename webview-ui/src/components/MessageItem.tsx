@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { CLAUDE_CODE_COLOR } from "../utils/constants";
 import SystemReminderToggle from "./SystemReminderToggle";
+import { renderMarkdown } from "../utils/markdown";
 
 interface Message {
   id: string;
@@ -21,9 +22,8 @@ interface MessageItemProps {
 }
 
 const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
-  // Syntax highlighting state
-  const [highlighted, setHighlighted] = useState<string | null>(null);
-  const codeRef = useRef<HTMLDivElement | null>(null);
+  // Rendered markdown content
+  const [renderedContent, setRenderedContent] = useState<string | null>(null);
 
   // Extract system reminders from string content (for user messages)
   let strippedContent: string | null = null;
@@ -37,37 +37,22 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
   }
 
   useEffect(() => {
-    let cancelled = false;
-
-    const loadAndHighlight = async (code: string, lang = "javascript") => {
+    // Process markdown content
+    const contentToProcess = typeof strippedContent === "string" ? strippedContent : 
+                            (typeof message.content === "string" ? message.content : null);
+    
+    if (contentToProcess) {
       try {
-        const shiki = await import("shiki");
-        const html = await shiki.codeToHtml(code, { lang, theme: "vitesse-dark" });
-        if (!cancelled) setHighlighted(html as string);
+        const html = renderMarkdown(contentToProcess);
+        setRenderedContent(html);
       } catch (err) {
-        console.error("Shiki highlight failed:", err);
-      }
-    };
-
-    // Detect code block strings: triple-backtick fences
-    const contentToCheck = typeof strippedContent === "string" ? strippedContent : (typeof message.content === "string" ? message.content : null);
-    if (contentToCheck) {
-      const match = contentToCheck.match(/```(\w+)?\n([\s\S]*?)```/);
-      if (match) {
-        const lang = match[1] || "plaintext";
-        const code = match[2];
-        loadAndHighlight(code, lang);
-      } else {
-        setHighlighted(null);
+        console.error("Markdown rendering failed:", err);
+        setRenderedContent(null);
       }
     } else {
-      setHighlighted(null);
+      setRenderedContent(null);
     }
-
-    return () => {
-      cancelled = true;
-    };
-  }, [message.content]);
+  }, [message.content, strippedContent]);
 
   const getMessageStyles = () => {
     const baseStyles = "px-2 py-1 rounded-lg relative overflow-hidden";
@@ -112,18 +97,17 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
 
   return (
     <div className={`group ${getMessageStyles()}`} style={getInlineStyle()}>
-      <div className="text-sm leading-relaxed whitespace-pre-wrap break-words">
-        {highlighted ? (
+      <div className="text-sm leading-relaxed break-words">
+        {renderedContent ? (
           <div
-            ref={codeRef}
-            className="code-block"
-            dangerouslySetInnerHTML={{ __html: highlighted }}
+            className="markdown-content"
+            dangerouslySetInnerHTML={{ __html: renderedContent }}
           />
         ) : React.isValidElement(message.content) ? (
           message.content
         ) : typeof strippedContent === "string" || typeof message.content === "string" || typeof message.content === "number" ? (
-          // prefer strippedContent (without system reminders) when available
-          (strippedContent ?? message.content)
+          // prefer strippedContent (without system reminders) when available - apply markdown-content for consistent styling
+          <div className="markdown-content whitespace-pre-wrap">{strippedContent ?? message.content}</div>
         ) : (
           <pre className="whitespace-pre-wrap">{JSON.stringify(message.content, null, 2)}</pre>
         )}

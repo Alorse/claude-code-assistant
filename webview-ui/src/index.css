@@ -79,3 +79,109 @@
     rgba(121, 121, 121, 0.6)
   );
 }
+
+/* Markdown styling for content rendered by markdown-it */
+.markdown-content {
+  /* Headers */
+  h1, h2, h3, h4, h5, h6 {
+    margin: 0.8em 0 0.5em 0;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  
+  h1 { font-size: 1.5em; }
+  h2 { font-size: 1.3em; }
+  h3 { font-size: 1.1em; }
+  h4, h5, h6 { font-size: 1em; }
+  
+  /* Paragraphs */
+  p {
+    margin: 0.5em 0;
+    line-height: 1.6;
+  }
+  
+  /* Code blocks */
+  pre {
+    background: var(--vscode-textCodeBlock-background, rgba(100, 100, 100, 0.1));
+    border: 1px solid var(--vscode-panel-border, rgba(128, 128, 128, 0.3));
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin: 8px 0;
+    overflow-x: auto;
+    font-family: var(--vscode-editor-font-family, 'Menlo', 'Monaco', 'Courier New', monospace);
+    font-size: 0.9em;
+  }
+  
+  /* Inline code */
+  code {
+    background-color: color-mix(in srgb, var(--vscode-textCodeBlock-background) 80%, var(--vscode-input-placeholderForeground));
+    border-radius: 4px;
+    color: var(--vscode-textLink-foreground);
+    font-family: var(--monaco-monospace-font, var(--vscode-editor-font-family, 'Menlo', 'Monaco', 'Courier New', monospace));
+    font-size: 0.9em;
+    padding: 1.5px 3px;
+    transition: all 0.1s ease;
+  }
+  
+  /* Clickable inline code (for interactive elements) */
+  code[style*="cursor: pointer"] {
+    background-color: var(--vscode-textCodeBlock-background);
+    border-color: var(--vscode-textLink-foreground);
+    color: var(--vscode-textLink-foreground);
+  }
+  
+  /* Lists */
+  ul, ol {
+    margin: 0.5em 0;
+    padding-left: 1.5em;
+  }
+  
+  li {
+    margin: 0.2em 0;
+  }
+  
+  /* Blockquotes */
+  blockquote {
+    border-left: 4px solid var(--vscode-textLink-foreground, #007acc);
+    margin: 0.8em 0;
+    padding: 0.5em 0 0.5em 1em;
+    background: rgba(100, 100, 100, 0.05);
+    font-style: italic;
+  }
+  
+  /* Tables */
+  table {
+    border-collapse: collapse;
+    margin: 0.8em 0;
+    width: 100%;
+  }
+  
+  th, td {
+    border: 1px solid var(--vscode-panel-border, rgba(128, 128, 128, 0.3));
+    padding: 6px 12px;
+    text-align: left;
+  }
+  
+  th {
+    background: var(--vscode-editor-inactiveSelectionBackground, rgba(100, 100, 100, 0.1));
+    font-weight: 600;
+  }
+  
+  /* Links */
+  a {
+    color: var(--vscode-textLink-foreground, #007acc);
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Horizontal rules */
+  hr {
+    border: none;
+    height: 1px;
+    background: var(--vscode-panel-border, rgba(128, 128, 128, 0.3));
+    margin: 1em 0;
+  }
+}
