@@ -148,6 +148,8 @@ export type WebviewToExtensionMessage =
   | SelectModelRequest;
 
 // UI message used by webview components
+import React from "react";
+
 export interface UIMessage {
   id: string;
   type:
@@ -158,6 +160,6 @@ export interface UIMessage {
     | "tool"
     | "tool-result"
     | "permission-request";
-  content: any;
+  content: React.ReactNode;
   timestamp: string;
 }

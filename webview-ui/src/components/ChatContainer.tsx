@@ -7,8 +7,8 @@ import StatusBar from "./StatusBar";
 import ChatHistoryModal from "./ChatHistoryModal";
 
 import { UIMessage } from "../utils/messageTypes";
-import ToolUseMessage from "./ToolUseMessage";
 type Message = UIMessage;
+// ToolUseMessage component is imported by MessageList, not used here directly
 
 interface ChatState {
   messages: Message[];
@@ -117,9 +117,9 @@ const ChatContainer: React.FC = () => {
         }
 
         case "toolUse": {
-          // Parse tool use object and render a readable summary
+          // Add a structured tool usage message so UI can render it with ToolUseMessage
           try {
-            addToolUseMessage(message.data);
+            addMessage("tool", message.data);
           } catch (err) {
             console.error("Failed to handle toolUse message:", err);
           }
@@ -318,7 +318,7 @@ const ChatContainer: React.FC = () => {
     return () => window.removeEventListener("message", handleMessage);
   }, []);
 
-  const addMessage = (type: Message["type"], content: string) => {
+  const addMessage = (type: Message["type"], content: React.ReactNode) => {
     const newMessage: Message = {
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
       type,
@@ -332,143 +332,9 @@ const ChatContainer: React.FC = () => {
     }));
   };
 
-  // Parse and display toolUse messages (based on src_old/ui.ts)
-  const addToolUseMessage = (data: any) => {
-    try {
-      const toolInfo =
-        (data && data.toolInfo) || (data && data.toolName) || "Tool";
-      const toolName = (data && data.toolName) || "";
+  // addToolUseMessage removed from here; UI now renders tool messages via ToolUseMessage component
 
-      // Prefer rawInput when available
-      const rawInput = data && data.rawInput ? data.rawInput : null;
-      const toolInput = data && data.toolInput ? data.toolInput : null;
-
-      let body = "";
-
-      if (rawInput && typeof rawInput === "object") {
-        if (toolName === "TodoWrite" && rawInput.todos) {
-          // Summarize todos
-          const todos = rawInput.todos.map((t: any) => {
-            const status =
-              t.status === "completed"
-                ? "✅"
-                : t.status === "in_progress"
-                  ? "🔄"
-                  : "⏳";
-            const priority = t.priority ? ` [${t.priority}]` : "";
-            return `${status} ${t.content}${priority}`;
-          });
-          body = "Todo List Update:\n" + todos.join("\n");
-        } else if (
-          toolName === "Edit" &&
-          rawInput.old_string &&
-          rawInput.new_string
-        ) {
-          body = formatEditToolDiff(rawInput);
-        } else if (toolName === "MultiEdit" && Array.isArray(rawInput.edits)) {
-          body = formatMultiEditToolDiff(rawInput);
-        } else if (toolName === "Write" && rawInput.content) {
-          body = formatWriteToolDiff(rawInput);
-        } else {
-          body = formatToolInputUI(rawInput);
-        }
-      } else if (toolInput) {
-        // toolInput may be a stringified JSON
-        try {
-          const parsed =
-            typeof toolInput === "string" ? JSON.parse(toolInput) : toolInput;
-          body = formatToolInputUI(parsed);
-        } catch (err) {
-          body =
-            typeof toolInput === "string"
-              ? toolInput
-              : JSON.stringify(toolInput);
-        }
-      } else if (data && data.toolName) {
-        body = `Executing: ${data.toolName}`;
-      } else {
-        body = JSON.stringify(data);
-      }
-
-      // Compose final message
-      const final = `${toolInfo}\n${body}`;
-      addMessage("system", final);
-    } catch (err) {
-      console.error("Error in addToolUseMessage:", err);
-      addMessage("system", `Tool invoked: ${JSON.stringify(data)}`);
-    }
-  };
-
-  const formatToolInputUI = (input: any) => {
-    if (!input) return "";
-    if (typeof input === "string") {
-      if (input.length > 200) return input.substring(0, 197) + "...";
-      return input;
-    }
-
-    // If it's a simple object with only file_path
-    if (input.file_path && Object.keys(input).length === 1) {
-      return `File: ${input.file_path}`;
-    }
-
-    const parts: string[] = [];
-    for (const [k, v] of Object.entries(input)) {
-      let val = typeof v === "string" ? v : JSON.stringify(v, null, 2);
-      if (val.length > 200) val = val.substring(0, 197) + "...";
-      parts.push(`${k}: ${val}`);
-    }
-    return parts.join("\n");
-  };
-
-  const formatEditToolDiff = (input: any) => {
-    const file = input.file_path || "unknown";
-    const oldLines = (input.old_string || "").split("\n");
-    const newLines = (input.new_string || "").split("\n");
-
-    const max = 6;
-    const preview: string[] = [];
-    preview.push(`File: ${file}`);
-    preview.push("Changes:");
-
-    const combined: Array<{ type: string; content: string }> = [];
-    for (const l of oldLines) combined.push({ type: "removed", content: l });
-    for (const l of newLines) combined.push({ type: "added", content: l });
-
-    const visible = combined.slice(0, max);
-    for (const line of visible) {
-      const prefix = line.type === "removed" ? "- " : "+ ";
-      preview.push(prefix + line.content);
-    }
-    if (combined.length > max)
-      preview.push(`... and ${combined.length - max} more lines`);
-    return preview.join("\n");
-  };
-
-  const formatMultiEditToolDiff = (input: any) => {
-    const file = input.file_path || "unknown";
-    const edits = Array.isArray(input.edits) ? input.edits : [];
-    const parts: string[] = [];
-    parts.push(`File: ${file}`);
-    parts.push(`Edits: ${edits.length}`);
-    if (edits.length > 0) {
-      const first = edits[0];
-      parts.push(formatEditToolDiff(first));
-      if (edits.length > 1)
-        parts.push(`... plus ${edits.length - 1} more edits`);
-    }
-    return parts.join("\n");
-  };
-
-  const formatWriteToolDiff = (input: any) => {
-    const file = input.file_path || "unknown";
-    const content = input.content || "";
-    const lines = content.split("\n");
-    const max = 6;
-    const preview = lines.slice(0, max).map((l: string) => "+ " + l);
-    if (lines.length > max)
-      preview.push(`... and ${lines.length - max} more lines`);
-    return [`File: ${file}`, "New file content:"].concat(preview).join("\n");
-  };
+  // Formatting helpers removed; ToolUseMessage/ToolResult components handle presentation
 
   const sendMessage = (text: string) => {
     console.log("sendMessage called with:", text);

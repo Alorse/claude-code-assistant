@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { createHighlighter } from "shiki";
 
 interface Message {
   id: string;
@@ -34,6 +35,46 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
       console.error("Failed to copy to clipboard:", err);
     }
   };
+
+  // Syntax highlighting state
+  const [highlighted, setHighlighted] = useState<string | null>(null);
+  const codeRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadAndHighlight = async (code: string, lang = "javascript") => {
+      try {
+        const highlighter = await createHighlighter({
+          themes: ["vitesse-dark"],
+          langs: [lang],
+        });
+        // use the bundled helper codeToHtml which operates on the singleton
+        const html = highlighter.codeToHtml(code, { lang, theme: "vitesse-dark" });
+        if (!cancelled) setHighlighted(html as string);
+      } catch (err) {
+        console.error("Shiki highlight failed:", err);
+      }
+    };
+
+    // Detect code block strings: triple-backtick fences
+    if (typeof message.content === "string") {
+      const match = message.content.match(/```(\w+)?\n([\s\S]*?)```/);
+      if (match) {
+        const lang = match[1] || "plaintext";
+        const code = match[2];
+        loadAndHighlight(code, lang);
+      } else {
+        setHighlighted(null);
+      }
+    } else {
+      setHighlighted(null);
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [message.content]);
 
   const getMessageStyles = () => {
     const baseStyles = "p-3 rounded-lg border relative overflow-hidden";
@@ -145,12 +186,18 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
 
       {/* Message Content */}
       <div className="text-sm leading-relaxed whitespace-pre-wrap break-words">
-        {typeof message.content === "string" ? (
+        {highlighted ? (
+          <div
+            ref={codeRef}
+            className="code-block"
+            dangerouslySetInnerHTML={{ __html: highlighted }}
+          />
+        ) : React.isValidElement(message.content) ? (
+          message.content
+        ) : typeof message.content === "string" || typeof message.content === "number" ? (
           message.content
         ) : (
-          <pre className="whitespace-pre-wrap">
-            {JSON.stringify(message.content, null, 2)}
-          </pre>
+          <pre className="whitespace-pre-wrap">{JSON.stringify(message.content, null, 2)}</pre>
         )}
       </div>
 
