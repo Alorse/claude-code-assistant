@@ -74,17 +74,18 @@ const ChatContainer: React.FC = () => {
 
         case "output":
           addMessage("claude", message.data);
+          setShowLoadingVerb(false);
           break;
 
         case "error":
           addMessage("error", message.data);
           setStatusType("error");
+          setShowLoadingVerb(false);
           break;
 
         case "loading":
           setStatusText(message.data);
           setStatusType("processing");
-          setShowLoadingVerb(true);
           break;
 
         case "clearLoading":
@@ -177,6 +178,10 @@ const ChatContainer: React.FC = () => {
     }
 
     console.log("Sending message via postMessage:", text);
+    
+    // Show loading verb immediately when sending
+    setShowLoadingVerb(true);
+    
     postMessage({
       type: "sendMessage",
       text,
@@ -188,12 +193,6 @@ const ChatContainer: React.FC = () => {
       ...prev,
       draftMessage: "",
     }));
-  };
-
-  const newSession = () => {
-    postMessage({ type: "newSession" });
-    setStatusText("Starting new session...");
-    setStatusType("processing");
   };
 
   const togglePlanMode = () => {
@@ -227,17 +226,6 @@ const ChatContainer: React.FC = () => {
     return () => clearTimeout(timeoutId);
   };
 
-  const openSettings = () => {
-    postMessage({ type: "getSettings" });
-    // TODO: Implement settings modal
-  };
-
-  const openHistory = () => {
-    setHistoryLoading(true);
-    postMessage({ type: "getConversationList" });
-    setHistoryOpen(true);
-  };
-
   const handleSelectHistory = (filename: string) => {
     postMessage({ type: "loadConversation", filename });
     setHistoryOpen(false);
@@ -269,7 +257,7 @@ const ChatContainer: React.FC = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         <MessageList
           messages={chatState.messages}
-          isProcessing={statusType === "processing"}
+          isProcessing={showLoadingVerb}
         />
         <div ref={messagesEndRef} />
       </div>
