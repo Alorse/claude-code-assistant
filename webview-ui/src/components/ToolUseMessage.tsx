@@ -55,9 +55,9 @@ const ToolUseMessage: React.FC<ToolUseMessageProps> = ({ data }) => {
   };
 
   return (
-    <div className="tool-message p-3 rounded-lg border border-yellow-300 bg-yellow-50">
-      <div className="flex items-center justify-between mb-2">
-        <div className="text-sm font-medium">{toolInfo}</div>
+    <div className="tool-message px-2 py-1">
+      <div className="flex items-center justify-between">
+        <div className="text-xs">{toolInfo}</div>
         <div className="flex gap-2">
           {rawInput?.content && typeof rawInput.content === "string" && (
             <button
