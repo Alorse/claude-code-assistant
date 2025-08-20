@@ -39,10 +39,11 @@ export function activate(context: vscode.ExtensionContext) {
   );
   const settingsCmd = vscode.commands.registerCommand(
     "claude-code-assistant.openSettings",
-    () => vscode.commands.executeCommand(
-      "workbench.action.openSettings",
-      "@ext:alorse.claude-code-assistant",
-    ),
+    () =>
+      vscode.commands.executeCommand(
+        "workbench.action.openSettings",
+        "@ext:alorse.claude-code-assistant",
+      ),
   );
 
   // Register webview view provider for sidebar chat

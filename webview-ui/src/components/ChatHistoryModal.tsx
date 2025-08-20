@@ -104,10 +104,14 @@ const ChatHistoryModal: React.FC<ChatHistoryModalProps> = ({
 
         <div className="max-h-96 overflow-y-auto">
           {loading && (
-            <div className="px-3 py-6 text-sm text-description">Loading chats...</div>
+            <div className="px-3 py-6 text-sm text-description">
+              Loading chats...
+            </div>
           )}
           {!loading && filtered.length === 0 && (
-            <div className="px-3 py-6 text-sm text-description">No conversations found</div>
+            <div className="px-3 py-6 text-sm text-description">
+              No conversations found
+            </div>
           )}
           {groupsOrder.map((group) => {
             const arr = grouped.get(group);
@@ -120,8 +124,17 @@ const ChatHistoryModal: React.FC<ChatHistoryModalProps> = ({
                 <ul className="divide-y divide-border">
                   {arr.map((it) => {
                     // show lastUserMessage prominently
-                    const last = (it.lastUserMessage || it.firstUserMessage || "conversation").slice(0, 35);
-                    const label = last + ((it.lastUserMessage || it.firstUserMessage || "").length > 35 ? "…" : "");
+                    const last = (
+                      it.lastUserMessage ||
+                      it.firstUserMessage ||
+                      "conversation"
+                    ).slice(0, 35);
+                    const label =
+                      last +
+                      ((it.lastUserMessage || it.firstUserMessage || "")
+                        .length > 35
+                        ? "…"
+                        : "");
                     const meta = `${new Date(it.startTime || 0).toLocaleString()}`;
                     return (
                       <li
