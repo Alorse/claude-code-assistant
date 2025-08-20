@@ -2,8 +2,15 @@ import React, { useState } from "react";
 
 interface Message {
   id: string;
-  type: "user" | "claude" | "error" | "system";
-  content: string;
+  type:
+    | "user"
+    | "claude"
+    | "error"
+    | "system"
+    | "tool"
+    | "tool-result"
+    | "permission-request";
+  content: any;
   timestamp: string;
 }
 
@@ -16,7 +23,11 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
 
   const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(message.content);
+      const text =
+        typeof message.content === "string"
+          ? message.content
+          : JSON.stringify(message.content, null, 2);
+      await navigator.clipboard.writeText(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -36,6 +47,12 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
         return `${baseStyles} border-red-500/30 bg-red-500/10 border-l-4 border-l-red-500`;
       case "system":
         return `${baseStyles} border-gray-500/20 bg-gray-500/5 border-l-4 border-l-gray-500`;
+      case "tool":
+        return `${baseStyles} border-yellow-500/20 bg-yellow-500/5 border-l-4 border-l-yellow-500`;
+      case "tool-result":
+        return `${baseStyles} border-indigo-500/20 bg-indigo-500/5 border-l-4 border-l-indigo-500`;
+      case "permission-request":
+        return `${baseStyles} border-purple-500/20 bg-purple-500/5 border-l-4 border-l-purple-500`;
       default:
         return baseStyles;
     }
@@ -54,6 +71,12 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
         return `${baseStyles} bg-gradient-to-br from-red-500 to-red-600`;
       case "system":
         return `${baseStyles} bg-gradient-to-br from-gray-500 to-gray-600`;
+      case "tool":
+        return `${baseStyles} bg-gradient-to-br from-yellow-500 to-yellow-600`;
+      case "tool-result":
+        return `${baseStyles} bg-gradient-to-br from-indigo-500 to-indigo-600`;
+      case "permission-request":
+        return `${baseStyles} bg-gradient-to-br from-purple-500 to-purple-600`;
       default:
         return baseStyles;
     }
@@ -69,6 +92,12 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
         return "E";
       case "system":
         return "S";
+      case "tool":
+        return "T";
+      case "tool-result":
+        return "R";
+      case "permission-request":
+        return "P";
       default:
         return "?";
     }
@@ -84,6 +113,12 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
         return "Error";
       case "system":
         return "System";
+      case "tool":
+        return "Tool";
+      case "tool-result":
+        return "Tool Result";
+      case "permission-request":
+        return "Permission";
       default:
         return "Unknown";
     }
@@ -110,7 +145,13 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
 
       {/* Message Content */}
       <div className="text-sm leading-relaxed whitespace-pre-wrap break-words">
-        {message.content}
+        {typeof message.content === "string" ? (
+          message.content
+        ) : (
+          <pre className="whitespace-pre-wrap">
+            {JSON.stringify(message.content, null, 2)}
+          </pre>
+        )}
       </div>
 
       {/* Timestamp */}

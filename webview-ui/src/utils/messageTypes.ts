@@ -146,3 +146,18 @@ export type WebviewToExtensionMessage =
   | LoadMCPServersRequest
   | DismissWSLAlertRequest
   | SelectModelRequest;
+
+// UI message used by webview components
+export interface UIMessage {
+  id: string;
+  type:
+    | "user"
+    | "claude"
+    | "error"
+    | "system"
+    | "tool"
+    | "tool-result"
+    | "permission-request";
+  content: any;
+  timestamp: string;
+}

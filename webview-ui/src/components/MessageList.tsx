@@ -1,14 +1,13 @@
 import React from "react";
 import LoadingVerb from "./LoadingVerb";
 import MessageItem from "./MessageItem";
+import ToolUseMessage from "./ToolUseMessage";
+import PermissionRequest from "./PermissionRequest";
 import { CLAUDE_CODE_COLOR } from "../utils/constants";
 
-interface Message {
-  id: string;
-  type: "user" | "claude" | "error" | "system";
-  content: string;
-  timestamp: string;
-}
+import { UIMessage } from "../utils/messageTypes";
+
+type Message = UIMessage;
 
 interface MessageListProps {
   messages: Message[];
@@ -39,9 +38,34 @@ const MessageList: React.FC<MessageListProps> = ({
 
   return (
     <div className="flex-1 overflow-y-auto p-3 space-y-3">
-      {messages.map((message) => (
-        <MessageItem key={message.id} message={message} />
-      ))}
+      {messages.map((message) => {
+        if (message.type === "tool") {
+          return <ToolUseMessage data={message.content} />;
+        }
+
+        if (message.type === "permission-request") {
+          const d = message.content as any;
+          return (
+            <PermissionRequest
+              key={message.id}
+              id={d.id}
+              tool={d.tool}
+              pattern={d.pattern}
+              onRespond={(id, approved, alwaysAllow) => {
+                // send response back to extension
+                window.acquireVsCodeApi().postMessage({
+                  type: "permissionResponse",
+                  id,
+                  approved,
+                  alwaysAllow: !!alwaysAllow,
+                });
+              }}
+            />
+          );
+        }
+
+        return <MessageItem key={message.id} message={message} />;
+      })}
       {isProcessing && (
         <div className="px-2" style={{ color: CLAUDE_CODE_COLOR }}>
           <LoadingVerb running />
