@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import SystemReminderToggle from "./SystemReminderToggle";
 
 interface ToolResultMessageProps {
   data: any;
@@ -7,7 +8,15 @@ interface ToolResultMessageProps {
 const ToolResultMessage: React.FC<ToolResultMessageProps> = ({ data }) => {
   const raw = typeof data === "string" ? data : JSON.stringify(data, null, 2);
 
-  const lines = useMemo(() => raw.split("\n"), [raw]);
+  // Extract system reminder blocks
+  const systemReminderRegex = /<system-reminder>([\s\S]*?)<\/system-reminder>/g;
+  const reminders: string[] = [];
+  const stripped = raw.replace(systemReminderRegex, (_, g1) => {
+    reminders.push(g1.trim());
+    return ""; // remove from displayed text
+  });
+
+  const lines = useMemo(() => stripped.split("\n"), [stripped]);
   const [expanded, setExpanded] = useState(false);
   const LINE_COUNT = 10;
 
@@ -19,7 +28,7 @@ const ToolResultMessage: React.FC<ToolResultMessageProps> = ({ data }) => {
       <div className="text-sm font-medium mb-2">Tool Result</div>
 
       <div className="text-xs">
-        {visibleLines.join("\n")}
+        <pre className="whitespace-pre-wrap max-h-64 overflow-auto">{visibleLines.join("\n")}</pre>
       </div>
 
       {shouldCollapse && (
@@ -30,6 +39,14 @@ const ToolResultMessage: React.FC<ToolResultMessageProps> = ({ data }) => {
           >
             {expanded ? "Show less" : `Show more (${lines.length - LINE_COUNT} more lines)`}
           </button>
+        </div>
+      )}
+
+      {reminders.length > 0 && (
+        <div className="mt-3">
+          {reminders.map((r, idx) => (
+            <SystemReminderToggle key={idx} content={r} />
+          ))}
         </div>
       )}
     </div>

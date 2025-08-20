@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { CLAUDE_CODE_COLOR } from "../utils/constants";
+import SystemReminderToggle from "./SystemReminderToggle";
 
 interface Message {
   id: string;
@@ -24,6 +25,17 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
   const [highlighted, setHighlighted] = useState<string | null>(null);
   const codeRef = useRef<HTMLDivElement | null>(null);
 
+  // Extract system reminders from string content (for user messages)
+  let strippedContent: string | null = null;
+  const reminders: string[] = [];
+  if (typeof message.content === "string") {
+    const systemReminderRegex = /<system-reminder>([\s\S]*?)<\/system-reminder>/g;
+    strippedContent = message.content.replace(systemReminderRegex, (_m, g1) => {
+      reminders.push((g1 || "").trim());
+      return "";
+    });
+  }
+
   useEffect(() => {
     let cancelled = false;
 
@@ -38,8 +50,9 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
     };
 
     // Detect code block strings: triple-backtick fences
-    if (typeof message.content === "string") {
-      const match = message.content.match(/```(\w+)?\n([\s\S]*?)```/);
+    const contentToCheck = typeof strippedContent === "string" ? strippedContent : (typeof message.content === "string" ? message.content : null);
+    if (contentToCheck) {
+      const match = contentToCheck.match(/```(\w+)?\n([\s\S]*?)```/);
       if (match) {
         const lang = match[1] || "plaintext";
         const code = match[2];
@@ -61,19 +74,19 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
 
     switch (message.type) {
       case "user":
-        return `${baseStyles} bg-input-background w-[90%] ml-auto border`;
+        return `${baseStyles} bg-input-background w-[90%] ml-auto`;
       case "claude":
         return `${baseStyles}`;
       case "error":
-        return `${baseStyles} border-red-500/30 bg-red-500/10 border-l-4 border-l-red-500`;
+        return `${baseStyles} bg-red-500/10`;
       case "system":
-        return `${baseStyles} border-gray-500/20 bg-gray-500/5 border-l-4 border-l-gray-500`;
+        return `${baseStyles} bg-gray-500/5`;
       case "tool":
         return `text-xs text-description opacity-50`;
       case "tool-result":
-        return `${baseStyles} border-indigo-500/20 bg-indigo-500/5 border-l-4 border-l-indigo-500`;
+        return `${baseStyles} bg-indigo-500/5`;
       case "permission-request":
-        return `${baseStyles} border-purple-500/20 bg-purple-500/5 border-l-4 border-l-purple-500`;
+        return `${baseStyles} bg-purple-500/5 border-l-4 border-l-purple-500`;
       default:
         return baseStyles;
     }
@@ -90,7 +103,9 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
 
   const getInlineStyle = (): React.CSSProperties | undefined => {
     if (message.type === 'user') {
-      return { borderColor: hexToRgba(CLAUDE_CODE_COLOR, 0.4) };
+      return { 
+        boxShadow: `0 0 10px 0.1px ${hexToRgba(CLAUDE_CODE_COLOR, 0.4)}`
+       };
     }
     return undefined;
   };
@@ -106,12 +121,23 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
           />
         ) : React.isValidElement(message.content) ? (
           message.content
-        ) : typeof message.content === "string" || typeof message.content === "number" ? (
-          message.content
+        ) : typeof strippedContent === "string" || typeof message.content === "string" || typeof message.content === "number" ? (
+          // prefer strippedContent (without system reminders) when available
+          (strippedContent ?? message.content)
         ) : (
           <pre className="whitespace-pre-wrap">{JSON.stringify(message.content, null, 2)}</pre>
         )}
       </div>
+      {reminders.length > 0 && (
+        <div className="mt-2">
+          {reminders.map((r, idx) => (
+            <div key={idx} className="mt-2">
+              {/* collapsed by default via SystemReminderToggle component */}
+              <SystemReminderToggle content={r} />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
