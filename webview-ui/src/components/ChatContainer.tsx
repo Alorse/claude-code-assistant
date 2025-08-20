@@ -135,7 +135,7 @@ const ChatContainer: React.FC = () => {
             );
           } else {
             addMessage(
-              "system",
+              "tool-result",
               message.data.content || JSON.stringify(message.data),
             );
           }

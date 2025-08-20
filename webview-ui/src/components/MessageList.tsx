@@ -2,6 +2,7 @@ import React from "react";
 import LoadingVerb from "./LoadingVerb";
 import MessageItem from "./MessageItem";
 import ToolUseMessage from "./ToolUseMessage";
+import ToolResultMessage from "./ToolResultMessage";
 import PermissionRequest from "./PermissionRequest";
 import { CLAUDE_CODE_COLOR } from "../utils/constants";
 
@@ -39,8 +40,13 @@ const MessageList: React.FC<MessageListProps> = ({
   return (
     <div className="flex-1 overflow-y-auto p-3 space-y-3">
       {messages.map((message) => {
+        console.log("message", message);
         if (message.type === "tool") {
           return <ToolUseMessage data={message.content} />;
+        }
+
+        if (message.type === "tool-result") {
+          return <ToolResultMessage data={message.content} />;
         }
 
         if (message.type === "permission-request") {
