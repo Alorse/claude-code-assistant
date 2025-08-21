@@ -29,7 +29,8 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
   let strippedContent: string | null = null;
   const reminders: string[] = [];
   if (typeof message.content === "string") {
-    const systemReminderRegex = /<system-reminder>([\s\S]*?)<\/system-reminder>/g;
+    const systemReminderRegex =
+      /<system-reminder>([\s\S]*?)<\/system-reminder>/g;
     strippedContent = message.content.replace(systemReminderRegex, (_m, g1) => {
       reminders.push((g1 || "").trim());
       return "";
@@ -38,9 +39,13 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
 
   useEffect(() => {
     // Process markdown content
-    const contentToProcess = typeof strippedContent === "string" ? strippedContent : 
-                            (typeof message.content === "string" ? message.content : null);
-    
+    const contentToProcess =
+      typeof strippedContent === "string"
+        ? strippedContent
+        : typeof message.content === "string"
+          ? message.content
+          : null;
+
     if (contentToProcess) {
       try {
         const html = renderMarkdown(contentToProcess);
@@ -78,7 +83,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
   };
 
   const hexToRgba = (hex: string, alpha: number) => {
-    const cleaned = hex.replace('#','');
+    const cleaned = hex.replace("#", "");
     const bigint = parseInt(cleaned, 16);
     const r = (bigint >> 16) & 255;
     const g = (bigint >> 8) & 255;
@@ -87,10 +92,10 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
   };
 
   const getInlineStyle = (): React.CSSProperties | undefined => {
-    if (message.type === 'user') {
-      return { 
-        boxShadow: `0 0 10px 0.1px ${hexToRgba(CLAUDE_CODE_COLOR, 0.4)}`
-       };
+    if (message.type === "user") {
+      return {
+        boxShadow: `0 0 10px 0.1px ${hexToRgba(CLAUDE_CODE_COLOR, 0.4)}`,
+      };
     }
     return undefined;
   };
@@ -105,11 +110,17 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
           />
         ) : React.isValidElement(message.content) ? (
           message.content
-        ) : typeof strippedContent === "string" || typeof message.content === "string" || typeof message.content === "number" ? (
+        ) : typeof strippedContent === "string" ||
+          typeof message.content === "string" ||
+          typeof message.content === "number" ? (
           // prefer strippedContent (without system reminders) when available - apply markdown-content for consistent styling
-          <div className="markdown-content whitespace-pre-wrap">{strippedContent ?? message.content}</div>
+          <div className="markdown-content whitespace-pre-wrap">
+            {strippedContent ?? message.content}
+          </div>
         ) : (
-          <pre className="whitespace-pre-wrap">{JSON.stringify(message.content, null, 2)}</pre>
+          <pre className="whitespace-pre-wrap">
+            {JSON.stringify(message.content, null, 2)}
+          </pre>
         )}
       </div>
       {reminders.length > 0 && (

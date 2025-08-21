@@ -21,14 +21,17 @@ const ToolResultMessage: React.FC<ToolResultMessageProps> = ({ data }) => {
   const LINE_COUNT = 10;
 
   const shouldCollapse = lines.length > LINE_COUNT;
-  const visibleLines = shouldCollapse && !expanded ? lines.slice(0, LINE_COUNT) : lines;
+  const visibleLines =
+    shouldCollapse && !expanded ? lines.slice(0, LINE_COUNT) : lines;
 
   return (
     <div className="tool-result-message px-2 py-1">
       <div className="text-sm font-medium mb-2">Tool Result</div>
 
       <div className="text-xs">
-        <pre className="whitespace-pre-wrap max-h-64 overflow-auto">{visibleLines.join("\n")}</pre>
+        <pre className="whitespace-pre-wrap max-h-64 overflow-auto">
+          {visibleLines.join("\n")}
+        </pre>
       </div>
 
       {shouldCollapse && (
@@ -37,7 +40,9 @@ const ToolResultMessage: React.FC<ToolResultMessageProps> = ({ data }) => {
             className="text-xs btn outlined"
             onClick={() => setExpanded((s) => !s)}
           >
-            {expanded ? "Show less" : `Show more (${lines.length - LINE_COUNT} more lines)`}
+            {expanded
+              ? "Show less"
+              : `Show more (${lines.length - LINE_COUNT} more lines)`}
           </button>
         </div>
       )}
@@ -54,5 +59,3 @@ const ToolResultMessage: React.FC<ToolResultMessageProps> = ({ data }) => {
 };
 
 export default ToolResultMessage;
-
-

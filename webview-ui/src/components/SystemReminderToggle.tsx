@@ -15,9 +15,7 @@ const SystemReminderToggle: React.FC<Props> = ({ content }) => {
         onClick={() => setOpen((s) => !s)}
         aria-expanded={open}
       >
-        <span aria-hidden>
-          {open ? "-" : "+"}
-        </span>
+        <span aria-hidden>{open ? "-" : "+"}</span>
         <span>{open ? "Hide system reminder" : "Show system reminder"}</span>
       </button>
       {open && (
@@ -30,5 +28,3 @@ const SystemReminderToggle: React.FC<Props> = ({ content }) => {
 };
 
 export default SystemReminderToggle;
-
-

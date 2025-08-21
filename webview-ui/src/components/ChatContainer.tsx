@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 import { useVSCode } from "../context/VSCodeContext";
 import MessageList from "./MessageList";
 import InputArea from "./InputArea";
@@ -29,7 +35,7 @@ const ChatContainer: React.FC = () => {
     planMode: false,
     thinkingMode: false,
   });
-  
+
   // Separate state for draft message to prevent MessageList re-renders
   const [draftMessage, setDraftMessage] = useState("");
 
@@ -52,36 +58,42 @@ const ChatContainer: React.FC = () => {
   >([]);
   const [historyLoading, setHistoryLoading] = useState(false);
 
-  const addMessage = useCallback((type: Message["type"], content: React.ReactNode) => {
-    const newMessage: Message = {
-      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-      type,
-      content,
-      timestamp: new Date().toISOString(),
-    };
+  const addMessage = useCallback(
+    (type: Message["type"], content: React.ReactNode) => {
+      const newMessage: Message = {
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+        type,
+        content,
+        timestamp: new Date().toISOString(),
+      };
 
-    setChatState((prev) => ({
-      ...prev,
-      messages: [...prev.messages, newMessage],
-    }));
-  }, []);
+      setChatState((prev) => ({
+        ...prev,
+        messages: [...prev.messages, newMessage],
+      }));
+    },
+    [],
+  );
 
   // Scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatState.messages]);
 
-  const messageHandlerProps = useMemo(() => ({
-    addMessage,
-    setStatusText,
-    setStatusType,
-    setShowLoadingVerb,
-    setChatState,
-    setHistoryOptions,
-    setHistoryLoading,
-    setHistoryOpen,
-    setDraftMessage,
-  }), [addMessage]);
+  const messageHandlerProps = useMemo(
+    () => ({
+      addMessage,
+      setStatusText,
+      setStatusType,
+      setShowLoadingVerb,
+      setChatState,
+      setHistoryOptions,
+      setHistoryLoading,
+      setHistoryOpen,
+      setDraftMessage,
+    }),
+    [addMessage],
+  );
 
   useMessageHandler(messageHandlerProps);
 
@@ -89,35 +101,43 @@ const ChatContainer: React.FC = () => {
 
   // Formatting helpers removed; ToolUseMessage/ToolResult components handle presentation
 
-  const sendMessage = useCallback((text: string) => {
-    console.log("sendMessage called with:", text);
-    console.log("Current chatState:", {
-      isProcessing: chatState.isProcessing,
-      trimmedText: text.trim(),
-    });
-
-    if (!text.trim() || chatState.isProcessing) {
-      console.log("Message send blocked:", {
-        hasText: !!text.trim(),
-        notProcessing: !chatState.isProcessing,
+  const sendMessage = useCallback(
+    (text: string) => {
+      console.log("sendMessage called with:", text);
+      console.log("Current chatState:", {
+        isProcessing: chatState.isProcessing,
+        trimmedText: text.trim(),
       });
-      return;
-    }
 
-    console.log("Sending message via postMessage:", text);
+      if (!text.trim() || chatState.isProcessing) {
+        console.log("Message send blocked:", {
+          hasText: !!text.trim(),
+          notProcessing: !chatState.isProcessing,
+        });
+        return;
+      }
 
-    // Show loading verb immediately when sending
-    setShowLoadingVerb(true);
+      console.log("Sending message via postMessage:", text);
 
-    postMessage({
-      type: "sendMessage",
-      text,
-      planMode: chatState.planMode,
-      thinkingMode: chatState.thinkingMode,
-    });
+      // Show loading verb immediately when sending
+      setShowLoadingVerb(true);
 
-    setDraftMessage("");
-  }, [chatState.isProcessing, chatState.planMode, chatState.thinkingMode, postMessage]);
+      postMessage({
+        type: "sendMessage",
+        text,
+        planMode: chatState.planMode,
+        thinkingMode: chatState.thinkingMode,
+      });
+
+      setDraftMessage("");
+    },
+    [
+      chatState.isProcessing,
+      chatState.planMode,
+      chatState.thinkingMode,
+      postMessage,
+    ],
+  );
 
   const togglePlanMode = useCallback(() => {
     setChatState((prev) => ({
@@ -133,24 +153,30 @@ const ChatContainer: React.FC = () => {
     }));
   }, []);
 
-  const handleDraftChange = useCallback((text: string) => {
-    setDraftMessage(text);
+  const handleDraftChange = useCallback(
+    (text: string) => {
+      setDraftMessage(text);
 
-    // Debounce saving draft message
-    const timeoutId = setTimeout(() => {
-      postMessage({
-        type: "saveInputText",
-        text,
-      });
-    }, 500);
+      // Debounce saving draft message
+      const timeoutId = setTimeout(() => {
+        postMessage({
+          type: "saveInputText",
+          text,
+        });
+      }, 500);
 
-    return () => clearTimeout(timeoutId);
-  }, [postMessage]);
+      return () => clearTimeout(timeoutId);
+    },
+    [postMessage],
+  );
 
-  const handleSelectHistory = useCallback((filename: string) => {
-    postMessage({ type: "loadConversation", filename });
-    setHistoryOpen(false);
-  }, [postMessage]);
+  const handleSelectHistory = useCallback(
+    (filename: string) => {
+      postMessage({ type: "loadConversation", filename });
+      setHistoryOpen(false);
+    },
+    [postMessage],
+  );
 
   if (!isReady) {
     return (
