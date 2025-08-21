@@ -64,7 +64,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
 
     switch (message.type) {
       case "user":
-        return `${baseStyles} bg-input-background w-[90%] ml-auto`;
+        return `${baseStyles} bg-input-background max-w-[90%] ml-auto w-fit`;
       case "claude":
         return `${baseStyles}`;
       case "error":
@@ -128,7 +128,10 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
           {reminders.map((r, idx) => (
             <div key={idx} className="mt-2">
               {/* collapsed by default via SystemToggle component */}
-              <SystemToggle content={r} />
+              <SystemToggle
+                headline={["Hide system reminder", "Show system reminder"]}
+                content={r}
+              />
             </div>
           ))}
         </div>

@@ -25,34 +25,41 @@ const ToolResultMessage: React.FC<ToolResultMessageProps> = ({ data }) => {
     shouldCollapse && !expanded ? lines.slice(0, LINE_COUNT) : lines;
 
   return (
-    <div className="tool-result-message px-2 py-1">
-      <div className="text-sm font-medium mb-2">Tool Result</div>
-
-      <div className="text-xs">
-        <pre className="whitespace-pre-wrap max-h-64 overflow-auto">
-          {visibleLines.join("\n")}
-        </pre>
-      </div>
-
-      {shouldCollapse && (
-        <div className="mt-2">
-          <button
-            className="text-xs btn outlined"
-            onClick={() => setExpanded((s) => !s)}
-          >
-            {expanded
-              ? "Show less"
-              : `Show more (${lines.length - LINE_COUNT} more lines)`}
-          </button>
-        </div>
-      )}
+    <div className="tool-result-message">
+      <SystemToggle
+        headline={["Hide Tool Result", "Show Tool Result"]}
+        content={
+          <>
+            <div className="text-xs">
+              <pre className="whitespace-pre-wrap max-h-64 overflow-auto">
+                {visibleLines.join("\n")}
+              </pre>
+            </div>
+            {shouldCollapse && (
+              <div className="mt-2">
+                <button
+                  className="text-xs btn outlined"
+                  onClick={() => setExpanded((s) => !s)}
+                >
+                  {expanded
+                    ? "Show less"
+                    : `Show more (${lines.length - LINE_COUNT} more lines)`}
+                </button>
+              </div>
+            )}
+          </>
+        }
+      />
 
       {reminders.length > 0 && (
         <div className="mt-2">
           {reminders.map((r, idx) => (
             <div key={idx} className="mt-2">
               {/* collapsed by default via SystemToggle component */}
-              <SystemToggle content={r} />
+              <SystemToggle
+                headline={["Hide system reminder", "Show system reminder"]}
+                content={r}
+              />
             </div>
           ))}
         </div>

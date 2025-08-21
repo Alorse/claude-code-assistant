@@ -19,6 +19,15 @@ const PermissionRequest: React.FC<PermissionRequestProps> = ({
 
   return (
     <>
+      {displayPattern && (
+        <div className="permission-request px-2 py-1">
+          <div className="text-xs">
+            <pre className="whitespace-pre-wrap max-h-64 overflow-auto">
+              {displayPattern}
+            </pre>
+          </div>
+        </div>
+      )}
       <div className="permission-request px-2 py-1 rounded-lg border border-border bg-input-background">
         <div className="flex items-center justify-between m-1">
           <div className="flex items-center gap-2">
@@ -48,17 +57,6 @@ const PermissionRequest: React.FC<PermissionRequestProps> = ({
           </div>
         </div>
       </div>
-      {displayPattern && (
-        <div className="tool-result-message px-2 py-1">
-          <div className="text-sm font-medium mb-2">Command</div>
-
-          <div className="text-xs">
-            <pre className="whitespace-pre-wrap max-h-64 overflow-auto">
-              {displayPattern}
-            </pre>
-          </div>
-        </div>
-      )}
     </>
   );
 };

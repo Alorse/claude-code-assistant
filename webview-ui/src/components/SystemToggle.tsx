@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 
 interface Props {
-  content: string;
+  headline: string[];
+  content: React.ReactNode;
   id?: string;
 }
 
-const SystemToggle: React.FC<Props> = ({ content }) => {
+const SystemToggle: React.FC<Props> = ({ headline, content }) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -16,7 +17,7 @@ const SystemToggle: React.FC<Props> = ({ content }) => {
         aria-expanded={open}
       >
         <span aria-hidden>{open ? "-" : "+"}</span>
-        <span>{open ? "Hide system reminder" : "Show system reminder"}</span>
+        <span>{open ? headline[0] : headline[1]}</span>
       </button>
       {open && (
         <div className="mt-2 p-2 bg-gray-800 text-white rounded text-xs">
