@@ -508,6 +508,9 @@ export class ClaudeService {
       this.currentProcess.kill("SIGTERM");
       this.currentProcess = undefined;
       this.isProcessing = false;
+      
+      // Clear session ID to ensure fresh start
+      this.currentSessionId = undefined;
 
       this.messageHandler({
         type: "error",

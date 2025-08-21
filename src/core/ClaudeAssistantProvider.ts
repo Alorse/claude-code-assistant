@@ -532,7 +532,21 @@ export class ClaudeAssistantProvider {
         return;
       }
 
+      // CRITICAL: Stop any current Claude process to clear its memory/context
+      this.claudeService?.stopCurrentProcess();
+
       await this.conversationService.loadConversation(filename);
+
+      // Get the session ID from the loaded conversation to resume it
+      const loadedConversation = this.conversationService.getCurrentConversationData();
+      if (loadedConversation && loadedConversation.sessionId) {
+        this.currentSessionId = loadedConversation.sessionId;
+        console.log("Loading conversation with session ID:", this.currentSessionId);
+      } else {
+        // If no session ID, start fresh
+        this.currentSessionId = undefined;
+        console.log("No session ID found, starting fresh");
+      }
 
       // Clear current UI and push loaded messages
       this.postMessage({ type: "sessionCleared" });

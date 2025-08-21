@@ -21,6 +21,7 @@ export class ConversationService {
   private conversationStartTime?: string;
   private conversationIndex: ConversationData[] = [];
   private draftMessage = "";
+  private currentConversationData: ConversationData | undefined;
 
   constructor(
     private context: vscode.ExtensionContext,
@@ -104,6 +105,7 @@ export class ConversationService {
         // Replace current conversation
         this.currentConversation = conversationData.messages || [];
         this.conversationStartTime = conversationData.startTime;
+        this.currentConversationData = conversationData;
 
         console.log(`Loaded conversation: ${filename}`);
         resolve();
@@ -136,10 +138,15 @@ export class ConversationService {
   clearCurrentConversation(): void {
     this.currentConversation = [];
     this.conversationStartTime = undefined;
+    this.currentConversationData = undefined;
   }
 
   getCurrentConversation(): ConversationMessage[] {
     return this.currentConversation;
+  }
+
+  getCurrentConversationData(): ConversationData | undefined {
+    return this.currentConversationData;
   }
 
   getDraftMessage(): string {
