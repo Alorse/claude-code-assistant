@@ -5,6 +5,7 @@ import ToolUseMessage from "./ToolUseMessage";
 import ToolResultMessage from "./ToolResultMessage";
 import PermissionRequest from "./PermissionRequest";
 import { CLAUDE_CODE_COLOR } from "../utils/constants";
+import { useVSCode } from "../context/VSCodeContext";
 
 import { UIMessage } from "../utils/messageTypes";
 
@@ -17,6 +18,7 @@ interface MessageListProps {
 
 const MessageList: React.FC<MessageListProps> = memo(
   ({ messages, isProcessing }) => {
+    const { postMessage } = useVSCode();
     if (messages.length === 0) {
       return (
         <div className="flex-1 flex items-center justify-center p-8">
@@ -57,7 +59,7 @@ const MessageList: React.FC<MessageListProps> = memo(
                 pattern={d.pattern}
                 onRespond={(id, approved, alwaysAllow) => {
                   // send response back to extension
-                  window.acquireVsCodeApi().postMessage({
+                  postMessage({
                     type: "permissionResponse",
                     id,
                     approved,

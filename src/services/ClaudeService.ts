@@ -40,6 +40,7 @@ export class ClaudeService {
   constructor(
     private messageHandler: (message: ClaudeMessage) => void,
     private workspacePath: string,
+    private mcpConfigPath?: string,
   ) {}
 
   async sendMessage(
@@ -498,8 +499,7 @@ export class ClaudeService {
   }
 
   private getMCPConfigPath(): string | null {
-    // TODO: Implement MCP config path logic
-    return null;
+    return this.mcpConfigPath || null;
   }
 
   public stopCurrentProcess(): void {

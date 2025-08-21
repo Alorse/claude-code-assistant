@@ -70,7 +70,6 @@ export const useMessageHandler = ({
           break;
 
         case "conversationList": {
-          console.log("conversationList", message);
           const items = (message.data || []).map((c: any) => ({
             filename: c.filename,
             startTime: c.startTime,
@@ -161,11 +160,9 @@ export const useMessageHandler = ({
         }
 
         case "permissionRequest": {
-          // Show a simple system message indicating permission requested
+          // Add the permission request as a proper message type
           if (message.data) {
-            const toolName =
-              message.data.tool || message.data.toolName || "Tool";
-            addMessage("system", `Permission requested: ${toolName}`);
+            addMessage("permission-request", message.data);
           }
           break;
         }

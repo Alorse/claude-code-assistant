@@ -103,12 +103,6 @@ const ChatContainer: React.FC = () => {
 
   const sendMessage = useCallback(
     (text: string) => {
-      console.log("sendMessage called with:", text);
-      console.log("Current chatState:", {
-        isProcessing: chatState.isProcessing,
-        trimmedText: text.trim(),
-      });
-
       if (!text.trim() || chatState.isProcessing) {
         console.log("Message send blocked:", {
           hasText: !!text.trim(),
