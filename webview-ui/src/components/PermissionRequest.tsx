@@ -19,7 +19,7 @@ const PermissionRequest: React.FC<PermissionRequestProps> = ({
 
   return (
     <>
-      <div className="permission-request px-2 py-1 rounded-lg border border-border">
+      <div className="permission-request px-2 py-1 rounded-lg border border-border bg-input-background">
         <div className="flex items-center justify-between m-1">
           <div className="flex items-center gap-2">
             <div className="text-xs text-description">

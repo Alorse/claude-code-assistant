@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { renderMarkdown } from "../utils/markdown";
 import TodoWriteMessage from "./TodoWriteMessage";
+import ExitPlanModeMessage from "./ExitPlanModeMessage";
 
 interface ToolUseMessageProps {
   data: any;
@@ -13,6 +14,10 @@ const ToolUseMessage: React.FC<ToolUseMessageProps> = ({ data }) => {
   // Check if this is a TodoWrite tool message
   const isTodoWriteMessage =
     data.toolName === "TodoWrite" || data.toolInfo?.includes("TodoWrite");
+
+  // Check if this is an ExitPlanMode tool message
+  const isExitPlanModeMessage =
+    data.toolName === "ExitPlanMode" || data.toolInfo?.includes("ExitPlanMode");
 
   const [renderedContent, setRenderedContent] = useState<string | null>(null);
 
@@ -41,6 +46,11 @@ const ToolUseMessage: React.FC<ToolUseMessageProps> = ({ data }) => {
   // If this is a TodoWrite message, use the specialized component
   if (isTodoWriteMessage) {
     return <TodoWriteMessage data={data} />;
+  }
+
+  // If this is an ExitPlanMode message, use the specialized component
+  if (isExitPlanModeMessage) {
+    return <ExitPlanModeMessage data={data} />;
   }
 
   return (
