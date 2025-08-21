@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { renderMarkdown } from "../utils/markdown";
 import TodoWriteMessage from "./TodoWriteMessage";
 import ExitPlanModeMessage from "./ExitPlanModeMessage";
+import MultiEditMessage from "./MultiEditMessage";
+import BashMessage from "./BashMessage";
 
 interface ToolUseMessageProps {
   data: any;
@@ -17,6 +19,14 @@ const ToolUseMessage: React.FC<ToolUseMessageProps> = ({ data }) => {
   // Check if this is an ExitPlanMode tool message
   const isExitPlanModeMessage =
     data.toolName === "ExitPlanMode" || data.toolInfo?.includes("ExitPlanMode");
+
+  // Check if this is a MultiEdit tool message
+  const isMultiEditMessage =
+    data.toolName === "MultiEdit" || data.toolInfo?.includes("MultiEdit");
+
+  // Check if this is a Bash tool message
+  const isBashMessage =
+    data.toolName === "Bash" || data.toolInfo?.includes("Bash");
 
   const [renderedContent, setRenderedContent] = useState<string | null>(null);
 
@@ -42,6 +52,16 @@ const ToolUseMessage: React.FC<ToolUseMessageProps> = ({ data }) => {
   // If this is an ExitPlanMode message, use the specialized component
   if (isExitPlanModeMessage) {
     return <ExitPlanModeMessage data={data} />;
+  }
+
+  // If this is a MultiEdit message, use the specialized component
+  if (isMultiEditMessage) {
+    return <MultiEditMessage data={data} />;
+  }
+
+  // If this is a Bash message, use the specialized component
+  if (isBashMessage) {
+    return <BashMessage data={data} />;
   }
 
   return (
