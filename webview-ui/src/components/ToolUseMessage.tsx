@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { renderMarkdown } from "../utils/markdown";
+import TodoWriteMessage from "./TodoWriteMessage";
 
 interface ToolUseMessageProps {
   data: any;
@@ -8,6 +9,10 @@ interface ToolUseMessageProps {
 const ToolUseMessage: React.FC<ToolUseMessageProps> = ({ data }) => {
   const toolInfo = data.toolInfo || data.toolName || "Tool";
   const rawInput = data.rawInput || null;
+
+  // Check if this is a TodoWrite tool message
+  const isTodoWriteMessage =
+    data.toolName === "TodoWrite" || data.toolInfo?.includes("TodoWrite");
 
   const [renderedContent, setRenderedContent] = useState<string | null>(null);
 
@@ -32,6 +37,11 @@ const ToolUseMessage: React.FC<ToolUseMessageProps> = ({ data }) => {
       console.error("Failed to copy content:", err);
     }
   };
+
+  // If this is a TodoWrite message, use the specialized component
+  if (isTodoWriteMessage) {
+    return <TodoWriteMessage data={data} />;
+  }
 
   return (
     <div className="tool-message px-2 py-1">

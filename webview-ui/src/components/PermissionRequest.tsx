@@ -14,22 +14,23 @@ const PermissionRequest: React.FC<PermissionRequestProps> = ({
   onRespond,
 }) => {
   const displayPattern = pattern ? pattern.replace(" *", "") : null;
-  const className = "vscode-button flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed";
+  const className =
+    "vscode-button flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed";
 
   return (
     <>
       <div className="permission-request px-2 py-1 rounded-lg border border-border">
         <div className="flex items-center justify-between m-1">
           <div className="flex items-center gap-2">
-            <div>
-              <div className="text-sm font-semibold">Permission Required</div>
-              <div className="text-xs text-description">
-                Allow <strong>{tool}</strong> to execute?
-              </div>
+            <div className="text-xs text-description">
+              Allow <strong>{tool}</strong> to execute?
             </div>
           </div>
           <div className="flex gap-2">
-            <button className={`${className} primary`} onClick={() => onRespond(id, true)}>
+            <button
+              className={`${className} primary`}
+              onClick={() => onRespond(id, true)}
+            >
               Allow
             </button>
             <button
@@ -38,7 +39,10 @@ const PermissionRequest: React.FC<PermissionRequestProps> = ({
             >
               Always allow
             </button>
-            <button className={`${className} bg-red-500/50 hover:bg-red-500/80`} onClick={() => onRespond(id, false)}>
+            <button
+              className={`${className} bg-red-500/50 hover:bg-red-500/80`}
+              onClick={() => onRespond(id, false)}
+            >
               Deny
             </button>
           </div>
