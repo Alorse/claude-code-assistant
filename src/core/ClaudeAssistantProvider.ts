@@ -4,7 +4,7 @@ import * as util from "util";
 import * as path from "path";
 import { getHtmlForWebview } from "../utils/webviewUtils";
 import { getValidModelValues, getModelByValue } from "../utils/models";
-import { ClaudeService, ClaudeMessage } from "../services/ClaudeService";
+import { ClaudeService } from "../services/ClaudeService";
 import { ConversationService } from "../services/ConversationService";
 import { BackupService } from "../services/BackupService";
 
@@ -32,30 +32,7 @@ export class ClaudeAssistantProvider {
   private messageHandlerDisposable: vscode.Disposable | undefined;
 
   // Session state
-  private totalCost: number = 0;
-  private totalTokensInput: number = 0;
-  private totalTokensOutput: number = 0;
-  private requestCount: number = 0;
   private currentSessionId: string | undefined;
-  private backupRepoPath: string | undefined;
-  private commits: Array<{
-    id: string;
-    sha: string;
-    message: string;
-    timestamp: string;
-  }> = [];
-  private conversationsPath: string | undefined;
-  private permissionRequestsPath: string | undefined;
-  private permissionWatcher: vscode.FileSystemWatcher | undefined;
-  private pendingPermissionResolvers:
-    | Map<string, (approved: boolean) => void>
-    | undefined;
-  private currentConversation: Array<{
-    timestamp: string;
-    messageType: string;
-    data: any;
-  }> = [];
-  private conversationStartTime: string | undefined;
   private conversationIndex: Array<{
     filename: string;
     sessionId: string;
@@ -66,12 +43,9 @@ export class ClaudeAssistantProvider {
     firstUserMessage: string;
     lastUserMessage: string;
   }> = [];
-  private currentClaudeProcess: cp.ChildProcess | undefined;
   private selectedModel: string = "default";
-  private isProcessing: boolean | undefined;
   private draftMessage: string = "";
 
-  // Services
   private claudeService?: ClaudeService;
   private conversationService?: ConversationService;
   private backupService?: BackupService;
@@ -311,7 +285,6 @@ export class ClaudeAssistantProvider {
   }
 
   private handleWebviewMessage(message: any) {
-    console.log("Extension received message:", message);
     switch (message.type) {
       case "sendMessage":
         console.log("Handling sendMessage:", message.text);
@@ -457,6 +430,9 @@ export class ClaudeAssistantProvider {
         this.currentSessionId,
         message,
       );
+
+      // Refresh conversation index after saving
+      this.refreshConversationIndex();
     } catch (error: any) {
       console.error("Error sending message to Claude:", error);
       this.sendAndSaveMessage({
@@ -530,6 +506,8 @@ export class ClaudeAssistantProvider {
   }
 
   public showHistory(): void {
+    // Refresh index before showing to ensure it's up to date
+    this.refreshConversationIndex();
     this.sendConversationList();
   }
 
@@ -826,6 +804,14 @@ export class ClaudeAssistantProvider {
     return this.conversationIndex.length > 0
       ? this.conversationIndex[0]
       : undefined;
+  }
+
+  private refreshConversationIndex(): void {
+    // Reload conversation index from workspace state to pick up new conversations
+    this.conversationIndex = this.context.workspaceState.get(
+      "claude.conversationIndex",
+      [],
+    );
   }
 
   public dispose() {
