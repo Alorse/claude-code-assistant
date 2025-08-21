@@ -5,7 +5,7 @@ interface Props {
   id?: string;
 }
 
-const SystemReminderToggle: React.FC<Props> = ({ content }) => {
+const SystemToggle: React.FC<Props> = ({ content }) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -27,4 +27,4 @@ const SystemReminderToggle: React.FC<Props> = ({ content }) => {
   );
 };
 
-export default SystemReminderToggle;
+export default SystemToggle;

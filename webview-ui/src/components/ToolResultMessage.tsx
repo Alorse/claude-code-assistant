@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import SystemReminderToggle from "./SystemReminderToggle";
+import SystemToggle from "./SystemToggle";
 
 interface ToolResultMessageProps {
   data: any;
@@ -48,9 +48,12 @@ const ToolResultMessage: React.FC<ToolResultMessageProps> = ({ data }) => {
       )}
 
       {reminders.length > 0 && (
-        <div className="mt-3">
+        <div className="mt-2">
           {reminders.map((r, idx) => (
-            <SystemReminderToggle key={idx} content={r} />
+            <div key={idx} className="mt-2">
+              {/* collapsed by default via SystemToggle component */}
+              <SystemToggle content={r} />
+            </div>
           ))}
         </div>
       )}

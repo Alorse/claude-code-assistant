@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { CLAUDE_CODE_COLOR } from "../utils/constants";
-import SystemReminderToggle from "./SystemReminderToggle";
+import SystemToggle from "./SystemToggle";
 import { renderMarkdown } from "../utils/markdown";
 
 interface Message {
@@ -127,8 +127,8 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
         <div className="mt-2">
           {reminders.map((r, idx) => (
             <div key={idx} className="mt-2">
-              {/* collapsed by default via SystemReminderToggle component */}
-              <SystemReminderToggle content={r} />
+              {/* collapsed by default via SystemToggle component */}
+              <SystemToggle content={r} />
             </div>
           ))}
         </div>
