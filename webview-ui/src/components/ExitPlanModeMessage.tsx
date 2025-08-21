@@ -14,7 +14,7 @@ interface ExitPlanModeMessageProps {
 
 const ExitPlanModeMessage: React.FC<ExitPlanModeMessageProps> = ({ data }) => {
   const plan = data.rawInput?.plan || data.toolInput || "";
-  
+
   // Create a message object that MessageItem can handle
   const message = {
     id: `plan-${Date.now()}`,

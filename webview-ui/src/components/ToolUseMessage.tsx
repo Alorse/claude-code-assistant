@@ -8,7 +8,6 @@ interface ToolUseMessageProps {
 }
 
 const ToolUseMessage: React.FC<ToolUseMessageProps> = ({ data }) => {
-  const toolInfo = data.toolInfo || data.toolName || "Tool";
   const rawInput = data.rawInput || null;
 
   // Check if this is a TodoWrite tool message
@@ -35,14 +34,6 @@ const ToolUseMessage: React.FC<ToolUseMessageProps> = ({ data }) => {
     }
   }, [rawInput]);
 
-  const copyContent = async (content: string) => {
-    try {
-      await navigator.clipboard.writeText(content);
-    } catch (err) {
-      console.error("Failed to copy content:", err);
-    }
-  };
-
   // If this is a TodoWrite message, use the specialized component
   if (isTodoWriteMessage) {
     return <TodoWriteMessage data={data} />;
@@ -54,32 +45,18 @@ const ToolUseMessage: React.FC<ToolUseMessageProps> = ({ data }) => {
   }
 
   return (
-    <div className="tool-message px-2 py-1">
-      <div className="flex items-center justify-between">
-        <div className="text-xs">{toolInfo}</div>
-        <div className="flex gap-2">
-          {rawInput?.content && typeof rawInput.content === "string" && (
-            <button
-              className="btn text-xs"
-              onClick={() => copyContent(rawInput.content)}
-              title="Copy content"
-            >
-              Copy
-            </button>
-          )}
-        </div>
-      </div>
-
+    <div className="tool-message px-2">
       {rawInput?.file_path && (
         <div className="mb-2 text-xs text-description">
-          <div className="font-semibold">File</div>
-          <div className="font-mono break-words">{rawInput.file_path}</div>
+          <div className="font-semibold">File:{" "}
+            <span className="font-mono break-words">{rawInput.file_path}</span>
+          </div>
         </div>
       )}
 
       {rawInput?.content && (
         <div className="mb-2">
-          <div className="font-semibold text-sm">Content</div>
+          <div className="font-semibold text-xs">Content:</div>
           {renderedContent ? (
             <div
               className="mt-1 p-2 rounded border border-border text-xs overflow-auto max-h-48 markdown-content"
