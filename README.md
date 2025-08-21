@@ -1,217 +1,217 @@
 # 🤖 Claude Code Assistant
 
-**Una extensión avanzada para VS Code, Cursor, y Windsurf que integra Claude Code con una interfaz moderna, sistema de permisos inteligente y gestión completa de conversaciones.**
+**An advanced extension for VS Code, Cursor, and Windsurf that integrates Claude Code with a modern interface, intelligent permission system, and comprehensive conversation management.**
 
 ---
 
-## 🌟 **Características Principales**
+## 🌟 **Key Features**
 
-### 💬 **Interfaz de Chat Avanzada**
-- **UI React Moderna**: Interfaz completamente construida con React 18, TypeScript y Tailwind CSS
-- **Mensajes Inteligentes**: Soporte para diferentes tipos de mensajes (usuario, Claude, herramientas, errores)
-- **Syntax Highlighting**: Resaltado de código automático usando Shiki con temas dinámicos
-- **Contenido Colapsable**: Los resultados largos se colapsan automáticamente para mejor UX
-- **Sistema de Recordatorios**: Manejo inteligente de `<system-reminder>` tags
+### 💬 **Advanced Chat Interface**
+- **Modern React UI**: Interface completely built with React 18, TypeScript and Tailwind CSS
+- **Intelligent Messages**: Support for different message types (user, Claude, tools, errors)
+- **Syntax Highlighting**: Automatic code highlighting using Shiki with dynamic themes
+- **Collapsible Content**: Long results auto-collapse for better UX
+- **Reminder System**: Intelligent handling of `<system-reminder>` tags
 
-### 🔧 **Sistema de Herramientas**
-- **Ejecutión de Herramientas**: Visualización detallada de tool use con información técnica
-- **Resultados Estructurados**: Formateo inteligente de outputs de herramientas
-- **Botones de Acción**: "Abrir archivo" y "Copiar contenido" integrados
-- **Monitoreo de Estado**: Indicadores visuales de ejecución y resultados
+### 🔧 **Tool System**
+- **Tool Execution**: Detailed visualization of tool use with technical information
+- **Structured Results**: Intelligent formatting of tool outputs
+- **Action Buttons**: Integrated "Open file" and "Copy content" buttons
+- **Status Monitoring**: Visual indicators of execution and results
 
-### 🛡️ **Sistema de Permisos Avanzado**
-- **Permisos Granulares**: Control fino sobre qué herramientas puede ejecutar Claude
-- **Diálogos Interactivos**: Interfaz moderna para aprobar/denegar permisos
-- **Always Allow**: Opción para permitir herramientas permanentemente
-- **Patrones Inteligentes**: Reconocimiento automático de comandos similares
-- **MCP Integration**: Integración completa con Model Context Protocol
+### 🛡️ **Advanced Permission System**
+- **Granular Permissions**: Fine control over which tools Claude can execute
+- **Interactive Dialogs**: Modern interface for approving/denying permissions
+- **Always Allow**: Option to permanently allow tools
+- **Smart Patterns**: Automatic recognition of similar commands
+- **MCP Integration**: Complete integration with Model Context Protocol
 
-### 📚 **Gestión de Conversaciones**
-- **Historial Completo**: Todas las conversaciones se guardan automáticamente
-- **Búsqueda y Filtrado**: Encuentra conversaciones por contenido o fecha
-- **Cambio de Contexto**: Carga conversaciones anteriores con contexto completo
-- **Sesiones Persistentes**: Claude mantiene el contexto entre sesiones
+### 📚 **Conversation Management**
+- **Complete History**: All conversations are automatically saved
+- **Search and Filter**: Find conversations by content or date
+- **Context Switching**: Load previous conversations with complete context
+- **Persistent Sessions**: Claude maintains context between sessions
 
-### 🎨 **Experiencia de Usuario**
-- **Theming Automático**: Se adapta automáticamente a los temas de VS Code/Cursor/Windsurf
-- **Performance Optimizada**: Re-renders inteligentes y memoización
-- **Estados Visuales**: Indicadores de carga, procesamiento y errores
-- **Keyboard Shortcuts**: Soporte completo para atajos de teclado
-
----
-
-## 🚀 **Compatibilidad**
-
-| Editor | Estado | Características |
-|--------|--------|----------------|
-| **VS Code** | ✅ Completo | Todas las características disponibles |
-| **Cursor** | ✅ Completo | Integración nativa con AI features |
-| **Windsurf** | ✅ Completo | Soporte completo para Codeium X |
+### 🎨 **User Experience**
+- **Automatic Theming**: Automatically adapts to VS Code/Cursor/Windsurf themes
+- **Optimized Performance**: Smart re-renders and memoization
+- **Visual States**: Loading, processing, and error indicators
+- **Keyboard Shortcuts**: Complete support for keyboard shortcuts
 
 ---
 
-## 🏗️ **Arquitectura Técnica**
+## 🚀 **Compatibility**
+
+| Editor | Status | Features |
+|--------|--------|----------|
+| **VS Code** | ✅ Complete | All features available |
+| **Cursor** | ✅ Complete | Native integration with AI features |
+| **Windsurf** | ✅ Complete | Full support for Codeium X |
+
+---
+
+## 🏗️ **Technical Architecture**
 
 ```
 claude-code-assistant/
-├── src/                          # 🔧 Código principal de la extensión
-│   ├── extension.ts             # Punto de entrada
-│   ├── core/                    # Lógica central
-│   │   └── ClaudeAssistantProvider.ts  # Provider principal
-│   ├── services/                # Servicios modulares
-│   │   ├── ClaudeService.ts     # Comunicación con Claude CLI
-│   │   ├── ConversationService.ts # Gestión de conversaciones
-│   │   └── BackupService.ts     # Sistema de backups
-│   ├── utils/                   # Utilidades compartidas
-│   └── webview/                 # Comunicación webview
-├── webview-ui/                   # 🎨 Aplicación React
+├── src/                          # 🔧 Main extension code
+│   ├── extension.ts             # Entry point
+│   ├── core/                    # Core logic
+│   │   └── ClaudeAssistantProvider.ts  # Main provider
+│   ├── services/                # Modular services
+│   │   ├── ClaudeService.ts     # Claude CLI communication
+│   │   ├── ConversationService.ts # Conversation management
+│   │   └── BackupService.ts     # Backup system
+│   ├── utils/                   # Shared utilities
+│   └── webview/                 # Webview communication
+├── webview-ui/                   # 🎨 React application
 │   ├── src/
-│   │   ├── components/          # Componentes modulares
-│   │   │   ├── ChatContainer.tsx      # Container principal
-│   │   │   ├── MessageList.tsx        # Lista de mensajes
-│   │   │   ├── ToolUseMessage.tsx     # Visualización de herramientas
-│   │   │   ├── PermissionRequest.tsx  # Diálogos de permisos
-│   │   │   └── SystemReminderToggle.tsx # Sistema de recordatorios
-│   │   ├── context/             # Contextos React
-│   │   ├── hooks/               # Hooks personalizados
-│   │   └── utils/               # Utilidades UI
-├── mcp-permissions.js            # 🛡️ Servidor MCP para permisos
-└── tests/                        # 🧪 Suite de testing
+│   │   ├── components/          # Modular components
+│   │   │   ├── ChatContainer.tsx      # Main container
+│   │   │   ├── MessageList.tsx        # Message list
+│   │   │   ├── ToolUseMessage.tsx     # Tool visualization
+│   │   │   ├── PermissionRequest.tsx  # Permission dialogs
+│   │   │   └── SystemReminderToggle.tsx # Reminder system
+│   │   ├── context/             # React contexts
+│   │   ├── hooks/               # Custom hooks
+│   │   └── utils/               # UI utilities
+├── mcp-permissions.js            # 🛡️ MCP server for permissions
+└── tests/                        # 🧪 Testing suite
 ```
 
 ---
 
-## 🛠️ **Tecnologías**
+## 🛠️ **Technologies**
 
-### **Backend (Extensión)**
-- **TypeScript** - Type safety completo
-- **Node.js** - Runtime principal
-- **ESBuild** - Bundling ultra-rápido
-- **VS Code API** - Integración nativa
+### **Backend (Extension)**
+- **TypeScript** - Complete type safety
+- **Node.js** - Main runtime
+- **ESBuild** - Ultra-fast bundling
+- **VS Code API** - Native integration
 
 ### **Frontend (Webview)**
-- **React 18** - Framework UI moderno
-- **TypeScript** - Tipado estricto
+- **React 18** - Modern UI framework
+- **TypeScript** - Strict typing
 - **Tailwind CSS** - Utility-first CSS
-- **Vite** - Build tool de nueva generación
-- **Shiki** - Syntax highlighting avanzado
+- **Vite** - Next-generation build tool
+- **Shiki** - Advanced syntax highlighting
 
-### **Sistemas de Integración**
-- **MCP (Model Context Protocol)** - Gestión de permisos
-- **Claude CLI** - Comunicación con Anthropic
-- **File System Watchers** - Monitoreo de archivos
+### **Integration Systems**
+- **MCP (Model Context Protocol)** - Permission management
+- **Claude CLI** - Anthropic communication
+- **File System Watchers** - File monitoring
 
 ---
 
-## 📦 **Instalación**
+## 📦 **Installation**
 
-### **Desde VS Code Marketplace**
-1. Abre VS Code/Cursor/Windsurf
-2. Ve a Extensions (`Ctrl+Shift+X`)
-3. Busca "Claude Code Assistant"
-4. Haz clic en "Install"
+### **From VS Code Marketplace**
+1. Open VS Code/Cursor/Windsurf
+2. Go to Extensions (`Ctrl+Shift+X`)
+3. Search for "Claude Code Assistant"
+4. Click "Install"
 
-### **Desarrollo Local**
+### **Local Development**
 ```bash
-# Clonar repositorio
-git clone https://github.com/[usuario]/claude-code-assistant.git
+# Clone repository
+git clone https://github.com/Alorse/claude-code-assistant.git
 cd claude-code-assistant
 
-# Instalar dependencias principales
+# Install main dependencies
 pnpm install
 
-# Instalar dependencias del webview
+# Install webview dependencies
 cd webview-ui && pnpm install
 
-# Build completo
+# Complete build
 pnpm run build
 ```
 
 ---
 
-## 🔧 **Configuración**
+## 🔧 **Configuration**
 
-### **Prerequisitos**
-- **Claude CLI** instalado y configurado
+### **Prerequisites**
+- **Claude CLI** installed and configured
 - **Node.js 18+**
-- **Git** (para backups automáticos)
+- **Git** (for automatic backups)
 
-### **Primera Configuración**
-1. Instala Claude CLI: `npm install -g @anthropic-ai/claude-3-5-sonnet`
-2. Configura tu API key: `claude config`
-3. Reinicia VS Code/Cursor/Windsurf
-4. Abre la extensión con `Ctrl+Shift+C`
+### **Initial Setup**
+1. Install Claude CLI: `npm install -g @anthropic-ai/claude-3-5-sonnet`
+2. Configure your API key: `claude config`
+3. Restart VS Code/Cursor/Windsurf
+4. Open the extension with `Ctrl+Shift+C`
 
 ---
 
-## 🎯 **Uso Avanzado**
+## 🎯 **Advanced Usage**
 
-### **Modos de Operación**
-- **🤔 Thinking Mode**: Claude "piensa en voz alta" antes de responder
-- **📋 Plan Mode**: Claude crea un plan detallado antes de ejecutar
-- **⚡ Direct Mode**: Respuestas directas sin procesamiento adicional
+### **Operation Modes**
+- **🤔 Thinking Mode**: Claude "thinks out loud" before responding
+- **📋 Plan Mode**: Claude creates a detailed plan before executing
+- **⚡ Direct Mode**: Direct responses without additional processing
 
-### **Gestión de Permisos**
+### **Permission Management**
 ```typescript
-// Configuración de permisos automáticos
+// Automatic permission configuration
 {
   "alwaysAllow": {
-    "Write": true,           // Siempre permitir escritura de archivos
-    "Read": true,            // Siempre permitir lectura
-    "Bash": ["git add *", "npm install *"]  // Comandos específicos
+    "Write": true,           // Always allow file writing
+    "Read": true,            // Always allow reading
+    "Bash": ["git add *", "npm install *"]  // Specific commands
   }
 }
 ```
 
 ### **Shortcuts**
-- `Ctrl+Shift+C` - Abrir/cerrar chat
-- `Ctrl+Enter` - Enviar mensaje
-- `Ctrl+Shift+P` - Activar Plan Mode
-- `Ctrl+Shift+T` - Activar Thinking Mode
-- `Ctrl+H` - Abrir historial de conversaciones
+- `Ctrl+Shift+C` - Open/close chat
+- `Ctrl+Enter` - Send message
+- `Ctrl+Shift+P` - Activate Plan Mode
+- `Ctrl+Shift+T` - Activate Thinking Mode
+- `Ctrl+H` - Open conversation history
 
 ---
 
-## 🔄 **Migración y Compatibilidad**
+## 🔄 **Migration and Compatibility**
 
-### **Desde claude-code-router-chat**
-Esta extensión es una **migración completa** con mejoras sustanciales:
+### **From claude-code-router-chat**
+This extension is a **complete migration** with substantial improvements:
 
-#### ✅ **Características Migradas**
-- ✅ Chat básico con Claude
-- ✅ Gestión de sesiones y modelos
-- ✅ Modos Plan y Thinking
-- ✅ Integración con workspace
-- ✅ Sistema de backups
+#### ✅ **Migrated Features**
+- ✅ Basic chat with Claude
+- ✅ Session and model management
+- ✅ Plan and Thinking modes
+- ✅ Workspace integration
+- ✅ Backup system
 
-#### 🆕 **Nuevas Características**
-- 🆕 **Sistema de permisos visual**
-- 🆕 **Gestión completa de conversaciones**
-- 🆕 **UI React moderna**
+#### 🆕 **New Features**
+- 🆕 **Visual permission system**
+- 🆕 **Complete conversation management**
+- 🆕 **Modern React UI**
 - 🆕 **Syntax highlighting**
-- 🆕 **Componentes de herramientas**
-- 🆕 **Performance optimizada**
+- 🆕 **Tool components**
+- 🆕 **Optimized performance**
 
 ---
 
-## 🧪 **Testing y Calidad**
+## 🧪 **Testing and Quality**
 
 ```bash
-# Testing completo
+# Complete testing
 pnpm run test
 
-# Testing con coverage
+# Testing with coverage
 pnpm run test:coverage
 
-# Linting y formatting
+# Linting and formatting
 pnpm run lint
 pnpm run format
 
-# Testing E2E
+# E2E testing
 pnpm run test:e2e
 ```
 
-### **Métricas de Calidad**
+### **Quality Metrics**
 - **Test Coverage**: >90%
 - **TypeScript**: Strict mode
 - **Performance**: <100ms render time
@@ -222,77 +222,72 @@ pnpm run test:e2e
 ## 📈 **Roadmap**
 
 ### **v1.1.0** 🎯
-- [ ] Plugin system para extensiones
-- [ ] Templates de conversación
-- [ ] Export/import de configuraciones
-- [ ] Métricas de uso avanzadas
+- [ ] Plugin system for extensions
+- [ ] Conversation templates
+- [ ] Configuration export/import
+- [ ] Advanced usage metrics
 
 ### **v1.2.0** 🚀
 - [ ] Multi-workspace support
 - [ ] Collaborative editing
-- [ ] Cloud sync de conversaciones
-- [ ] API pública para integraciones
+- [ ] Cloud conversation sync
+- [ ] Public API for integrations
 
 ### **v2.0.0** 🌟
-- [ ] Soporte para múltiples LLMs
+- [ ] Multiple LLM support
 - [ ] Workflow automation
 - [ ] Custom UI themes
 - [ ] Advanced debugging tools
 
 ---
 
-## 🤝 **Contribución**
+## 🤝 **Contributing**
 
 ### **Guidelines**
-1. **Fork** el proyecto
-2. **Crear feature branch**: `git checkout -b feature/amazing-feature`
-3. **Commit cambios**: `git commit -m 'Add amazing feature'`
+1. **Fork** the project
+2. **Create feature branch**: `git checkout -b feature/amazing-feature`
+3. **Commit changes**: `git commit -m 'Add amazing feature'`
 4. **Push**: `git push origin feature/amazing-feature`
-5. **Abrir Pull Request**
+5. **Open Pull Request**
 
-### **Desarrollo Local**
+### **Local Development**
 ```bash
-# Setup completo
+# Complete setup
 pnpm install && cd webview-ui && pnpm install
 
-# Desarrollo con hot reload
+# Development with hot reload
 pnpm run dev
 
-# Testing antes de PR
+# Testing before PR
 pnpm run test && pnpm run lint
 ```
 
 ---
 
-## 📄 **Licencia**
+## 📄 **License**
 
-**MIT License** - Ver [LICENSE](LICENSE) para detalles completos.
-
----
-
-## 🙏 **Agradecimientos**
-
-- **Anthropic** por Claude y la increíble API
-- **VS Code Team** por la excelente plataforma de extensiones
-- **Cursor Team** por las innovaciones en AI-powered coding
-- **Windsurf Team** por el soporte avanzado de Codeium X
-- **React Community** por el ecosistema robusto
-- **Comunidad Open Source** por las librerías y herramientas
+**MIT License** - See [LICENSE](https://github.com/Alorse/claude-code-assistant/blob/main/LICENSE) for complete details.
 
 ---
 
-## 📧 **Soporte**
+## 🙏 **Acknowledgments**
 
-- **Issues**: [GitHub Issues](https://github.com/[usuario]/claude-code-assistant/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/[usuario]/claude-code-assistant/discussions)
-- **Documentation**: [Wiki completa](https://github.com/[usuario]/claude-code-assistant/wiki)
+- **Anthropic** for Claude and the incredible API
+
+---
+
+## 📧 **Support**
+
+- **Issues**: [GitHub Issues](https://github.com/Alorse/claude-code-assistant/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Alorse/claude-code-assistant/discussions)
+- **Documentation**: [Complete Wiki](https://github.com/Alorse/claude-code-assistant/wiki)
 
 ---
 
 <div align="center">
 
-**⭐ Si esta extensión te es útil, considera darle una estrella en GitHub ⭐**
+**⭐ If this extension is useful to you, consider giving it a star on GitHub ⭐**
 
-[🐛 Reportar Bug](https://github.com/[usuario]/claude-code-assistant/issues) • [✨ Solicitar Feature](https://github.com/[usuario]/claude-code-assistant/issues) • [📖 Documentación](https://github.com/[usuario]/claude-code-assistant/wiki)
+[🐛 Report Bug](https://github.com/Alorse/claude-code-assistant/issues) • [✨ Request Feature](https://github.com/Alorse/claude-code-assistant/issues) • [📖 Documentation](https://github.com/Alorse/claude-code-assistant/wiki)
 
 </div>
