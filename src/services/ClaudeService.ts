@@ -68,12 +68,6 @@ export class ClaudeService {
         data: { isProcessing: true },
       });
 
-      // Show loading indicator
-      this.messageHandler({
-        type: "loading",
-        data: "Claude is working...",
-      });
-
       // Execute Claude command
       await this.executeClaudeCommand(actualMessage, options);
     } catch (error) {

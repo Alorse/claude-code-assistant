@@ -12,6 +12,7 @@ interface UseMessageHandlerProps {
   setHistoryOptions: React.Dispatch<React.SetStateAction<any[]>>;
   setHistoryLoading: (loading: boolean) => void;
   setHistoryOpen: (open: boolean) => void;
+  setDraftMessage: (message: string) => void;
 }
 
 export const useMessageHandler = ({
@@ -23,6 +24,7 @@ export const useMessageHandler = ({
   setHistoryOptions,
   setHistoryLoading,
   setHistoryOpen,
+  setDraftMessage,
 }: UseMessageHandlerProps) => {
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -262,10 +264,7 @@ export const useMessageHandler = ({
           break;
 
         case "restoreInputText":
-          setChatState((prev: any) => ({
-            ...prev,
-            draftMessage: message.data,
-          }));
+          setDraftMessage(message.data);
           break;
 
         case "sessionCleared":
@@ -274,6 +273,7 @@ export const useMessageHandler = ({
             messages: [],
             currentSessionId: null,
           }));
+          setDraftMessage("");
           break;
 
         default:
@@ -292,5 +292,6 @@ export const useMessageHandler = ({
     setHistoryOptions,
     setHistoryLoading,
     setHistoryOpen,
+    setDraftMessage,
   ]);
 };

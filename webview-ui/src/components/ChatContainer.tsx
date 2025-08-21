@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useVSCode } from "../context/VSCodeContext";
 import MessageList from "./MessageList";
 import InputArea from "./InputArea";
@@ -17,7 +17,6 @@ interface ChatState {
   selectedModel: string;
   planMode: boolean;
   thinkingMode: boolean;
-  draftMessage: string;
 }
 
 const ChatContainer: React.FC = () => {
@@ -29,8 +28,10 @@ const ChatContainer: React.FC = () => {
     selectedModel: "default",
     planMode: false,
     thinkingMode: false,
-    draftMessage: "",
   });
+  
+  // Separate state for draft message to prevent MessageList re-renders
+  const [draftMessage, setDraftMessage] = useState("");
 
   const [statusText, setStatusText] = useState("Initializing...");
   const [statusType, setStatusType] = useState<
@@ -51,7 +52,7 @@ const ChatContainer: React.FC = () => {
   >([]);
   const [historyLoading, setHistoryLoading] = useState(false);
 
-  const addMessage = (type: Message["type"], content: React.ReactNode) => {
+  const addMessage = useCallback((type: Message["type"], content: React.ReactNode) => {
     const newMessage: Message = {
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
       type,
@@ -63,14 +64,14 @@ const ChatContainer: React.FC = () => {
       ...prev,
       messages: [...prev.messages, newMessage],
     }));
-  };
+  }, []);
 
   // Scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatState.messages]);
 
-  useMessageHandler({
+  const messageHandlerProps = useMemo(() => ({
     addMessage,
     setStatusText,
     setStatusType,
@@ -79,13 +80,16 @@ const ChatContainer: React.FC = () => {
     setHistoryOptions,
     setHistoryLoading,
     setHistoryOpen,
-  });
+    setDraftMessage,
+  }), [addMessage]);
+
+  useMessageHandler(messageHandlerProps);
 
   // addToolUseMessage removed from here; UI now renders tool messages via ToolUseMessage component
 
   // Formatting helpers removed; ToolUseMessage/ToolResult components handle presentation
 
-  const sendMessage = (text: string) => {
+  const sendMessage = useCallback((text: string) => {
     console.log("sendMessage called with:", text);
     console.log("Current chatState:", {
       isProcessing: chatState.isProcessing,
@@ -112,31 +116,25 @@ const ChatContainer: React.FC = () => {
       thinkingMode: chatState.thinkingMode,
     });
 
-    setChatState((prev) => ({
-      ...prev,
-      draftMessage: "",
-    }));
-  };
+    setDraftMessage("");
+  }, [chatState.isProcessing, chatState.planMode, chatState.thinkingMode, postMessage]);
 
-  const togglePlanMode = () => {
+  const togglePlanMode = useCallback(() => {
     setChatState((prev) => ({
       ...prev,
       planMode: !prev.planMode,
     }));
-  };
+  }, []);
 
-  const toggleThinkingMode = () => {
+  const toggleThinkingMode = useCallback(() => {
     setChatState((prev) => ({
       ...prev,
       thinkingMode: !prev.thinkingMode,
     }));
-  };
+  }, []);
 
-  const handleDraftChange = (text: string) => {
-    setChatState((prev) => ({
-      ...prev,
-      draftMessage: text,
-    }));
+  const handleDraftChange = useCallback((text: string) => {
+    setDraftMessage(text);
 
     // Debounce saving draft message
     const timeoutId = setTimeout(() => {
@@ -147,12 +145,12 @@ const ChatContainer: React.FC = () => {
     }, 500);
 
     return () => clearTimeout(timeoutId);
-  };
+  }, [postMessage]);
 
-  const handleSelectHistory = (filename: string) => {
+  const handleSelectHistory = useCallback((filename: string) => {
     postMessage({ type: "loadConversation", filename });
     setHistoryOpen(false);
-  };
+  }, [postMessage]);
 
   if (!isReady) {
     return (
@@ -186,7 +184,7 @@ const ChatContainer: React.FC = () => {
       </div>
 
       <InputArea
-        value={chatState.draftMessage}
+        value={draftMessage}
         onChange={handleDraftChange}
         onSend={sendMessage}
         disabled={chatState.isProcessing}
