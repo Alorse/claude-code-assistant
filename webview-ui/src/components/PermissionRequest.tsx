@@ -14,42 +14,48 @@ const PermissionRequest: React.FC<PermissionRequestProps> = ({
   onRespond,
 }) => {
   const displayPattern = pattern ? pattern.replace(" *", "") : null;
+  const className = "vscode-button flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed";
 
   return (
-    <div className="permission-request p-3 rounded-lg border border-purple-300 bg-purple-50">
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-purple-500 text-white flex items-center justify-center">
-            🔐
-          </div>
-          <div>
-            <div className="text-sm font-semibold">Permission Required</div>
-            <div className="text-xs text-description">
-              Allow <strong>{tool}</strong> to execute?
+    <>
+      <div className="permission-request px-2 py-1 rounded-lg border border-border">
+        <div className="flex items-center justify-between m-1">
+          <div className="flex items-center gap-2">
+            <div>
+              <div className="text-sm font-semibold">Permission Required</div>
+              <div className="text-xs text-description">
+                Allow <strong>{tool}</strong> to execute?
+              </div>
             </div>
           </div>
-        </div>
-        <div className="flex gap-2">
-          <button className="btn" onClick={() => onRespond(id, false)}>
-            Deny
-          </button>
-          <button
-            className="btn always-allow"
-            onClick={() => onRespond(id, true, true)}
-          >
-            Always allow
-          </button>
-          <button className="btn primary" onClick={() => onRespond(id, true)}>
-            Allow
-          </button>
+          <div className="flex gap-2">
+            <button className={`${className} primary`} onClick={() => onRespond(id, true)}>
+              Allow
+            </button>
+            <button
+              className={`${className} always-allow`}
+              onClick={() => onRespond(id, true, true)}
+            >
+              Always allow
+            </button>
+            <button className={`${className} bg-red-500/50 hover:bg-red-500/80`} onClick={() => onRespond(id, false)}>
+              Deny
+            </button>
+          </div>
         </div>
       </div>
       {displayPattern && (
-        <div className="text-xs text-description">
-          Command: <code>{displayPattern}</code>
+        <div className="tool-result-message px-2 py-1">
+          <div className="text-sm font-medium mb-2">Command</div>
+
+          <div className="text-xs">
+            <pre className="whitespace-pre-wrap max-h-64 overflow-auto">
+              {displayPattern}
+            </pre>
+          </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

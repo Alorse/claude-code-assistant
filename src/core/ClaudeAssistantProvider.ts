@@ -49,7 +49,8 @@ export class ClaudeAssistantProvider {
   // Permission system
   private permissionRequestsPath: string | undefined;
   private permissionWatcher: vscode.FileSystemWatcher | undefined;
-  private pendingPermissionResolvers: Map<string, (approved: boolean) => void> = new Map();
+  private pendingPermissionResolvers: Map<string, (approved: boolean) => void> =
+    new Map();
 
   private claudeService?: ClaudeService;
   private conversationService?: ConversationService;
@@ -109,9 +110,13 @@ export class ClaudeAssistantProvider {
 
     // Initialize Claude service
     const mcpConfigPath = this.getMCPConfigPath();
-    this.claudeService = new ClaudeService((message) => {
-      this.sendAndSaveMessage(message);
-    }, workspacePath, mcpConfigPath);
+    this.claudeService = new ClaudeService(
+      (message) => {
+        this.sendAndSaveMessage(message);
+      },
+      workspacePath,
+      mcpConfigPath,
+    );
   }
 
   public getPanel(): vscode.WebviewPanel | undefined {
@@ -252,32 +257,41 @@ export class ClaudeAssistantProvider {
   private async initializeMCPConfig(): Promise<void> {
     try {
       const storagePath = this.context.storageUri?.fsPath;
-      if (!storagePath) { return; }
+      if (!storagePath) {
+        return;
+      }
 
       // Create MCP config directory
-      const mcpConfigDir = path.join(storagePath, 'mcp');
+      const mcpConfigDir = path.join(storagePath, "mcp");
       try {
         await vscode.workspace.fs.stat(vscode.Uri.file(mcpConfigDir));
       } catch {
-        await vscode.workspace.fs.createDirectory(vscode.Uri.file(mcpConfigDir));
+        await vscode.workspace.fs.createDirectory(
+          vscode.Uri.file(mcpConfigDir),
+        );
         console.log(`Created MCP config directory at: ${mcpConfigDir}`);
       }
 
       // Create or update mcp-servers.json with permissions server, preserving existing servers
-      const mcpConfigPath = path.join(mcpConfigDir, 'mcp-servers.json');
-      const mcpPermissionsPath = this.convertToWSLPath(path.join(this.extensionUri.fsPath, 'mcp-permissions.js'));
-      const permissionRequestsPath = this.convertToWSLPath(path.join(storagePath, 'permission-requests'));
+      const mcpConfigPath = path.join(mcpConfigDir, "mcp-servers.json");
+      const mcpPermissionsPath = this.convertToWSLPath(
+        path.join(this.extensionUri.fsPath, "mcp-permissions.js"),
+      );
+      const permissionRequestsPath = this.convertToWSLPath(
+        path.join(storagePath, "permission-requests"),
+      );
 
       // Load existing config or create new one
       let mcpConfig: any = { mcpServers: {} };
       const mcpConfigUri = vscode.Uri.file(mcpConfigPath);
 
       try {
-        const existingContent = await vscode.workspace.fs.readFile(mcpConfigUri);
+        const existingContent =
+          await vscode.workspace.fs.readFile(mcpConfigUri);
         mcpConfig = JSON.parse(new TextDecoder().decode(existingContent));
-        console.log('Loaded existing MCP config, preserving user servers');
+        console.log("Loaded existing MCP config, preserving user servers");
       } catch {
-        console.log('No existing MCP config found, creating new one');
+        console.log("No existing MCP config found, creating new one");
       }
 
       // Ensure mcpServers exists
@@ -286,36 +300,39 @@ export class ClaudeAssistantProvider {
       }
 
       // Add or update the permissions server entry
-      mcpConfig.mcpServers['claude-code-chat-permissions'] = {
-        command: 'node',
+      mcpConfig.mcpServers["claude-code-chat-permissions"] = {
+        command: "node",
         args: [mcpPermissionsPath],
         env: {
-          CLAUDE_PERMISSIONS_PATH: permissionRequestsPath
-        }
+          CLAUDE_PERMISSIONS_PATH: permissionRequestsPath,
+        },
       };
 
-      const configContent = new TextEncoder().encode(JSON.stringify(mcpConfig, null, 2));
+      const configContent = new TextEncoder().encode(
+        JSON.stringify(mcpConfig, null, 2),
+      );
       await vscode.workspace.fs.writeFile(mcpConfigUri, configContent);
 
       console.log(`Updated MCP config at: ${mcpConfigPath}`);
     } catch (error: any) {
-      console.error('Failed to initialize MCP config:', error.message);
+      console.error("Failed to initialize MCP config:", error.message);
     }
   }
 
   private convertToWSLPath(windowsPath: string): string {
-    const config = vscode.workspace.getConfiguration('claudeCodeAssistant');
-    const wslEnabled = config.get<boolean>('wsl.enabled', false);
+    const config = vscode.workspace.getConfiguration("claudeCodeAssistant");
+    const wslEnabled = config.get<boolean>("wsl.enabled", false);
 
     if (wslEnabled && windowsPath.match(/^[a-zA-Z]:/)) {
       // Convert C:\Users\... to /mnt/c/Users/...
-      return windowsPath.replace(/^([a-zA-Z]):/, '/mnt/$1').toLowerCase().replace(/\\/g, '/');
+      return windowsPath
+        .replace(/^([a-zA-Z]):/, "/mnt/$1")
+        .toLowerCase()
+        .replace(/\\/g, "/");
     }
 
     return windowsPath;
   }
-
-
 
   private initializeWebview() {
     // Resume session from latest conversation
@@ -440,7 +457,11 @@ export class ClaudeAssistantProvider {
         this.saveInputText(message.text);
         return;
       case "permissionResponse":
-        this.handlePermissionResponse(message.id, message.approved, message.alwaysAllow);
+        this.handlePermissionResponse(
+          message.id,
+          message.approved,
+          message.alwaysAllow,
+        );
         return;
     }
   }
@@ -598,10 +619,14 @@ export class ClaudeAssistantProvider {
       await this.conversationService.loadConversation(filename);
 
       // Get the session ID from the loaded conversation to resume it
-      const loadedConversation = this.conversationService.getCurrentConversationData();
+      const loadedConversation =
+        this.conversationService.getCurrentConversationData();
       if (loadedConversation && loadedConversation.sessionId) {
         this.currentSessionId = loadedConversation.sessionId;
-        console.log("Loading conversation with session ID:", this.currentSessionId);
+        console.log(
+          "Loading conversation with session ID:",
+          this.currentSessionId,
+        );
       } else {
         // If no session ID, start fresh
         this.currentSessionId = undefined;
@@ -727,8 +752,6 @@ export class ClaudeAssistantProvider {
     console.log("Creating image file:", imageType);
     // TODO: Implement image file creation logic
   }
-
-
 
   private async sendPermissions() {
     console.log("Sending permissions");
@@ -890,27 +913,41 @@ export class ClaudeAssistantProvider {
       }
 
       const storagePath = this.context.storageUri?.fsPath;
-      if (!storagePath) { return; }
-
-      // Create permission requests directory
-      this.permissionRequestsPath = path.join(storagePath, 'permission-requests');
-      try {
-        await vscode.workspace.fs.stat(vscode.Uri.file(this.permissionRequestsPath));
-      } catch {
-        await vscode.workspace.fs.createDirectory(vscode.Uri.file(this.permissionRequestsPath));
-        console.log(`Created permission requests directory at: ${this.permissionRequestsPath}`);
+      if (!storagePath) {
+        return;
       }
 
-      console.log("Permission requests directory:", this.permissionRequestsPath);
+      // Create permission requests directory
+      this.permissionRequestsPath = path.join(
+        storagePath,
+        "permission-requests",
+      );
+      try {
+        await vscode.workspace.fs.stat(
+          vscode.Uri.file(this.permissionRequestsPath),
+        );
+      } catch {
+        await vscode.workspace.fs.createDirectory(
+          vscode.Uri.file(this.permissionRequestsPath),
+        );
+        console.log(
+          `Created permission requests directory at: ${this.permissionRequestsPath}`,
+        );
+      }
+
+      console.log(
+        "Permission requests directory:",
+        this.permissionRequestsPath,
+      );
 
       // Set up file watcher for *.request files
       this.permissionWatcher = vscode.workspace.createFileSystemWatcher(
-        new vscode.RelativePattern(this.permissionRequestsPath, '*.request')
+        new vscode.RelativePattern(this.permissionRequestsPath, "*.request"),
       );
 
       this.permissionWatcher.onDidCreate(async (uri) => {
         // Only handle file scheme URIs, ignore vscode-userdata scheme
-        if (uri.scheme === 'file') {
+        if (uri.scheme === "file") {
           console.log("Permission request file created:", uri.fsPath);
           await this.handlePermissionRequest(uri);
         }
@@ -918,9 +955,8 @@ export class ClaudeAssistantProvider {
 
       this.disposables.push(this.permissionWatcher);
       console.log("Permission system initialized successfully");
-
     } catch (error: any) {
-      console.error('Failed to initialize permissions:', error.message);
+      console.error("Failed to initialize permissions:", error.message);
     }
   }
 
@@ -934,42 +970,46 @@ export class ClaudeAssistantProvider {
       const approved = await this.showPermissionDialog(request);
 
       // Write response file
-      const responseFile = requestUri.fsPath.replace('.request', '.response');
+      const responseFile = requestUri.fsPath.replace(".request", ".response");
       const response = {
         id: request.id,
         approved: approved,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
-      const responseContent = new TextEncoder().encode(JSON.stringify(response));
-      await vscode.workspace.fs.writeFile(vscode.Uri.file(responseFile), responseContent);
+      const responseContent = new TextEncoder().encode(
+        JSON.stringify(response),
+      );
+      await vscode.workspace.fs.writeFile(
+        vscode.Uri.file(responseFile),
+        responseContent,
+      );
 
       // Clean up request file
       await vscode.workspace.fs.delete(requestUri);
-
     } catch (error: any) {
-      console.error('Failed to handle permission request:', error.message);
+      console.error("Failed to handle permission request:", error.message);
     }
   }
 
   private async showPermissionDialog(request: any): Promise<boolean> {
-    const toolName = request.tool || 'Unknown Tool';
+    const toolName = request.tool || "Unknown Tool";
 
     // Generate pattern for Bash commands
     let pattern: string | undefined = undefined;
-    if (toolName === 'Bash' && request.input?.command) {
+    if (toolName === "Bash" && request.input?.command) {
       pattern = this.getCommandPattern(request.input.command);
     }
 
     // Send permission request to the UI
     this.sendAndSaveMessage({
-      type: 'permissionRequest',
+      type: "permissionRequest",
       data: {
         id: request.id,
         tool: toolName,
         input: request.input,
-        pattern: pattern
-      }
+        pattern: pattern,
+      },
     });
 
     // Wait for response from UI
@@ -979,7 +1019,11 @@ export class ClaudeAssistantProvider {
     });
   }
 
-  private handlePermissionResponse(id: string, approved: boolean, alwaysAllow?: boolean): void {
+  private handlePermissionResponse(
+    id: string,
+    approved: boolean,
+    alwaysAllow?: boolean,
+  ): void {
     if (this.pendingPermissionResolvers.has(id)) {
       const resolver = this.pendingPermissionResolvers.get(id);
       if (resolver) {
@@ -1000,7 +1044,9 @@ export class ClaudeAssistantProvider {
       const storagePath = this.context.storageUri?.fsPath;
       if (!storagePath) return;
 
-      const requestFileUri = vscode.Uri.file(path.join(storagePath, 'permission-requests', `${requestId}.request`));
+      const requestFileUri = vscode.Uri.file(
+        path.join(storagePath, "permission-requests", `${requestId}.request`),
+      );
 
       let requestContent: Uint8Array;
       try {
@@ -1012,7 +1058,9 @@ export class ClaudeAssistantProvider {
       const request = JSON.parse(new TextDecoder().decode(requestContent));
 
       // Load existing workspace permissions
-      const permissionsUri = vscode.Uri.file(path.join(storagePath, 'permission-requests', 'permissions.json'));
+      const permissionsUri = vscode.Uri.file(
+        path.join(storagePath, "permission-requests", "permissions.json"),
+      );
       let permissions: any = { alwaysAllow: {} };
 
       try {
@@ -1024,7 +1072,7 @@ export class ClaudeAssistantProvider {
 
       // Add the new permission
       const toolName = request.tool;
-      if (toolName === 'Bash' && request.input?.command) {
+      if (toolName === "Bash" && request.input?.command) {
         // For Bash, store the command pattern
         if (!permissions.alwaysAllow[toolName]) {
           permissions.alwaysAllow[toolName] = [];
@@ -1042,7 +1090,9 @@ export class ClaudeAssistantProvider {
       }
 
       // Ensure permissions directory exists
-      const permissionsDir = vscode.Uri.file(path.dirname(permissionsUri.fsPath));
+      const permissionsDir = vscode.Uri.file(
+        path.dirname(permissionsUri.fsPath),
+      );
       try {
         await vscode.workspace.fs.stat(permissionsDir);
       } catch {
@@ -1050,12 +1100,14 @@ export class ClaudeAssistantProvider {
       }
 
       // Save the permissions
-      const permissionsContent = new TextEncoder().encode(JSON.stringify(permissions, null, 2));
+      const permissionsContent = new TextEncoder().encode(
+        JSON.stringify(permissions, null, 2),
+      );
       await vscode.workspace.fs.writeFile(permissionsUri, permissionsContent);
 
       console.log(`Saved always-allow permission for ${toolName}`);
     } catch (error) {
-      console.error('Error saving always-allow permission:', error);
+      console.error("Error saving always-allow permission:", error);
     }
   }
 
@@ -1064,87 +1116,87 @@ export class ClaudeAssistantProvider {
     if (parts.length === 0) return command;
 
     const baseCmd = parts[0];
-    const subCmd = parts.length > 1 ? parts[1] : '';
+    const subCmd = parts.length > 1 ? parts[1] : "";
 
     // Common patterns that should use wildcards
     const patterns = [
       // Package managers
-      ['npm', 'install', 'npm install *'],
-      ['npm', 'i', 'npm i *'],
-      ['npm', 'add', 'npm add *'],
-      ['npm', 'remove', 'npm remove *'],
-      ['npm', 'uninstall', 'npm uninstall *'],
-      ['npm', 'update', 'npm update *'],
-      ['npm', 'run', 'npm run *'],
-      ['yarn', 'add', 'yarn add *'],
-      ['yarn', 'remove', 'yarn remove *'],
-      ['yarn', 'install', 'yarn install *'],
-      ['pnpm', 'install', 'pnpm install *'],
-      ['pnpm', 'add', 'pnpm add *'],
-      ['pnpm', 'remove', 'pnpm remove *'],
+      ["npm", "install", "npm install *"],
+      ["npm", "i", "npm i *"],
+      ["npm", "add", "npm add *"],
+      ["npm", "remove", "npm remove *"],
+      ["npm", "uninstall", "npm uninstall *"],
+      ["npm", "update", "npm update *"],
+      ["npm", "run", "npm run *"],
+      ["yarn", "add", "yarn add *"],
+      ["yarn", "remove", "yarn remove *"],
+      ["yarn", "install", "yarn install *"],
+      ["pnpm", "install", "pnpm install *"],
+      ["pnpm", "add", "pnpm add *"],
+      ["pnpm", "remove", "pnpm remove *"],
 
       // Git commands
-      ['git', 'add', 'git add *'],
-      ['git', 'commit', 'git commit *'],
-      ['git', 'push', 'git push *'],
-      ['git', 'pull', 'git pull *'],
-      ['git', 'checkout', 'git checkout *'],
-      ['git', 'branch', 'git branch *'],
-      ['git', 'merge', 'git merge *'],
-      ['git', 'clone', 'git clone *'],
-      ['git', 'reset', 'git reset *'],
-      ['git', 'rebase', 'git rebase *'],
-      ['git', 'tag', 'git tag *'],
+      ["git", "add", "git add *"],
+      ["git", "commit", "git commit *"],
+      ["git", "push", "git push *"],
+      ["git", "pull", "git pull *"],
+      ["git", "checkout", "git checkout *"],
+      ["git", "branch", "git branch *"],
+      ["git", "merge", "git merge *"],
+      ["git", "clone", "git clone *"],
+      ["git", "reset", "git reset *"],
+      ["git", "rebase", "git rebase *"],
+      ["git", "tag", "git tag *"],
 
       // Docker commands
-      ['docker', 'run', 'docker run *'],
-      ['docker', 'build', 'docker build *'],
-      ['docker', 'exec', 'docker exec *'],
-      ['docker', 'logs', 'docker logs *'],
-      ['docker', 'stop', 'docker stop *'],
-      ['docker', 'start', 'docker start *'],
-      ['docker', 'rm', 'docker rm *'],
-      ['docker', 'rmi', 'docker rmi *'],
-      ['docker', 'pull', 'docker pull *'],
-      ['docker', 'push', 'docker push *'],
+      ["docker", "run", "docker run *"],
+      ["docker", "build", "docker build *"],
+      ["docker", "exec", "docker exec *"],
+      ["docker", "logs", "docker logs *"],
+      ["docker", "stop", "docker stop *"],
+      ["docker", "start", "docker start *"],
+      ["docker", "rm", "docker rm *"],
+      ["docker", "rmi", "docker rmi *"],
+      ["docker", "pull", "docker pull *"],
+      ["docker", "push", "docker push *"],
 
       // Build tools
-      ['make', '', 'make *'],
-      ['cargo', 'build', 'cargo build *'],
-      ['cargo', 'run', 'cargo run *'],
-      ['cargo', 'test', 'cargo test *'],
-      ['cargo', 'install', 'cargo install *'],
-      ['mvn', 'compile', 'mvn compile *'],
-      ['mvn', 'test', 'mvn test *'],
-      ['mvn', 'package', 'mvn package *'],
-      ['gradle', 'build', 'gradle build *'],
-      ['gradle', 'test', 'gradle test *'],
+      ["make", "", "make *"],
+      ["cargo", "build", "cargo build *"],
+      ["cargo", "run", "cargo run *"],
+      ["cargo", "test", "cargo test *"],
+      ["cargo", "install", "cargo install *"],
+      ["mvn", "compile", "mvn compile *"],
+      ["mvn", "test", "mvn test *"],
+      ["mvn", "package", "mvn package *"],
+      ["gradle", "build", "gradle build *"],
+      ["gradle", "test", "gradle test *"],
 
       // System commands
-      ['curl', '', 'curl *'],
-      ['wget', '', 'wget *'],
-      ['ssh', '', 'ssh *'],
-      ['scp', '', 'scp *'],
-      ['rsync', '', 'rsync *'],
-      ['tar', '', 'tar *'],
-      ['zip', '', 'zip *'],
-      ['unzip', '', 'unzip *'],
+      ["curl", "", "curl *"],
+      ["wget", "", "wget *"],
+      ["ssh", "", "ssh *"],
+      ["scp", "", "scp *"],
+      ["rsync", "", "rsync *"],
+      ["tar", "", "tar *"],
+      ["zip", "", "zip *"],
+      ["unzip", "", "unzip *"],
 
       // Development tools
-      ['node', '', 'node *'],
-      ['python', '', 'python *'],
-      ['python3', '', 'python3 *'],
-      ['pip', 'install', 'pip install *'],
-      ['pip3', 'install', 'pip3 install *'],
-      ['composer', 'install', 'composer install *'],
-      ['composer', 'require', 'composer require *'],
-      ['bundle', 'install', 'bundle install *'],
-      ['gem', 'install', 'gem install *'],
+      ["node", "", "node *"],
+      ["python", "", "python *"],
+      ["python3", "", "python3 *"],
+      ["pip", "install", "pip install *"],
+      ["pip3", "install", "pip3 install *"],
+      ["composer", "install", "composer install *"],
+      ["composer", "require", "composer require *"],
+      ["bundle", "install", "bundle install *"],
+      ["gem", "install", "gem install *"],
     ];
 
     // Find matching pattern
     for (const [cmd, sub, pattern] of patterns) {
-      if (baseCmd === cmd && (sub === '' || subCmd === sub)) {
+      if (baseCmd === cmd && (sub === "" || subCmd === sub)) {
         return pattern;
       }
     }
@@ -1155,9 +1207,11 @@ export class ClaudeAssistantProvider {
 
   private getMCPConfigPath(): string | undefined {
     const storagePath = this.context.storageUri?.fsPath;
-    if (!storagePath) { return undefined; }
+    if (!storagePath) {
+      return undefined;
+    }
 
-    const configPath = path.join(storagePath, 'mcp', 'mcp-servers.json');
+    const configPath = path.join(storagePath, "mcp", "mcp-servers.json");
     return configPath;
   }
 
