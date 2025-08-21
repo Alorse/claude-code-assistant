@@ -87,39 +87,6 @@
           "command": "claude-code-assistant.openChat"
         }
       ],
-      "editor/context": [
-        {
-          "command": "claude-code-assistant.openChat",
-          "group": "claude@1",
-          "when": "editorTextFocus"
-        }
-      ],
-      "editor/title": [
-        {
-          "command": "claude-code-assistant.openChat",
-          "group": "navigation@1",
-          "when": "true"
-        }
-      ],
-      "editor/title/context": [
-        {
-          "command": "claude-code-assistant.openChat",
-          "group": "claude@1"
-        }
-      ],
-      "explorer/context": [
-        {
-          "command": "claude-code-assistant.openChat",
-          "group": "claude@1"
-        }
-      ],
-      "scm/title": [
-        {
-          "command": "claude-code-assistant.openChat",
-          "group": "navigation@1",
-          "when": "true"
-        }
-      ],
       "view/title": [
         {
           "command": "claude-code-assistant.newChat",

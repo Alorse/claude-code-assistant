@@ -67,16 +67,6 @@ export function activate(context: vscode.ExtensionContext) {
     },
   );
 
-  // Create status bar item
-  const statusBarItem = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Right,
-    100,
-  );
-  statusBarItem.text = "Claude";
-  statusBarItem.tooltip = "Open Claude Code Assistant (Ctrl+Shift+C)";
-  statusBarItem.command = "claude-code-assistant.openChat";
-  statusBarItem.show();
-
   context.subscriptions.push(
     openChatDisposable,
     loadConversationDisposable,
@@ -84,7 +74,6 @@ export function activate(context: vscode.ExtensionContext) {
     historyCmd,
     settingsCmd,
     configChangeDisposable,
-    statusBarItem,
   );
 
   console.log(
