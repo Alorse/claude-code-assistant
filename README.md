@@ -50,66 +50,7 @@
 
 ---
 
-## 🏗️ **Technical Architecture**
-
-```
-claude-code-assistant/
-├── src/                          # 🔧 Main extension code
-│   ├── extension.ts             # Entry point
-│   ├── core/                    # Core logic
-│   │   └── ClaudeAssistantProvider.ts  # Main provider
-│   ├── services/                # Modular services
-│   │   ├── ClaudeService.ts     # Claude CLI communication
-│   │   ├── ConversationService.ts # Conversation management
-│   │   └── BackupService.ts     # Backup system
-│   ├── utils/                   # Shared utilities
-│   └── webview/                 # Webview communication
-├── webview-ui/                   # 🎨 React application
-│   ├── src/
-│   │   ├── components/          # Modular components
-│   │   │   ├── ChatContainer.tsx      # Main container
-│   │   │   ├── MessageList.tsx        # Message list
-│   │   │   ├── ToolUseMessage.tsx     # Tool visualization
-│   │   │   ├── PermissionRequest.tsx  # Permission dialogs
-│   │   │   └── SystemReminderToggle.tsx # Reminder system
-│   │   ├── context/             # React contexts
-│   │   ├── hooks/               # Custom hooks
-│   │   └── utils/               # UI utilities
-├── mcp-permissions.js            # 🛡️ MCP server for permissions
-└── tests/                        # 🧪 Testing suite
-```
-
----
-
-## 🛠️ **Technologies**
-
-### **Backend (Extension)**
-- **TypeScript** - Complete type safety
-- **Node.js** - Main runtime
-- **ESBuild** - Ultra-fast bundling
-- **VS Code API** - Native integration
-
-### **Frontend (Webview)**
-- **React 18** - Modern UI framework
-- **TypeScript** - Strict typing
-- **Tailwind CSS** - Utility-first CSS
-- **Vite** - Next-generation build tool
-- **Shiki** - Advanced syntax highlighting
-
-### **Integration Systems**
-- **MCP (Model Context Protocol)** - Permission management
-- **Claude CLI** - Anthropic communication
-- **File System Watchers** - File monitoring
-
----
-
 ## 📦 **Installation**
-
-### **From VS Code Marketplace**
-1. Open VS Code/Cursor/Windsurf
-2. Go to Extensions (`Ctrl+Shift+X`)
-3. Search for "Claude Code Assistant"
-4. Click "Install"
 
 ### **Local Development**
 ```bash
@@ -120,11 +61,8 @@ cd claude-code-assistant
 # Install main dependencies
 pnpm install
 
-# Install webview dependencies
-cd webview-ui && pnpm install
-
-# Complete build
-pnpm run build
+# Generate .vsix file
+pnpm dlx @vscode/vsce package --no-dependencies
 ```
 
 ---
@@ -149,7 +87,6 @@ pnpm run build
 ### **Operation Modes**
 - **🤔 Thinking Mode**: Claude "thinks out loud" before responding
 - **📋 Plan Mode**: Claude creates a detailed plan before executing
-- **⚡ Direct Mode**: Direct responses without additional processing
 
 ### **Permission Management**
 ```typescript
@@ -162,13 +99,6 @@ pnpm run build
   }
 }
 ```
-
-### **Shortcuts**
-- `Ctrl+Shift+C` - Open/close chat
-- `Ctrl+Enter` - Send message
-- `Ctrl+Shift+P` - Activate Plan Mode
-- `Ctrl+Shift+T` - Activate Thinking Mode
-- `Ctrl+H` - Open conversation history
 
 ---
 
@@ -194,53 +124,6 @@ This extension is a **complete migration** with substantial improvements:
 
 ---
 
-## 🧪 **Testing and Quality**
-
-```bash
-# Complete testing
-pnpm run test
-
-# Testing with coverage
-pnpm run test:coverage
-
-# Linting and formatting
-pnpm run lint
-pnpm run format
-
-# E2E testing
-pnpm run test:e2e
-```
-
-### **Quality Metrics**
-- **Test Coverage**: >90%
-- **TypeScript**: Strict mode
-- **Performance**: <100ms render time
-- **Bundle Size**: <500kb total
-
----
-
-## 📈 **Roadmap**
-
-### **v1.1.0** 🎯
-- [ ] Plugin system for extensions
-- [ ] Conversation templates
-- [ ] Configuration export/import
-- [ ] Advanced usage metrics
-
-### **v1.2.0** 🚀
-- [ ] Multi-workspace support
-- [ ] Collaborative editing
-- [ ] Cloud conversation sync
-- [ ] Public API for integrations
-
-### **v2.0.0** 🌟
-- [ ] Multiple LLM support
-- [ ] Workflow automation
-- [ ] Custom UI themes
-- [ ] Advanced debugging tools
-
----
-
 ## 🤝 **Contributing**
 
 ### **Guidelines**
@@ -249,18 +132,6 @@ pnpm run test:e2e
 3. **Commit changes**: `git commit -m 'Add amazing feature'`
 4. **Push**: `git push origin feature/amazing-feature`
 5. **Open Pull Request**
-
-### **Local Development**
-```bash
-# Complete setup
-pnpm install && cd webview-ui && pnpm install
-
-# Development with hot reload
-pnpm run dev
-
-# Testing before PR
-pnpm run test && pnpm run lint
-```
 
 ---
 
