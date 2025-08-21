@@ -37,7 +37,7 @@ const TodoWriteMessage: React.FC<TodoWriteMessageProps> = ({ data }) => {
   const getStatusColor = (status: Todo["status"]) => {
     switch (status) {
       case "completed":
-        return "text-green-400 line-through";
+        return "text-[#98c379] line-through";
       case "in_progress":
         return "text-blue-400";
       case "cancelled":
@@ -57,14 +57,17 @@ const TodoWriteMessage: React.FC<TodoWriteMessageProps> = ({ data }) => {
       </div>
 
       {todos.length > 0 && (
-        <div>
+        <div className="space-y-0">
           {todos.map((todo, index) => (
             <div
               key={index}
-              className={`flex gap-3 px-2 mt-0 items-center ${getStatusColor(todo.status)}`}
+              className={`flex gap-2 px-2 items-center ${getStatusColor(todo.status)}`}
             >
               <span className="text-lg">{getStatusIcon(todo.status)}</span>
-              <div className="flex items-center">{todo.content}</div>
+              <div
+                className="markdown-content"
+                dangerouslySetInnerHTML={{ __html: todo.content }}
+              />
             </div>
           ))}
         </div>
