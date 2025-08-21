@@ -68,7 +68,8 @@ const ToolUseMessage: React.FC<ToolUseMessageProps> = ({ data }) => {
     <div className="tool-message px-2">
       {rawInput?.file_path && (
         <div className="mb-2 text-xs text-description">
-          <div className="font-semibold">File:{" "}
+          <div className="font-semibold">
+            File:{" "}
             <span className="font-mono break-words">{rawInput.file_path}</span>
           </div>
         </div>

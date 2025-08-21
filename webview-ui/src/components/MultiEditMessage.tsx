@@ -30,7 +30,7 @@ const MultiEditMessage: React.FC<MultiEditMessageProps> = ({ data }) => {
               <div className="bg-red-800/30">
                 <span className="p-1">-</span> {edit.old_string}
               </div>
-              
+
               {/* New string (added) */}
               <div className="bg-green-800/30">
                 <span className="p-1">+</span> {edit.new_string}
@@ -39,9 +39,7 @@ const MultiEditMessage: React.FC<MultiEditMessageProps> = ({ data }) => {
           ))}
         </pre>
       ) : (
-        <div>
-          {data.toolInput || "No edits found"}
-        </div>
+        <div>{data.toolInput || "No edits found"}</div>
       )}
     </div>
   );
