@@ -5,6 +5,7 @@ export interface DropdownOption {
   value: string;
   label: string;
   description?: string;
+  title?: string;
 }
 
 interface GenericDropdownProps {
@@ -141,7 +142,13 @@ const GenericDropdown: React.FC<GenericDropdownProps> = ({
         `}
         title={selectedOption?.description || placeholder}
       >
-        <span>{selectedOption?.label || placeholder}</span>
+          <span>
+            {selectedOption?.label 
+              ? (selectedOption.label.length > 15 
+                  ? `${selectedOption.label.substring(0, 15)}...` 
+                  : selectedOption.label)
+              : placeholder}
+          </span>
         <svg
           width="8"
           height="8"
