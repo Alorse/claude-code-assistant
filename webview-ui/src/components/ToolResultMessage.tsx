@@ -8,6 +8,11 @@ interface ToolResultMessageProps {
 const ToolResultMessage: React.FC<ToolResultMessageProps> = ({ data }) => {
   const raw = typeof data === "string" ? data : JSON.stringify(data, null, 2);
 
+  // if no content, don't render anything
+  if (raw === "") {
+    return null;
+  }
+
   // Extract system reminder blocks
   const systemReminderRegex = /<system-reminder>([\s\S]*?)<\/system-reminder>/g;
   const reminders: string[] = [];

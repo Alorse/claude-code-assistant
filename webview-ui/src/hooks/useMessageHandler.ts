@@ -99,12 +99,12 @@ export const useMessageHandler = ({
           if (message.data && message.data.isError) {
             addMessage(
               "error",
-              message.data.content || JSON.stringify(message.data),
+              message.data.content || "",
             );
           } else {
             addMessage(
               "tool-result",
-              message.data.content || JSON.stringify(message.data),
+              message.data.content || "",
             );
           }
           break;
