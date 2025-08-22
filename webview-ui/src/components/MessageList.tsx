@@ -4,6 +4,7 @@ import MessageItem from "./MessageItem";
 import ToolUseMessage from "./ToolUseMessage";
 import ToolResultMessage from "./ToolResultMessage";
 import PermissionRequest from "./PermissionRequest";
+import ToolUseErrorMessage from "./ToolUseErrorMessage";
 import { CLAUDE_CODE_COLOR } from "../utils/constants";
 import { useVSCode } from "../context/VSCodeContext";
 
@@ -51,13 +52,24 @@ const MessageList: React.FC<MessageListProps> = memo(
         ref={messagesEndRef}
       >
         {messages.map((message) => {
-          // console.log("message < HERE >", message);
           if (message.type === "tool") {
             return <ToolUseMessage data={message.content} />;
           }
 
           if (message.type === "tool-result") {
             return <ToolResultMessage data={message.content} />;
+          }
+
+          if (message.type === "error") {
+            console.log("message < HERE >", message);
+            return (
+              <ToolUseErrorMessage
+                content={
+                  typeof message.content === "string" ? message.content : ""
+                }
+                toolUseId={(message as any).toolUseId || "unknown"}
+              />
+            );
           }
 
           if (message.type === "permission-request") {
