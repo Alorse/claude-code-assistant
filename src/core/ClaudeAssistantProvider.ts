@@ -33,6 +33,16 @@ export class ClaudeAssistantProvider {
 
   // Session state
   private currentSessionId: string | undefined;
+  private isProcessing: boolean = false;
+
+  private setProcessing(processing: boolean) {
+    this.isProcessing = processing;
+    this.postMessage({
+      type: "setProcessing",
+      data: { isProcessing: processing },
+    });
+  }
+
   private conversationIndex: Array<{
     filename: string;
     sessionId: string;
@@ -152,7 +162,7 @@ export class ClaudeAssistantProvider {
     );
 
     // Set icon for the webview tab using URI path
-    const iconPath = vscode.Uri.joinPath(this.extensionUri, "icon.png");
+    const iconPath = vscode.Uri.joinPath(this.extensionUri, "assets/icon_nobg.png");
     this.panel.iconPath = iconPath;
 
     this.panel.webview.html = getHtmlForWebview(
@@ -472,13 +482,19 @@ export class ClaudeAssistantProvider {
 
     // Save to conversation
     this.conversationService?.addMessage(message);
+    
+    // Save conversation with session ID if this is a user message
+    if (message.type === 'userInput' && this.currentSessionId) {
+      this.conversationService?.saveConversation(this.currentSessionId, message.data);
+    }
   }
 
   private async sendMessageToClaude(
     message: string,
-    planMode?: boolean,
-    thinkingMode?: boolean,
+    planMode: boolean = false,
+    thinkingMode: boolean = false,
   ): Promise<void> {
+    this.setProcessing(true);
     if (!this.claudeService) {
       throw new Error("Claude service not initialized");
     }
@@ -528,9 +544,12 @@ export class ClaudeAssistantProvider {
 
     // Clear current session
     this.currentSessionId = undefined;
-
-    // Clear conversation
-    this.conversationService?.clearCurrentConversation();
+    this.setProcessing(false);
+    
+    // Initialize conversation service with required arguments
+    const conversationsDir = path.join(this.context.globalStorageUri.fsPath, 'conversations');
+    this.conversationService = new ConversationService(this.context, conversationsDir);
+    this.postMessage({ type: "newSession" });
 
     // Stop any current Claude process
     this.claudeService?.stopCurrentProcess();

@@ -451,6 +451,7 @@ export class ClaudeService {
 
   private handleProcessClose(code: number, errorOutput: string): void {
     this.currentProcess = undefined;
+    this.isProcessing = false;
 
     this.messageHandler({
       type: "clearLoading",
@@ -466,6 +467,7 @@ export class ClaudeService {
 
   private handleProcessError(error: Error): void {
     this.currentProcess = undefined;
+    this.isProcessing = false;
 
     this.messageHandler({
       type: "clearLoading",
