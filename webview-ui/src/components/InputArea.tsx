@@ -3,6 +3,7 @@ import { useVSCode } from "../context/VSCodeContext";
 import ModelDropdown from "./ModelDropdown";
 import StatusBar from "./StatusBar";
 import { HINT_TEMPLATES } from "../utils/constants";
+import OptionsDropdown from "./OptionsDropdown";
 
 interface InputAreaProps {
   value: string;
@@ -112,49 +113,6 @@ const InputArea: React.FC<InputAreaProps> = ({
       className="border-t border-border p-3 pb-2"
       style={{ borderColor: "#DE7356" }}
     >
-      {/* Mode Toggles */}
-      <div className="flex items-center w-full mb-2 text-xs">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <label className="flex items-center gap-2 cursor-pointer text-foreground/80 hover:text-foreground">
-              <span onClick={onTogglePlanMode}>Plan First</span>
-              <div
-                className={`relative w-7 h-4 rounded-full cursor-pointer transition-colors ${
-                  planMode ? "bg-button-background" : "bg-border"
-                }`}
-                onClick={onTogglePlanMode}
-              >
-                <div
-                  className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-transform ${
-                    planMode ? "translate-x-3" : "translate-x-0.5"
-                  }`}
-                />
-              </div>
-            </label>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <label className="flex items-center gap-2 cursor-pointer text-foreground/80 hover:text-foreground">
-              <span onClick={onToggleThinkingMode}>Thinking Mode</span>
-              <div
-                className={`relative w-7 h-4 rounded-full cursor-pointer transition-colors ${
-                  thinkingMode ? "bg-button-background" : "bg-border"
-                }`}
-                onClick={onToggleThinkingMode}
-              >
-                <div
-                  className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-transform ${
-                    thinkingMode ? "translate-x-3" : "translate-x-0.5"
-                  }`}
-                />
-              </div>
-            </label>
-          </div>
-        </div>
-        <div className="ml-auto pr-1">
-          <StatusBar text={statusText} type={statusType} />
-        </div>
-      </div>
 
       {/* Input Container */}
       <div className="flex gap-3 items-end">
@@ -175,6 +133,7 @@ const InputArea: React.FC<InputAreaProps> = ({
           {/* Controls */}
           <div className="flex justify-between items-center bg-input-background px-2 py-0.5">
             <div className="flex items-center gap-2">
+              <StatusBar text={statusText} type={statusType} />
               {/* Model Selector */}
               <ModelDropdown
                 selectedModel={selectedModel}
@@ -193,6 +152,15 @@ const InputArea: React.FC<InputAreaProps> = ({
                   <path d="M1 2.5l3 3 3-3"></path>
                 </svg>
               </button>
+
+              {/* Options Selector */}
+              <OptionsDropdown
+                planMode={planMode}
+                onPlanModeChange={onTogglePlanMode}
+                thinkingMode={thinkingMode}
+                onThinkingModeChange={onToggleThinkingMode}
+                disabled={disabled}
+              />
             </div>
 
             <div className="flex items-center gap-2">

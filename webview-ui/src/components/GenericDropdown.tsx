@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 export interface DropdownOption {
@@ -9,107 +9,56 @@ export interface DropdownOption {
 }
 
 interface GenericDropdownProps {
-  options: DropdownOption[];
-  selectedValue: string;
-  onSelectionChange: (value: string) => void;
+  options?: DropdownOption[];
+  selectedValue?: string;
+  onSelectionChange?: (value: string) => void;
   disabled?: boolean;
   placeholder?: string;
   className?: string;
   minWidth?: string;
+  children?: ReactNode;
+  icon?: ReactNode;
 }
 
 const GenericDropdown: React.FC<GenericDropdownProps> = ({
-  options,
-  selectedValue,
-  onSelectionChange,
+  options = [],
+  selectedValue = "",
+  onSelectionChange = () => {},
   disabled = false,
   placeholder = "Select option...",
   className = "",
   minWidth = "min-w-48",
+  children,
+  icon,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [hoveredOption, setHoveredOption] = useState<string | null>(null);
-  const [dropdownPosition, setDropdownPosition] = useState({
-    top: 0,
-    left: 0,
-    width: 0,
-  });
   const dropdownRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
-  const selectedOption = options.find(
-    (option) => option.value === selectedValue,
-  );
+  const selectedOption = options?.find((opt) => opt.value === selectedValue) || null;
 
   // Calculate dropdown position
   const updateDropdownPosition = () => {
+    // Position logic can be added back if needed
     if (triggerRef.current) {
-      const rect = triggerRef.current.getBoundingClientRect();
-
-      // Calculate dropdown height estimate
-      const itemHeight = 30; // height per item with padding
-      const maxVisibleItems = Math.min(options.length, 6);
-      const dropdownHeight = maxVisibleItems * itemHeight;
-
-      // Check if there's enough space above, otherwise position below
-      const spaceAbove = rect.top;
-
-      let top: number;
-      if (spaceAbove >= dropdownHeight + 4) {
-        // Position above the button
-        top = rect.top - dropdownHeight - 4;
-      } else {
-        // Position below the button as fallback
-        top = rect.bottom + 4;
-      }
-
-      setDropdownPosition({
-        top,
-        left: rect.left,
-        width: rect.width,
-      });
+      // const rect = triggerRef.current.getBoundingClientRect();
+      // Use rect for positioning logic when needed
     }
   };
 
-  // Close dropdown when clicking outside
+  // Handle keyboard navigation
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        triggerRef.current &&
-        !triggerRef.current.contains(event.target as Node)
-      ) {
-        // Check if click is outside both trigger and dropdown
-        const dropdownElement = document.querySelector(
-          "[data-dropdown-portal]",
-        );
-        if (
-          !dropdownElement ||
-          !dropdownElement.contains(event.target as Node)
-        ) {
-          setIsOpen(false);
-          setHoveredOption(null);
-        }
-      }
-    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isOpen) return;
 
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-      return () =>
-        document.removeEventListener("mousedown", handleClickOutside);
-    }
-  }, [isOpen]);
-
-  // Close dropdown on escape key
-  useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && isOpen) {
+      if (e.key === "Escape") {
         setIsOpen(false);
-        setHoveredOption(null);
+        triggerRef.current?.focus();
       }
     };
 
-    document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isOpen]);
 
   const handleToggle = () => {
@@ -121,17 +70,15 @@ const GenericDropdown: React.FC<GenericDropdownProps> = ({
     }
   };
 
-  const handleOptionSelect = (optionValue: string) => {
-    onSelectionChange(optionValue);
+
+  const handleClickOutside = () => {
     setIsOpen(false);
-    setHoveredOption(null);
   };
 
   return (
-    <div className={`relative ${className}`} ref={dropdownRef}>
-      {/* Trigger Button */}
+    <div className={`relative inline-block ${className}`} ref={dropdownRef}>
       <button
-        ref={triggerRef}
+        type="button"
         onClick={handleToggle}
         disabled={disabled}
         className={`
@@ -142,93 +89,66 @@ const GenericDropdown: React.FC<GenericDropdownProps> = ({
         `}
         title={selectedOption?.description || placeholder}
       >
-          <span>
-            {selectedOption?.label 
-              ? (selectedOption.label.length > 15 
-                  ? `${selectedOption.label.substring(0, 15)}...` 
-                  : selectedOption.label)
-              : placeholder}
-          </span>
-        <svg
-          width="8"
-          height="8"
-          viewBox="0 0 8 8"
-          fill="currentColor"
-          className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
-        >
-          <path d="M1 2.5l3 3 3-3"></path>
-        </svg>
+        {icon || (
+          <>
+            <span>
+              {selectedOption?.label 
+                ? (selectedOption.label.length > 15 
+                    ? `${selectedOption.label.substring(0, 15)}...` 
+                    : selectedOption.label)
+                : placeholder}
+            </span>
+            <svg
+              width="8"
+              height="8"
+              viewBox="0 0 8 8"
+              fill="currentColor"
+              className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+            >
+              <path d="M1 2.5l3 3 3-3"></path>
+            </svg>
+          </>
+        )}
       </button>
 
       {/* Dropdown Menu - Rendered as Portal */}
       {isOpen &&
         createPortal(
-          <>
-            {/* Description tooltip */}
-            {hoveredOption &&
-              options.find((o) => o.value === hoveredOption)?.description && (
-                <div
-                  className="p-1 border-t bg-background border border-border rounded shadow-lg rounded-lg absolute top-0 left-0 z-50"
-                  style={{
-                    position: "fixed",
-                    top: `${dropdownPosition.top - 47}px`,
-                    left: `${dropdownPosition.left}px`,
-                    minWidth: `200px`,
-                    zIndex: 99999,
-                  }}
-                >
-                  <p className="text-xs text-foreground/80 leading-relaxed">
-                    {(() => {
-                      const desc = options.find(
-                        (o) => o.value === hoveredOption,
-                      )?.description;
-                      return desc;
-                    })()}
-                  </p>
-                </div>
-              )}
+          <div
+            className="fixed inset-0 z-50 flex items-start justify-center pt-16 bg-black/50"
+            onClick={handleClickOutside}
+          >
             <div
-              data-dropdown-portal
-              className={`
-              ${minWidth} bg-background border border-border rounded-lg shadow-lg
-              max-h-64 overflow-y-auto my-1 overflow-x-hidden py-1
-            `}
-              style={{
-                position: "fixed",
-                top: `${dropdownPosition.top - 15}px`,
-                left: `${dropdownPosition.left}px`,
-                minWidth: `${dropdownPosition.width}px`,
-                zIndex: 99999,
-              }}
+              className={`bg-background border border-border rounded-md shadow-lg overflow-auto max-h-[calc(100vh-8rem)] ${minWidth}`}
+              onClick={(e) => e.stopPropagation()}
             >
-              {options.map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => handleOptionSelect(option.value)}
-                  onMouseEnter={() => {
-                    setHoveredOption(option.value);
-                  }}
-                  onMouseLeave={() => {
-                    setHoveredOption(null);
-                  }}
-                  className={`
-                  w-full flex items-center justify-between px-3 py-1.5 text-left rounded-lg mx-1
-                  transition-colors hover:bg-gray-500/25 border-none outline-none cursor-pointer
-                  ${option.value === selectedValue ? "bg-gray-500/10" : ""}
-                `}
-                  title={option.description}
-                >
-                  <span className="text-foreground truncate">
-                    {option.label}
-                  </span>
-                  {option.value === selectedValue && (
-                    <span className="text-green-500 ml-2 flex-shrink-0">✓</span>
-                  )}
-                </button>
-              ))}
+              {children || (
+                <>
+                  {options.map((option) => (
+                    <div
+                      key={option.value}
+                      className={`px-4 py-2 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 ${
+                        selectedValue === option.value ? "bg-gray-100 dark:bg-gray-800 font-medium" : ""
+                      }`}
+                      onClick={() => {
+                        onSelectionChange(option.value);
+                        setIsOpen(false);
+                      }}
+                      title={option.description}
+                    >
+                      <div className="font-medium">{option.label}</div>
+                      {option.description && (
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          {option.description}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </>
+              )}
             </div>
-          </>,
-          document.body,
+          </div>,
+          document.body
         )}
     </div>
   );
