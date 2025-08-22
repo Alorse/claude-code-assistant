@@ -50,6 +50,10 @@ const MessageList: React.FC<MessageListProps> = memo(
           }
 
           if (message.type === "permission-request") {
+            // Only show the PermissionRequest if it's the last message
+            const currentIdx = messages.findIndex((m) => m.id === message.id);
+            const isLast = currentIdx === messages.length - 1;
+            if (!isLast) return null;
             const d = message.content as any;
             return (
               <PermissionRequest
