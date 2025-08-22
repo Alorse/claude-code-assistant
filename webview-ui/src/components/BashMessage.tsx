@@ -21,7 +21,9 @@ const BashMessage: React.FC<BashMessageProps> = ({ data }) => {
       <pre className="text-sm font-mono">
         <div className="px-3">
           {description && (
-            <div className="text-gray-600 text-xs py-1">{description}</div>
+            <div className="text-gray-600 text-xs py-1 break-words whitespace-normal">
+              {description}
+            </div>
           )}
           <div className="permission-request px-2 py-1 border border-border bg-input-background">
             <div className="text-xs">

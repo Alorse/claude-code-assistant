@@ -161,10 +161,10 @@ const GenericDropdown: React.FC<GenericDropdownProps> = ({
             {hoveredOption &&
               options.find((o) => o.value === hoveredOption)?.description && (
                 <div
-                  className="px-3 py-2 border-t bg-background border border-border rounded shadow-lg absolute top-0 left-0 z-50"
+                  className="p-1 border-t bg-background border border-border rounded shadow-lg rounded-lg absolute top-0 left-0 z-50"
                   style={{
                     position: "fixed",
-                    top: `${dropdownPosition.top - 40}px`,
+                    top: `${dropdownPosition.top - 47}px`,
                     left: `${dropdownPosition.left}px`,
                     minWidth: `200px`,
                     zIndex: 99999,
@@ -183,12 +183,12 @@ const GenericDropdown: React.FC<GenericDropdownProps> = ({
             <div
               data-dropdown-portal
               className={`
-              ${minWidth} bg-background border border-border rounded shadow-lg
-              max-h-64 overflow-y-auto
+              ${minWidth} bg-background border border-border rounded-lg shadow-lg
+              max-h-64 overflow-y-auto my-1 overflow-x-hidden py-1
             `}
               style={{
                 position: "fixed",
-                top: `${dropdownPosition.top}px`,
+                top: `${dropdownPosition.top - 15}px`,
                 left: `${dropdownPosition.left}px`,
                 minWidth: `${dropdownPosition.width}px`,
                 zIndex: 99999,
@@ -205,8 +205,8 @@ const GenericDropdown: React.FC<GenericDropdownProps> = ({
                     setHoveredOption(null);
                   }}
                   className={`
-                  w-full flex items-center justify-between px-3 py-2 text-left 
-                  transition-colors hover:bg-gray-500/15 border-none outline-none cursor-pointer
+                  w-full flex items-center justify-between px-3 py-1.5 text-left rounded-lg mx-1
+                  transition-colors hover:bg-gray-500/25 border-none outline-none cursor-pointer
                   ${option.value === selectedValue ? "bg-gray-500/10" : ""}
                 `}
                   title={option.description}
