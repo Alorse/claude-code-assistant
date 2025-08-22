@@ -113,7 +113,6 @@ const InputArea: React.FC<InputAreaProps> = ({
       className="border-t border-border p-3 pb-2"
       style={{ borderColor: "#DE7356" }}
     >
-
       {/* Input Container */}
       <div className="flex gap-3 items-end">
         <div className="flex-1 bg-input-background border border-border rounded-lg overflow-hidden">

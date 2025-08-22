@@ -1,6 +1,5 @@
 import React from "react";
 import GenericDropdown from "./GenericDropdown";
-import { Settings } from "lucide-react";
 
 interface ToggleOptionProps {
   label: string;
@@ -60,8 +59,28 @@ const OptionsDropdown: React.FC<OptionsDropdownProps> = ({
     <GenericDropdown
       disabled={disabled}
       icon={
-        <div className="flex items-center justify-center w-5 h-5">
-          <Settings className="w-4 h-4" />
+        <div className="flex items-center justify-center w-4 h-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="800"
+            height="450"
+            viewBox="0 0 24 20"
+            fill="currentColor"
+          >
+            <g
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="2" y1="4" x2="5" y2="4" />
+              <line x1="12" y1="4" x2="22" y2="4" />
+              <circle cx="8" cy="4" r="3" fill="none" />
+              <line x1="2" y1="14" x2="12" y2="14" />
+              <line x1="19" y1="14" x2="22" y2="14" />
+              <circle cx="16" cy="14" r="3" fill="none" />
+            </g>
+          </svg>
         </div>
       }
     >

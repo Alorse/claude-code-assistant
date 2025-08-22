@@ -35,7 +35,8 @@ const GenericDropdown: React.FC<GenericDropdownProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
-  const selectedOption = options?.find((opt) => opt.value === selectedValue) || null;
+  const selectedOption =
+    options?.find((opt) => opt.value === selectedValue) || null;
 
   // Calculate dropdown position
   const updateDropdownPosition = () => {
@@ -70,7 +71,6 @@ const GenericDropdown: React.FC<GenericDropdownProps> = ({
     }
   };
 
-
   const handleClickOutside = () => {
     setIsOpen(false);
   };
@@ -92,10 +92,10 @@ const GenericDropdown: React.FC<GenericDropdownProps> = ({
         {icon || (
           <>
             <span>
-              {selectedOption?.label 
-                ? (selectedOption.label.length > 15 
-                    ? `${selectedOption.label.substring(0, 15)}...` 
-                    : selectedOption.label)
+              {selectedOption?.label
+                ? selectedOption.label.length > 15
+                  ? `${selectedOption.label.substring(0, 15)}...`
+                  : selectedOption.label
                 : placeholder}
             </span>
             <svg
@@ -128,7 +128,9 @@ const GenericDropdown: React.FC<GenericDropdownProps> = ({
                     <div
                       key={option.value}
                       className={`px-4 py-2 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 ${
-                        selectedValue === option.value ? "bg-gray-100 dark:bg-gray-800 font-medium" : ""
+                        selectedValue === option.value
+                          ? "bg-gray-100 dark:bg-gray-800 font-medium"
+                          : ""
                       }`}
                       onClick={() => {
                         onSelectionChange(option.value);
@@ -148,7 +150,7 @@ const GenericDropdown: React.FC<GenericDropdownProps> = ({
               )}
             </div>
           </div>,
-          document.body
+          document.body,
         )}
     </div>
   );
