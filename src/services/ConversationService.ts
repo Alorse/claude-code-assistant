@@ -13,6 +13,9 @@ export interface ConversationData {
   filename: string;
   startTime: string;
   lastUserMessage: string;
+  firstUserMessage: string;
+  messageCount: number;
+  totalCost?: number;
   messages: ConversationMessage[];
 }
 
@@ -70,10 +73,13 @@ export class ConversationService {
 
       // Create conversation data
       const conversationData: ConversationData = {
-        sessionId: sessionId || "unknown",
+        sessionId: sessionId || this.getSessionId(),
         filename,
         startTime: this.conversationStartTime,
         lastUserMessage: userMessage || this.getLastUserMessage(),
+        firstUserMessage: this.getFirstUserMessage(),
+        messageCount: this.currentConversation.length,
+        // totalCost: this.getTotalCost(),
         messages: this.currentConversation,
       };
 
@@ -83,7 +89,8 @@ export class ConversationService {
       // Update index
       this.updateConversationIndex(conversationData);
 
-      console.log(`Conversation saved: ${filename}`);
+      console.log(`Conversation saved: ${filename}`, conversationData);
+      console.log("Conversation index:", conversationData);
     } catch (error) {
       console.error("Failed to save conversation:", error);
     }
@@ -184,6 +191,16 @@ export class ConversationService {
     }
   }
 
+  private getSessionId(): string {
+    const userMessages = this.currentConversation
+      .filter((msg) => msg.type === "sessionInfo")
+      .map((msg) => msg.data.sessionId);
+
+    console.log("getFirstUserMessage ", userMessages);
+
+    return userMessages.length > 0 ? userMessages[userMessages.length - 1] : "";
+  }
+
   private updateConversationIndex(conversationData: ConversationData): void {
     // Remove existing entry with same filename
     this.conversationIndex = this.conversationIndex.filter(
@@ -215,7 +232,19 @@ export class ConversationService {
       .filter((msg) => msg.type === "userInput")
       .map((msg) => msg.data);
 
+    console.log("getLastUserMessage ", userMessages);
+
     return userMessages.length > 0 ? userMessages[userMessages.length - 1] : "";
+  }
+
+  private getFirstUserMessage(): string {
+    const userMessages = this.currentConversation
+      .filter((msg) => msg.type === "userInput")
+      .map((msg) => msg.data);
+
+    console.log("getFirstUserMessage ", userMessages);
+
+    return userMessages.length > 0 ? userMessages[0] : "";
   }
 
   private saveTimeout?: NodeJS.Timeout;
