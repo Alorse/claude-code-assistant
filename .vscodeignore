@@ -25,6 +25,6 @@ out/**/*.map
 
 # Allow top-level essentials
 !LICENSE
-!icon.png
+!assets/icon.png
 !package.json
 !README.md

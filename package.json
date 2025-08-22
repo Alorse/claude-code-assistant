@@ -45,7 +45,7 @@
     "development",
     "productivity"
   ],
-  "icon": "icon.png",
+  "icon": "assets/icon.png",
   "main": "./out/extension.js",
   "activationEvents": [
     "onStartupFinished"
@@ -56,7 +56,7 @@
         "command": "claude-code-assistant.openChat",
         "title": "Open Claude Code Assistant",
         "category": "Claude Code Assistant",
-        "icon": "icon.png"
+        "icon": "assets/icon_nobg.png"
       },
       {
         "command": "claude-code-assistant.newChat",
@@ -125,7 +125,7 @@
           "type": "webview",
           "name": "Claude Code Assistant",
           "when": "true",
-          "icon": "icon.png",
+          "icon": "assets/icon_nobg.png",
           "contextualTitle": "Claude Code Assistant"
         }
       ]
@@ -135,7 +135,7 @@
         {
           "id": "claude-code-assistant",
           "title": "Claude Code Assistant",
-          "icon": "icon.png"
+          "icon": "assets/icon_nobg.png"
         }
       ]
     },
