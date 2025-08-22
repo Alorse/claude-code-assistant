@@ -58,12 +58,20 @@ const ChatContainer: React.FC = () => {
   const [historyLoading, setHistoryLoading] = useState(false);
 
   const addMessage = useCallback(
-    (type: Message["type"], content: React.ReactNode) => {
+    (
+      type: Message["type"],
+      content: React.ReactNode,
+      timestamp: string,
+      toolName?: string,
+      toolUseId?: string,
+    ) => {
       const newMessage: Message = {
         id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
         type,
         content,
-        timestamp: new Date().toISOString(),
+        timestamp,
+        toolName,
+        toolUseId,
       };
 
       setChatState((prev) => ({

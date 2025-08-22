@@ -4,7 +4,13 @@ import { UIMessage } from "../utils/messageTypes";
 type Message = UIMessage;
 
 interface UseMessageHandlerProps {
-  addMessage: (type: Message["type"], content: React.ReactNode) => void;
+  addMessage: (
+    type: Message["type"],
+    content: React.ReactNode,
+    timestamp: string,
+    toolName?: string,
+    toolUseId?: string,
+  ) => void;
   setStatusText: (text: string) => void;
   setStatusType: (type: "ready" | "processing" | "error") => void;
   setShowLoadingVerb: (show: boolean) => void;
@@ -29,6 +35,7 @@ export const useMessageHandler = ({
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       const message = event.data;
+      console.log("handleMessage < HERE ", message);
 
       switch (message.type) {
         case "ready":
@@ -37,16 +44,16 @@ export const useMessageHandler = ({
           break;
 
         case "userInput":
-          addMessage("user", message.data);
+          addMessage("user", message.data, message.timestamp);
           break;
 
         case "output":
-          addMessage("claude", message.data);
+          addMessage("claude", message.data, message.timestamp);
           setShowLoadingVerb(false);
           break;
 
         case "error":
-          addMessage("error", message.data);
+          addMessage("error", message.data, message.timestamp);
           setStatusType("error");
           setShowLoadingVerb(false);
           break;
@@ -87,7 +94,13 @@ export const useMessageHandler = ({
         case "toolUse": {
           // Add a structured tool usage message so UI can render it with ToolUseMessage
           try {
-            addMessage("tool", message.data);
+            addMessage(
+              "tool",
+              message.data,
+              message.timestamp,
+              message.data.toolName,
+              message.data.toolUseId,
+            );
           } catch (err) {
             console.error("Failed to handle toolUse message:", err);
           }
@@ -97,16 +110,32 @@ export const useMessageHandler = ({
         case "toolResult": {
           // Show tool result (success or error) as system message
           if (message.data && message.data.isError) {
-            addMessage("error", message.data.content || "");
+            addMessage(
+              "error",
+              message.data.content || "",
+              message.timestamp,
+              message.data.toolName,
+              message.data.toolUseId,
+            );
           } else {
-            addMessage("tool-result", message.data.content || "");
+            addMessage(
+              "tool-result",
+              message.data.content || "",
+              message.timestamp,
+              message.data.toolName,
+              message.data.toolUseId,
+            );
           }
           break;
         }
 
         case "thinking": {
           if (message.data && String(message.data).trim()) {
-            addMessage("system", `💭 Thinking... ${message.data}`);
+            addMessage(
+              "system",
+              `💭 Thinking... ${message.data}`,
+              message.timestamp,
+            );
           }
           break;
         }
@@ -125,7 +154,11 @@ export const useMessageHandler = ({
         case "imagePath": {
           if (message.data && message.data.filePath) {
             // Insert file path text as a system note
-            addMessage("system", `Image saved: ${message.data.filePath}`);
+            addMessage(
+              "system",
+              `Image saved: ${message.data.filePath}`,
+              message.timestamp,
+            );
           }
           break;
         }
@@ -148,6 +181,7 @@ export const useMessageHandler = ({
           addMessage(
             "error",
             `🔐 Login Required\n${message.data || "API key invalid or expired"}`,
+            message.timestamp,
           );
           setStatusType("error");
           break;
@@ -156,14 +190,14 @@ export const useMessageHandler = ({
         case "permissionRequest": {
           // Add the permission request as a proper message type
           if (message.data) {
-            addMessage("permission-request", message.data);
+            addMessage("permission-request", message.data, message.timestamp);
           }
           break;
         }
 
         case "mcpServers": {
           // backend sent list of servers
-          addMessage("system", `MCP servers updated`);
+          addMessage("system", `MCP servers updated`, message.timestamp);
           break;
         }
 
@@ -171,6 +205,7 @@ export const useMessageHandler = ({
           addMessage(
             "system",
             `✅ MCP server "${message.data.name}" saved successfully`,
+            message.timestamp,
           );
           break;
         }
@@ -179,6 +214,7 @@ export const useMessageHandler = ({
           addMessage(
             "system",
             `✅ MCP server "${message.data.name}" deleted successfully`,
+            message.timestamp,
           );
           break;
         }
@@ -187,6 +223,7 @@ export const useMessageHandler = ({
           addMessage(
             "error",
             `❌ Error with MCP server: ${message.data?.error || message.data}`,
+            message.timestamp,
           );
           break;
         }
@@ -197,6 +234,7 @@ export const useMessageHandler = ({
             addMessage(
               "system",
               `${message.data.length} workspace files received`,
+              message.timestamp,
             );
           }
           break;
@@ -213,13 +251,14 @@ export const useMessageHandler = ({
             addMessage(
               "system",
               `WSL detected on Windows — consider enabling WSL integration`,
+              message.timestamp,
             );
           }
           break;
         }
 
         case "permissionsData": {
-          addMessage("system", `Permissions updated`);
+          addMessage("system", `Permissions updated`, message.timestamp);
           break;
         }
 
@@ -228,22 +267,28 @@ export const useMessageHandler = ({
             addMessage(
               "system",
               `Restore available: ${message.data.message || message.data.sha || JSON.stringify(message.data)}`,
+              message.timestamp,
             );
           break;
         }
 
         case "restoreProgress": {
-          if (message.data) addMessage("system", `🔄 ${message.data}`);
+          if (message.data)
+            addMessage("system", `🔄 ${message.data}`, message.timestamp);
           break;
         }
 
         case "restoreSuccess": {
-          addMessage("system", `✅ ${message.data.message || message.data}`);
+          addMessage(
+            "system",
+            `✅ ${message.data.message || message.data}`,
+            message.timestamp,
+          );
           break;
         }
 
         case "restoreError": {
-          addMessage("error", `❌ ${message.data}`);
+          addMessage("error", `❌ ${message.data}`, message.timestamp);
           break;
         }
 

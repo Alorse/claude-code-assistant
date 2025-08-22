@@ -162,4 +162,6 @@ export interface UIMessage {
     | "permission-request";
   content: React.ReactNode;
   timestamp: string;
+  toolName?: string;
+  toolUseId?: string;
 }
