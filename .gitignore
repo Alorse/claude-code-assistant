@@ -48,4 +48,8 @@ Thumbs.db
 tmp/
 temp/
 
+src_old/
+
+# Claude
 .claude/
+CLAUDE.md
