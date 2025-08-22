@@ -23,18 +23,22 @@ const MultiEditMessage: React.FC<MultiEditMessageProps> = ({ data }) => {
   return (
     <div className="tool-message">
       {edits.length > 0 ? (
-        <pre className="text-sm font-mono py-2">
+        <pre className="text-sm font-mono py-2 overflow-x-auto overflow-y-auto max-h-60">
           {edits.map((edit, index) => (
             <div key={index} className="px-3 py-0.5">
               {/* Old string (removed) */}
-              <div className="bg-red-800/30">
-                <span className="p-1">-</span> {edit.old_string}
-              </div>
+              {edit.old_string.split('\n').map((line, lineIndex) => (
+                <div key={`old-${index}-${lineIndex}`} className="bg-red-800/30">
+                  <span className="p-1">-</span> {line}
+                </div>
+              ))}
 
               {/* New string (added) */}
-              <div className="bg-green-800/30">
-                <span className="p-1">+</span> {edit.new_string}
-              </div>
+              {edit.new_string.split('\n').map((line, lineIndex) => (
+                <div key={`new-${index}-${lineIndex}`} className="bg-green-800/30">
+                  <span className="p-1">+</span> {line}
+                </div>
+              ))}
             </div>
           ))}
         </pre>
