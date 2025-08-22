@@ -110,7 +110,7 @@ const InputArea: React.FC<InputAreaProps> = ({
 
   return (
     <div
-      className="border-t border-border p-3 pb-2"
+      className="border-t border-border p-2 pb-0"
       style={{ borderColor: "#DE7356" }}
     >
       {/* Input Container */}
@@ -123,14 +123,14 @@ const InputArea: React.FC<InputAreaProps> = ({
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             placeholder={`Try "${placeholderHint}"`}
-            className="w-full bg-transparent text-input-foreground p-3 resize-none outline-none min-h-[48px] leading-relaxed focus:outline-none focus:ring-0 focus:border-none focus:shadow-none focus:box-shadow-none"
+            className="w-full bg-transparent text-input-foreground px-3 py-2 resize-none outline-none min-h-[48px] leading-relaxed focus:outline-none focus:ring-0 focus:border-none focus:shadow-none focus:box-shadow-none"
             style={{ outline: "none", border: "none", boxShadow: "none" }}
             disabled={disabled}
             rows={1}
           />
 
           {/* Controls */}
-          <div className="flex justify-between items-center bg-input-background px-2 py-0.5">
+          <div className="flex justify-between items-center bg-input-background px-2 pb-1">
             <div className="flex items-center gap-2">
               <StatusBar text={statusText} type={statusType} />
               {/* Model Selector */}

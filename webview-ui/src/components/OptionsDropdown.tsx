@@ -14,7 +14,7 @@ const ToggleOption: React.FC<ToggleOptionProps> = ({
   onChange,
   description,
 }) => (
-  <div className="px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-800">
+  <div className="px-2 py-1 text-sm cursor-pointer hover:bg-gray-500/25 dark:hover:bg-gray-500/25 rounded-lg">
     <label className="flex items-center justify-between cursor-pointer">
       <div>
         <div className="text-sm font-medium text-foreground">{label}</div>
@@ -28,7 +28,10 @@ const ToggleOption: React.FC<ToggleOptionProps> = ({
         className={`relative w-10 h-5 rounded-full cursor-pointer transition-colors ${
           checked ? "bg-blue-500" : "bg-gray-300 dark:bg-gray-600"
         }`}
-        onClick={() => onChange(!checked)}
+        onClick={(e) => {
+          e.stopPropagation();
+          onChange(!checked);
+        }}
       >
         <div
           className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-transform ${
@@ -84,14 +87,13 @@ const OptionsDropdown: React.FC<OptionsDropdownProps> = ({
         </div>
       }
     >
-      <div className="py-1">
+      <div className="[&>*:not(:first-child)]:mt-1">
         <ToggleOption
           label="Plan First"
           checked={planMode}
           onChange={onPlanModeChange}
           description="Enable to see the plan before execution"
         />
-        <div className="border-t border-border my-1" />
         <ToggleOption
           label="Thinking Mode"
           checked={thinkingMode}
