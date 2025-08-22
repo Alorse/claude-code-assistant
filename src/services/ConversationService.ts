@@ -89,8 +89,7 @@ export class ConversationService {
       // Update index
       this.updateConversationIndex(conversationData);
 
-      console.log(`Conversation saved: ${filename}`, conversationData);
-      console.log("Conversation index:", conversationData);
+      console.log(`Conversation saved: ${filename}`);
     } catch (error) {
       console.error("Failed to save conversation:", error);
     }
@@ -196,8 +195,6 @@ export class ConversationService {
       .filter((msg) => msg.type === "sessionInfo")
       .map((msg) => msg.data.sessionId);
 
-    console.log("getFirstUserMessage ", userMessages);
-
     return userMessages.length > 0 ? userMessages[userMessages.length - 1] : "";
   }
 
@@ -232,8 +229,6 @@ export class ConversationService {
       .filter((msg) => msg.type === "userInput")
       .map((msg) => msg.data);
 
-    console.log("getLastUserMessage ", userMessages);
-
     return userMessages.length > 0 ? userMessages[userMessages.length - 1] : "";
   }
 
@@ -241,8 +236,6 @@ export class ConversationService {
     const userMessages = this.currentConversation
       .filter((msg) => msg.type === "userInput")
       .map((msg) => msg.data);
-
-    console.log("getFirstUserMessage ", userMessages);
 
     return userMessages.length > 0 ? userMessages[0] : "";
   }

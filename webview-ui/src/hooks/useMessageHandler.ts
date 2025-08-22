@@ -35,7 +35,6 @@ export const useMessageHandler = ({
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       const message = event.data;
-      console.log("handleMessage < HERE ", message);
 
       switch (message.type) {
         case "ready":
@@ -313,7 +312,7 @@ export const useMessageHandler = ({
           break;
 
         default:
-          console.log("Unhandled message type:", message.type);
+          // console.log("Unhandled message type:", message.type);
       }
     };
 
