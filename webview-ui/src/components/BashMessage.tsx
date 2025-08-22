@@ -27,9 +27,7 @@ const BashMessage: React.FC<BashMessageProps> = ({ data }) => {
             <div className="text-xs">
               <pre
                 className={`whitespace-pre-wrap max-h-64 text-[#98c379] ${
-                  command.length > 60
-                    ? "overflow-auto"
-                    : "overflow-visible"
+                  command.length > 60 ? "overflow-auto" : "overflow-visible"
                 }`}
               >
                 <span className="p-1">$</span> {command}

@@ -167,7 +167,8 @@
     color: var(--vscode-textLink-foreground);
   }
 
-  code.language-javascript, pre code {
+  code.language-javascript,
+  pre code {
     background-color: transparent;
   }
 
