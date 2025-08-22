@@ -8,7 +8,6 @@ import React, {
 import { useVSCode } from "../context/VSCodeContext";
 import MessageList from "./MessageList";
 import InputArea from "./InputArea";
-import StatusBar from "./StatusBar";
 import ChatHistoryModal from "./ChatHistoryModal";
 import { useMessageHandler } from "../hooks/useMessageHandler";
 
@@ -213,9 +212,9 @@ const ChatContainer: React.FC = () => {
         selectedModel={chatState.selectedModel}
         onTogglePlanMode={togglePlanMode}
         onToggleThinkingMode={toggleThinkingMode}
+        statusText={statusText}
+        statusType={statusType}
       />
-
-      <StatusBar text={statusText} type={statusType} />
     </div>
   );
 };

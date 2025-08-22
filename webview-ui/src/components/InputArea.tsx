@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useVSCode } from "../context/VSCodeContext";
 import ModelDropdown from "./ModelDropdown";
+import StatusBar from "./StatusBar";
 import { HINT_TEMPLATES } from "../utils/constants";
 
 interface InputAreaProps {
@@ -13,6 +14,8 @@ interface InputAreaProps {
   selectedModel: string;
   onTogglePlanMode: () => void;
   onToggleThinkingMode: () => void;
+  statusText: string;
+  statusType: "ready" | "processing" | "error";
 }
 
 const InputArea: React.FC<InputAreaProps> = ({
@@ -25,6 +28,8 @@ const InputArea: React.FC<InputAreaProps> = ({
   selectedModel,
   onTogglePlanMode,
   onToggleThinkingMode,
+  statusText,
+  statusType,
 }) => {
   const { postMessage } = useVSCode();
   const [localValue, setLocalValue] = useState(value);
@@ -108,47 +113,52 @@ const InputArea: React.FC<InputAreaProps> = ({
       style={{ borderColor: "#DE7356" }}
     >
       {/* Mode Toggles */}
-      <div className="flex items-center gap-4 mb-2 text-xs">
-        <div className="flex items-center gap-2">
-          <label className="flex items-center gap-2 cursor-pointer text-foreground/80 hover:text-foreground">
-            <span onClick={onTogglePlanMode}>Plan First</span>
-            <div
-              className={`relative w-7 h-4 rounded-full cursor-pointer transition-colors ${
-                planMode ? "bg-button-background" : "bg-border"
-              }`}
-              onClick={onTogglePlanMode}
-            >
+      <div className="flex items-center w-full mb-2 text-xs">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <label className="flex items-center gap-2 cursor-pointer text-foreground/80 hover:text-foreground">
+              <span onClick={onTogglePlanMode}>Plan First</span>
               <div
-                className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-transform ${
-                  planMode ? "translate-x-3" : "translate-x-0.5"
+                className={`relative w-7 h-4 rounded-full cursor-pointer transition-colors ${
+                  planMode ? "bg-button-background" : "bg-border"
                 }`}
-              />
-            </div>
-          </label>
-        </div>
+                onClick={onTogglePlanMode}
+              >
+                <div
+                  className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-transform ${
+                    planMode ? "translate-x-3" : "translate-x-0.5"
+                  }`}
+                />
+              </div>
+            </label>
+          </div>
 
-        <div className="flex items-center gap-2">
-          <label className="flex items-center gap-2 cursor-pointer text-foreground/80 hover:text-foreground">
-            <span onClick={onToggleThinkingMode}>Thinking Mode</span>
-            <div
-              className={`relative w-7 h-4 rounded-full cursor-pointer transition-colors ${
-                thinkingMode ? "bg-button-background" : "bg-border"
-              }`}
-              onClick={onToggleThinkingMode}
-            >
+          <div className="flex items-center gap-2">
+            <label className="flex items-center gap-2 cursor-pointer text-foreground/80 hover:text-foreground">
+              <span onClick={onToggleThinkingMode}>Thinking Mode</span>
               <div
-                className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-transform ${
-                  thinkingMode ? "translate-x-3" : "translate-x-0.5"
+                className={`relative w-7 h-4 rounded-full cursor-pointer transition-colors ${
+                  thinkingMode ? "bg-button-background" : "bg-border"
                 }`}
-              />
-            </div>
-          </label>
+                onClick={onToggleThinkingMode}
+              >
+                <div
+                  className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-transform ${
+                    thinkingMode ? "translate-x-3" : "translate-x-0.5"
+                  }`}
+                />
+              </div>
+            </label>
+          </div>
+        </div>
+        <div className="ml-auto pr-1">
+          <StatusBar text={statusText} type={statusType} />
         </div>
       </div>
 
       {/* Input Container */}
       <div className="flex gap-3 items-end">
-        <div className="flex-1 bg-input-background border border-border rounded-md overflow-hidden">
+        <div className="flex-1 bg-input-background border border-border rounded-lg overflow-hidden">
           {/* Textarea */}
           <textarea
             ref={textareaRef}

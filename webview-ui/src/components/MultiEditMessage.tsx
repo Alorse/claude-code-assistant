@@ -27,15 +27,21 @@ const MultiEditMessage: React.FC<MultiEditMessageProps> = ({ data }) => {
           {edits.map((edit, index) => (
             <div key={index} className="px-3 py-0.5">
               {/* Old string (removed) */}
-              {edit.old_string.split('\n').map((line, lineIndex) => (
-                <div key={`old-${index}-${lineIndex}`} className="bg-red-800/30">
+              {edit.old_string.split("\n").map((line, lineIndex) => (
+                <div
+                  key={`old-${index}-${lineIndex}`}
+                  className="bg-red-800/30"
+                >
                   <span className="p-1">-</span> {line}
                 </div>
               ))}
 
               {/* New string (added) */}
-              {edit.new_string.split('\n').map((line, lineIndex) => (
-                <div key={`new-${index}-${lineIndex}`} className="bg-green-800/30">
+              {edit.new_string.split("\n").map((line, lineIndex) => (
+                <div
+                  key={`new-${index}-${lineIndex}`}
+                  className="bg-green-800/30"
+                >
                   <span className="p-1">+</span> {line}
                 </div>
               ))}
