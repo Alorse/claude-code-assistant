@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useRef, useEffect } from "react";
 import LoadingVerb from "./LoadingVerb";
 import MessageItem from "./MessageItem";
 import ToolUseMessage from "./ToolUseMessage";
@@ -37,10 +37,21 @@ const MessageList: React.FC<MessageListProps> = memo(
       );
     }
 
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+      }
+    }, [messages]);
+
     return (
-      <div className="flex-1 overflow-y-auto p-3 space-y-3">
+      <div
+        className="flex-1 overflow-y-auto p-3 space-y-3"
+        ref={messagesEndRef}
+      >
         {messages.map((message) => {
-          console.log("message < HERE >", message);
+          // console.log("message < HERE >", message);
           if (message.type === "tool") {
             return <ToolUseMessage data={message.content} />;
           }
