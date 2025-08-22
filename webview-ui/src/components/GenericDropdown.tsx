@@ -119,7 +119,7 @@ const GenericDropdown: React.FC<GenericDropdownProps> = ({
             onClick={handleClickOutside}
           >
             <div
-              className={`bg-background border border-border rounded-md shadow-lg overflow-auto max-h-[calc(100vh-8rem)] ${minWidth}`}
+              className={`p-2 rounded-full bg-background border border-border rounded-lg shadow-lg overflow-auto max-h-[calc(100vh-8rem)] ${minWidth}`}
               onClick={(e) => e.stopPropagation()}
             >
               {children || (
@@ -127,9 +127,9 @@ const GenericDropdown: React.FC<GenericDropdownProps> = ({
                   {options.map((option) => (
                     <div
                       key={option.value}
-                      className={`px-4 py-2 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 ${
+                      className={`px-2 py-1 text-sm cursor-pointer hover:bg-gray-500/25 dark:hover:bg-gray-500/25 [&:not(:first-child)]:mt-1 rounded-lg ${
                         selectedValue === option.value
-                          ? "bg-gray-100 dark:bg-gray-800 font-medium"
+                          ? "bg-gray-100 dark:bg-gray-500/25 font-medium"
                           : ""
                       }`}
                       onClick={() => {
