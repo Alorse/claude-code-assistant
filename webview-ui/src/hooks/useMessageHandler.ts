@@ -97,15 +97,9 @@ export const useMessageHandler = ({
         case "toolResult": {
           // Show tool result (success or error) as system message
           if (message.data && message.data.isError) {
-            addMessage(
-              "error",
-              message.data.content || "",
-            );
+            addMessage("error", message.data.content || "");
           } else {
-            addMessage(
-              "tool-result",
-              message.data.content || "",
-            );
+            addMessage("tool-result", message.data.content || "");
           }
           break;
         }

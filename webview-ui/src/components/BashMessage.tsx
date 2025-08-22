@@ -25,7 +25,7 @@ const BashMessage: React.FC<BashMessageProps> = ({ data }) => {
           )}
           <div className="permission-request px-2 py-1 border border-border bg-input-background">
             <div className="text-xs">
-              <pre className="whitespace-pre-wrap max-h-64 overflow-auto text-[#98c379]">
+              <pre className="whitespace-pre-wrap max-h-64 text-[#98c379]">
                 <span className="p-1">$</span> {command}
               </pre>
             </div>

@@ -167,6 +167,10 @@
     color: var(--vscode-textLink-foreground);
   }
 
+  code.language-javascript {
+    background-color: transparent;
+  }
+
   /* Lists */
   ul,
   ol {
