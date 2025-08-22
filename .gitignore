@@ -48,4 +48,4 @@ Thumbs.db
 tmp/
 temp/
 
-src_old/
+.claude/
