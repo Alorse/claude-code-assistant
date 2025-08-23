@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useVSCode } from "../context/VSCodeContext";
 import ModelDropdown from "./ModelDropdown";
-import StatusBar from "./StatusBar";
+// import StatusBar from "./StatusBar";
 import { HINT_TEMPLATES } from "../utils/constants";
 import OptionsDropdown from "./OptionsDropdown";
 
@@ -15,8 +15,8 @@ interface InputAreaProps {
   selectedModel: string;
   onTogglePlanMode: () => void;
   onToggleThinkingMode: () => void;
-  statusText: string;
-  statusType: "ready" | "processing" | "error";
+  // statusText: string;
+  // statusType: "ready" | "processing" | "error";
 }
 
 const InputArea: React.FC<InputAreaProps> = ({
@@ -29,8 +29,8 @@ const InputArea: React.FC<InputAreaProps> = ({
   selectedModel,
   onTogglePlanMode,
   onToggleThinkingMode,
-  statusText,
-  statusType,
+  // statusText,
+  // statusType,
 }) => {
   const { postMessage } = useVSCode();
   const [localValue, setLocalValue] = useState(value);
@@ -132,7 +132,7 @@ const InputArea: React.FC<InputAreaProps> = ({
           {/* Controls */}
           <div className="flex justify-between items-center bg-input-background px-2 pb-1">
             <div className="flex items-center gap-2">
-              <StatusBar text={statusText} type={statusType} />
+              {/* <StatusBar text={statusText} type={statusType} /> */}
               {/* Model Selector */}
               <ModelDropdown
                 selectedModel={selectedModel}

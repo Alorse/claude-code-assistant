@@ -220,8 +220,8 @@ const ChatContainer: React.FC = () => {
         selectedModel={chatState.selectedModel}
         onTogglePlanMode={togglePlanMode}
         onToggleThinkingMode={toggleThinkingMode}
-        statusText={statusText}
-        statusType={statusType}
+        // statusText={statusText}
+        // statusType={statusType}
       />
     </div>
   );
