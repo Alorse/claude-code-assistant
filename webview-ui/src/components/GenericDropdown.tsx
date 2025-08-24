@@ -93,9 +93,11 @@ const GenericDropdown: React.FC<GenericDropdownProps> = ({
           <>
             <span>
               {selectedOption?.label
-                ? selectedOption.label.length > 15
-                  ? `${selectedOption.label.substring(0, 15)}...`
-                  : selectedOption.label
+                ? selectedOption.label.startsWith("Default")
+                  ? "Default"
+                  : selectedOption.label.length > 15
+                    ? `${selectedOption.label.substring(0, 15)}...`
+                    : selectedOption.label
                 : placeholder}
             </span>
             <svg
