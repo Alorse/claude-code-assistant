@@ -60,11 +60,11 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
   }, [message.content, strippedContent]);
 
   const getMessageStyles = () => {
-    const baseStyles = "px-2 py-1 rounded-lg relative overflow-hidden";
+    const baseStyles = "px-0.5 py-1 rounded-lg relative overflow-hidden";
 
     switch (message.type) {
       case "user":
-        return `${baseStyles} bg-input-background max-w-[90%] ml-auto w-fit`;
+        return `${baseStyles} px-1.5 bg-input-background max-w-[90%] ml-auto w-fit`;
       case "claude":
         return `${baseStyles}`;
       case "error":
