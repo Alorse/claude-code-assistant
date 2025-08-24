@@ -61,7 +61,6 @@ const MessageList: React.FC<MessageListProps> = memo(
           }
 
           if (message.type === "error") {
-            console.log("message < HERE >", message);
             return (
               <ToolUseErrorMessage
                 content={

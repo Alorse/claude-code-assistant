@@ -1,6 +1,6 @@
 import React from "react";
 import GenericDropdown, { DropdownOption } from "./GenericDropdown";
-import { AVAILABLE_MODELS } from "../utils/models";
+import { AVAILABLE_MODELS } from "../../../src/utils/models";
 
 interface ModelDropdownProps {
   selectedModel: string;
