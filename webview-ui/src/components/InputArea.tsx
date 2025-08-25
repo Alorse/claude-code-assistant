@@ -90,11 +90,6 @@ const InputArea: React.FC<InputAreaProps> = ({
     postMessage({ type: "selectModel", model: newModel });
   };
 
-  const handleMCPModal = () => {
-    postMessage({ type: "loadMCPServers" });
-    // TODO: Implement MCP modal
-  };
-
   const handleSlashCommands = () => {
     // TODO: Implement slash commands modal
   };
@@ -139,18 +134,6 @@ const InputArea: React.FC<InputAreaProps> = ({
                 onModelChange={handleModelChange}
                 disabled={disabled}
               />
-
-              {/* MCP Button */}
-              <button
-                onClick={handleMCPModal}
-                className="flex items-center gap-1 px-2 py-0.5 bg-gray-500/15 text-foreground rounded text-xs font-medium transition-colors hover:bg-gray-500/25"
-                title="Configure MCP servers"
-              >
-                MCP
-                <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor">
-                  <path d="M1 2.5l3 3 3-3"></path>
-                </svg>
-              </button>
 
               {/* Options Selector */}
               <OptionsDropdown
