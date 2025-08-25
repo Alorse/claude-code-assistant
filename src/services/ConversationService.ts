@@ -52,13 +52,17 @@ export class ConversationService {
 
   saveConversation(sessionId?: string, userMessage?: string): void {
     if (this.currentConversation.length === 0 || !this.conversationStartTime) {
+      console.log('No conversation to save or missing start time');
       return;
     }
 
     try {
+      console.log(`Attempting to save conversation to directory: ${this.conversationsDir}`);
       // Create conversations directory if it doesn't exist
       if (!fs.existsSync(this.conversationsDir)) {
+        console.log(`Directory does not exist, creating: ${this.conversationsDir}`);
         fs.mkdirSync(this.conversationsDir, { recursive: true });
+        console.log(`Directory created successfully`);
       }
 
       // Generate filename based on start time
@@ -70,6 +74,7 @@ export class ConversationService {
 
       const filename = `conversation_${timestamp}.json`;
       const filepath = path.join(this.conversationsDir, filename);
+      console.log(`Full file path for saving: ${filepath}`);
 
       // Create conversation data
       const conversationData: ConversationData = {
@@ -84,12 +89,27 @@ export class ConversationService {
       };
 
       // Save conversation file
-      fs.writeFileSync(filepath, JSON.stringify(conversationData, null, 2));
+      try {
+        const dataToWrite = JSON.stringify(conversationData, null, 2);
+        fs.writeFileSync(filepath, dataToWrite, 'utf8');
+        console.log(`Successfully wrote ${dataToWrite.length} bytes to ${filepath}`);
+        
+        // Verify file was written
+        if (fs.existsSync(filepath)) {
+          const stats = fs.statSync(filepath);
+          console.log(`File verification: ${filepath} exists and is ${stats.size} bytes`);
+        } else {
+          console.error(`ERROR: File was not created at ${filepath}`);
+        }
+      } catch (writeError) {
+        console.error(`Failed to write file ${filepath}:`, writeError);
+        throw writeError; // Re-throw to be caught by the outer try-catch
+      }
 
       // Update index
       this.updateConversationIndex(conversationData);
 
-      console.log(`Conversation saved: ${filename}`);
+      console.log(`Conversation saved successfully: ${filepath}`);
     } catch (error) {
       console.error("Failed to save conversation:", error);
     }
@@ -162,12 +182,12 @@ export class ConversationService {
   setDraftMessage(message: string): void {
     this.draftMessage = message;
 
-    // Save to workspace state
-    this.context.workspaceState.update("claude.draftMessage", message);
+    // Save to global state
+    this.context.globalState.update("claude.draftMessage", message);
   }
 
   restoreDraftMessage(): string {
-    const draft = this.context.workspaceState.get<string>(
+    const draft = this.context.globalState.get<string>(
       "claude.draftMessage",
       "",
     );
@@ -177,10 +197,35 @@ export class ConversationService {
 
   private loadConversationIndex(): void {
     try {
-      this.conversationIndex = this.context.workspaceState.get(
+      // First try to load from workspace state
+      this.conversationIndex = this.context.globalState.get(
         "claude.conversationIndex",
         [],
       );
+
+      // If no conversations in index, try to load from disk
+      if (this.conversationIndex.length === 0 && fs.existsSync(this.conversationsDir)) {
+        console.log(`Scanning directory for conversation files: ${this.conversationsDir}`);
+        const files = fs.readdirSync(this.conversationsDir);
+        
+        for (const file of files) {
+          if (file.endsWith('.json')) {
+            try {
+              const filepath = path.join(this.conversationsDir, file);
+              const data = fs.readFileSync(filepath, 'utf8');
+              const conversation = JSON.parse(data);
+              this.conversationIndex.push(conversation);
+            } catch (error) {
+              console.error(`Error loading conversation from ${file}:`, error);
+            }
+          }
+        }
+        
+        // Save the index to global state for next time
+        if (this.conversationIndex.length > 0) {
+          this.context.globalState.update('claude.conversationIndex', this.conversationIndex);
+        }
+      }
 
       // Also restore draft message
       this.restoreDraftMessage();
@@ -217,8 +262,8 @@ export class ConversationService {
         .slice(0, 50);
     }
 
-    // Save to workspace state
-    this.context.workspaceState.update(
+    // Save to global state
+    this.context.globalState.update(
       "claude.conversationIndex",
       this.conversationIndex,
     );

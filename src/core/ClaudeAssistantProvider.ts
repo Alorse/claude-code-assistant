@@ -2,7 +2,9 @@ import * as vscode from "vscode";
 import * as cp from "child_process";
 import * as util from "util";
 import * as path from "path";
+import * as fs from "fs";
 import { getHtmlForWebview } from "../utils/webviewUtils";
+import { ClaudeMessage } from "../services/ClaudeService";
 import { getValidModelValues, getModelByValue } from "../utils/models";
 import { ClaudeService } from "../services/ClaudeService";
 import { ConversationService } from "../services/ConversationService";
@@ -82,15 +84,41 @@ export class ClaudeAssistantProvider {
     this.currentSessionId = latestConversation?.sessionId;
   }
 
+  private handleClaudeMessage(message: ClaudeMessage): void {
+    // Forward the message to the webview
+    this.sendAndSaveMessage({
+      type: message.type,
+      data: message.data || {}
+    });
+  }
+
   private initializeServices(): void {
     const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
     const workspacePath = workspaceFolder
       ? workspaceFolder.uri.fsPath
       : process.cwd();
-    const conversationsDir = path.join(
+      
+    // Use extension's global storage for conversations
+    const storagePath = this.context.globalStorageUri.fsPath || 
+                       (this.context.globalStorageUri.scheme === 'file' ? 
+                        this.context.globalStorageUri.fsPath : 
+                        path.join(this.context.globalStorageUri.path, '..'));
+    
+    const conversationsDir = path.join(storagePath, 'conversations');
+    
+    // Create the directory if it doesn't exist
+    if (!fs.existsSync(conversationsDir)) {
+      fs.mkdirSync(conversationsDir, { recursive: true });
+    }
+    
+    console.log(`Using conversations directory: ${conversationsDir}`);
+
+    // Initialize Claude service with context
+    this.claudeService = new ClaudeService(
+      (message) => this.handleClaudeMessage(message),
       workspacePath,
-      ".claude",
-      "conversations",
+      this.getMCPConfigPath(),
+      this.context // Pass the extension context
     );
 
     // Initialize conversation service
@@ -465,12 +493,16 @@ export class ClaudeAssistantProvider {
     }
   }
 
-  private sendAndSaveMessage(message: { type: string; data: any }): void {
+  private sendAndSaveMessage(message: { type: string; data?: any }): void {
     // Send to UI
     this.postMessage(message);
 
-    // Save to conversation
-    this.conversationService?.addMessage(message);
+    // Save to conversation - ensure data is always an object
+    const messageToSave = {
+      type: message.type,
+      data: message.data || {}
+    };
+    this.conversationService?.addMessage(messageToSave);
 
     // Save conversation with session ID if this is a user message
     if (message.type === "userInput" && this.currentSessionId) {

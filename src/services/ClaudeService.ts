@@ -32,7 +32,19 @@ export interface ProcessingOptions {
 
 export class ClaudeService {
   private currentProcess?: cp.ChildProcess;
-  private currentSessionId?: string;
+  private _currentSessionId?: string;
+
+  private get currentSessionId(): string | undefined {
+    return this._currentSessionId;
+  }
+
+  private set currentSessionId(value: string | undefined) {
+    this._currentSessionId = value;
+    // Save to context if available
+    if (this.context) {
+      this.context.workspaceState.update('claude.currentSessionId', value);
+    }
+  }
   private isProcessing = false;
   private totalTokensInput = 0;
   private totalTokensOutput = 0;
@@ -41,7 +53,13 @@ export class ClaudeService {
     private messageHandler: (message: ClaudeMessage) => void,
     private workspacePath: string,
     private mcpConfigPath?: string,
-  ) {}
+    private context?: vscode.ExtensionContext
+  ) {
+    // Restore session ID from context if available
+    if (this.context) {
+      this.currentSessionId = this.context.workspaceState.get('claude.currentSessionId');
+    }
+  }
 
   async sendMessage(
     message: string,
@@ -86,10 +104,19 @@ export class ClaudeService {
     let actualMessage = message;
 
     // Add plan mode prefix
+    if (!this.currentSessionId) {
+      actualMessage =
+        "Current project folder: " +
+        this.workspacePath +
+        "\n\n" +
+        actualMessage;
+    }
+
+    // Add plan mode prefix
     if (options.planMode) {
       actualMessage =
         "PLAN FIRST FOR THIS MESSAGE ONLY: Plan first before making any changes. Show me in detail what you will change and wait for my explicit approval in a separate message before proceeding. Do not implement anything until I confirm. This planning requirement applies ONLY to this current message. \n\n" +
-        message;
+        actualMessage;
     }
 
     // Add thinking mode prefix
@@ -511,8 +538,7 @@ export class ClaudeService {
       this.currentProcess = undefined;
       this.isProcessing = false;
 
-      // Clear session ID to ensure fresh start
-      this.currentSessionId = undefined;
+      // The session ID is maintained to allow resuming
 
       this.messageHandler({
         type: "error",
