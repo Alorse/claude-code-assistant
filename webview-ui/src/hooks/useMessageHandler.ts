@@ -312,7 +312,7 @@ export const useMessageHandler = ({
           break;
 
         default:
-          // console.log("Unhandled message type:", message.type);
+        // console.log("Unhandled message type:", message.type);
       }
     };
 

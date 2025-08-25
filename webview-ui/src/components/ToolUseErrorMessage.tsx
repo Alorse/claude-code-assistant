@@ -16,21 +16,21 @@ const ToolUseErrorMessage: React.FC<ToolUseErrorMessageProps> = ({
 
   return (
     <SystemToggle
-    headline={["Hide Tool Error", "Show Tool Error"]}
-    className="text-red-300"
-    content={
-      <div>
-      <div className="mt-1 text-sm text-red-700 dark:text-red-300">
-        {errorMessage}
-      </div>
-      {toolUseId && (
-        <div className="mt-1 text-xs text-red-500 dark:text-red-400 opacity-70">
-          ID: {toolUseId}
+      headline={["Hide Tool Error", "Show Tool Error"]}
+      className="text-red-300"
+      content={
+        <div>
+          <div className="mt-1 text-sm text-red-700 dark:text-red-300">
+            {errorMessage}
+          </div>
+          {toolUseId && (
+            <div className="mt-1 text-xs text-red-500 dark:text-red-400 opacity-70">
+              ID: {toolUseId}
+            </div>
+          )}
         </div>
-      )}
-    </div>
-    }
-  />
+      }
+    />
   );
 };
 

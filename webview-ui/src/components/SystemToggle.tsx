@@ -9,7 +9,7 @@ interface Props {
 
 const SystemToggle: React.FC<Props> = ({ headline, content, className }) => {
   const [open, setOpen] = useState(false);
-  
+
   return (
     <div className="system-reminder my-2">
       <button
