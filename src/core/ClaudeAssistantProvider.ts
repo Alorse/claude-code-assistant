@@ -64,8 +64,8 @@ export class ClaudeAssistantProvider {
     this.initializeMCPConfig();
     this.initializePermissions();
 
-    // Load conversation index from workspace state
-    this.conversationIndex = this.context.workspaceState.get(
+    // Load conversation index from global state
+    this.conversationIndex = this.context.globalState.get(
       "claude.conversationIndex",
       [],
     );
@@ -947,7 +947,7 @@ export class ClaudeAssistantProvider {
 
   private refreshConversationIndex(): void {
     // Reload conversation index from workspace state to pick up new conversations
-    this.conversationIndex = this.context.workspaceState.get(
+    this.conversationIndex = this.context.globalState.get(
       "claude.conversationIndex",
       [],
     );
