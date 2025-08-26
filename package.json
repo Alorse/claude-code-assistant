@@ -2,14 +2,14 @@
   "name": "claude-code-assistant",
   "displayName": "Claude Code Assistant",
   "description": "Integrated Claude Code Assistant for VS Code with React UI",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "publisher": "Alorse",
   "author": "Alorse",
   "repository": {
     "type": "git",
     "url": "https://github.com/alorse/claude-code-assistant"
   },
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "MIT",
   "engines": {
     "vscode": "^1.94.0"
   },
