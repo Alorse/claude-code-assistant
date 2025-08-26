@@ -58,9 +58,6 @@ export class ClaudeAssistantProvider {
     private readonly extensionUri: vscode.Uri,
     private readonly context: vscode.ExtensionContext,
   ) {
-    // Initialize backup repository and conversations
-    this.initializeBackupRepo();
-    this.initializeConversations();
     this.initializeMCPConfig();
     this.initializePermissions();
 
@@ -80,8 +77,8 @@ export class ClaudeAssistantProvider {
     this.initializeServices();
 
     // Resume session from latest conversation
-    const latestConversation = this.getLatestConversation();
-    this.currentSessionId = latestConversation?.sessionId;
+    // const latestConversation = this.conversationService?.getLatestConversation();
+    // this.currentSessionId = latestConversation?.sessionId;
   }
 
   private handleClaudeMessage(message: ClaudeMessage): void {
@@ -110,8 +107,6 @@ export class ClaudeAssistantProvider {
     if (!fs.existsSync(conversationsDir)) {
       fs.mkdirSync(conversationsDir, { recursive: true });
     }
-    
-    console.log(`Using conversations directory: ${conversationsDir}`);
 
     // Initialize Claude service with context
     this.claudeService = new ClaudeService(
@@ -193,9 +188,11 @@ export class ClaudeAssistantProvider {
     this.setupWebviewMessageHandler(this.panel.webview);
     this.initializePermissions();
 
+    console.log("Current session ID:", this.currentSessionId);
     // Resume session from latest conversation
-    const latestConversation = this.getLatestConversation();
-    this.currentSessionId = latestConversation?.sessionId;
+    const latestConversation = this.conversationService?.getLatestConversation();
+    this.currentSessionId = this.currentSessionId || latestConversation?.sessionId;
+    console.log("Current session ID after resume:", this.currentSessionId);
 
     // Load latest conversation history if available
     if (latestConversation) {
@@ -268,17 +265,6 @@ export class ClaudeAssistantProvider {
       type: "configChanged",
       data: "⚙️ WSL configuration changed. Started a new session.",
     });
-  }
-
-  // Private methods - simplified for this initial migration
-  private async initializeBackupRepo(): Promise<void> {
-    // Implementation from original - simplified for now
-    console.log("Initializing backup repository...");
-  }
-
-  private async initializeConversations(): Promise<void> {
-    // Implementation from original - simplified for now
-    console.log("Initializing conversations...");
   }
 
   private async initializeMCPConfig(): Promise<void> {
@@ -362,13 +348,19 @@ export class ClaudeAssistantProvider {
   }
 
   private initializeWebview() {
-    // Resume session from latest conversation
-    const latestConversation = this.getLatestConversation();
-    this.currentSessionId = latestConversation?.sessionId;
+    let conversationData = null;
+    if (this.currentSessionId) {
+      console.log("Current session ID:", this.currentSessionId);
+      conversationData = this.conversationService?.getConversationBySessionId(this.currentSessionId);
+    }else {
+      conversationData = this.conversationService?.getLatestConversation();
+      this.currentSessionId = conversationData?.sessionId;
+    }
+    console.log("Current session ID after resume:", this.currentSessionId);
 
     // Load latest conversation history if available
-    if (latestConversation) {
-      this.loadConversationHistory(latestConversation.filename);
+    if (conversationData) {
+      this.loadConversationHistory(conversationData.filename);
     } else {
       // If no conversation to load, send ready immediately
       setTimeout(() => {
@@ -937,12 +929,6 @@ export class ClaudeAssistantProvider {
     } else if (this.webview) {
       this.webview.postMessage(message);
     }
-  }
-
-  private getLatestConversation(): any | undefined {
-    return this.conversationIndex.length > 0
-      ? this.conversationIndex[0]
-      : undefined;
   }
 
   private refreshConversationIndex(): void {

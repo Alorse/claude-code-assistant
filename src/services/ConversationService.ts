@@ -154,6 +154,12 @@ export class ConversationService {
     )[0];
   }
 
+  getConversationBySessionId(sessionId: string): ConversationData | null {
+    return this.conversationIndex.find(
+      (conv) => conv.sessionId === sessionId,
+    ) || null;
+  }
+
   getConversationList(): ConversationData[] {
     return this.conversationIndex.sort(
       (a, b) =>
