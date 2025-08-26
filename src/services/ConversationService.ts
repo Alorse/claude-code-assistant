@@ -201,6 +201,12 @@ export class ConversationService {
     this.context.globalState.update("claude.draftMessage", message);
   }
 
+  setCurrentSessionId(sessionId: string): void {
+    if (this.currentConversationData) {
+      this.currentConversationData.sessionId = sessionId;
+    }
+  }
+
   restoreDraftMessage(): string {
     const draft = this.context.globalState.get<string>(
       "claude.draftMessage",

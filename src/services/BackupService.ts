@@ -118,7 +118,7 @@ export class BackupService {
 
   private async initializeBackupRepo(): Promise<void> {
     try {
-      const config = vscode.workspace.getConfiguration("claudeCodeChat");
+      const config = vscode.workspace.getConfiguration("claudeCodeAssistant");
       const backupEnabled = config.get<boolean>("backup.enabled", false);
 
       if (!backupEnabled) {

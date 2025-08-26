@@ -57,9 +57,13 @@ export class ClaudeService {
   ) {
     // Restore session ID from context if available
     if (this.context) {
-      this.currentSessionId = this.context.workspaceState.get(
-        "claude.currentSessionId",
+      const savedSessionId = this.context.workspaceState.get<string | undefined>(
+        "claude.currentSessionId"
       );
+      if (savedSessionId) {
+        this.currentSessionId = savedSessionId;
+        console.log("Session ID restored from context:", savedSessionId);
+      }
     }
   }
 
@@ -123,7 +127,7 @@ export class ClaudeService {
 
     // Add thinking mode prefix
     if (options.thinkingMode) {
-      const config = vscode.workspace.getConfiguration("claudeCodeChat");
+      const config = vscode.workspace.getConfiguration("claudeCodeAssistant");
       const thinkingIntensity = config.get<string>(
         "thinking.intensity",
         "think",
@@ -176,7 +180,7 @@ export class ClaudeService {
     const args = ["-p", "--output-format", "stream-json", "--verbose"];
 
     // Get configuration
-    const config = vscode.workspace.getConfiguration("claudeCodeChat");
+    const config = vscode.workspace.getConfiguration("claudeCodeAssistant");
     const yoloMode = config.get<boolean>("permissions.yoloMode", false);
 
     if (yoloMode) {
@@ -214,7 +218,7 @@ export class ClaudeService {
   }
 
   private spawnClaudeProcess(args: string[]): cp.ChildProcess | null {
-    const config = vscode.workspace.getConfiguration("claudeCodeChat");
+    const config = vscode.workspace.getConfiguration("claudeCodeAssistant");
     const wslEnabled = config.get<boolean>("wsl.enabled", false);
     const claudeCommand = this.getClaudeCommand();
 
@@ -236,20 +240,15 @@ export class ClaudeService {
   }
 
   private spawnWSLProcess(args: string[], options: any): cp.ChildProcess {
-    const config = vscode.workspace.getConfiguration("claudeCodeChat");
+    const config = vscode.workspace.getConfiguration("claudeCodeAssistant");
     const wslDistro = config.get<string>("wsl.distro", "Ubuntu");
-    const nodePath = config.get<string>("wsl.nodePath", "/usr/bin/node");
-    const claudePath = config.get<string>(
+    const wslNodePath = config.get<string>("wsl.nodePath", "/usr/bin/node");
+    const wslClaudePath = config.get<string>(
       "wsl.claudePath",
       "/usr/local/bin/claude",
     );
 
-    console.log("Using WSL configuration:", {
-      wslDistro,
-      nodePath,
-      claudePath,
-    });
-    const wslCommand = `"${nodePath}" --no-warnings --enable-source-maps "${claudePath}" ${args.join(" ")}`;
+    const wslCommand = `"${wslNodePath}" --no-warnings --enable-source-maps "${wslClaudePath}" ${args.join(" ")}`;
 
     return cp.spawn(
       "wsl",
@@ -329,15 +328,17 @@ export class ClaudeService {
     switch (jsonData.type) {
       case "system":
         if (jsonData.subtype === "init") {
-          this.currentSessionId = jsonData.session_id;
-          this.messageHandler({
-            type: "sessionInfo",
-            data: {
-              sessionId: jsonData.session_id,
-              tools: jsonData.tools || [],
-              mcpServers: jsonData.mcp_servers || [],
-            },
-          });
+          if (jsonData.session_id) {
+            this.currentSessionId = jsonData.session_id;
+            this.messageHandler({
+              type: "sessionInfo",
+              data: {
+                sessionId: jsonData.session_id,
+                tools: jsonData.tools || [],
+                mcpServers: jsonData.mcp_servers || [],
+              },
+            });
+          }
         }
         break;
 
@@ -521,7 +522,7 @@ export class ClaudeService {
   }
 
   private getClaudeCommand(): string {
-    const config = vscode.workspace.getConfiguration("claudeCodeChat");
+    const config = vscode.workspace.getConfiguration("claudeCodeAssistant");
     const configured = config.get<string>("claudeCommand", "ccr code");
     const valid = ["claude", "ccr code"];
     const cmd = valid.includes(configured) ? configured : "ccr code";
@@ -535,12 +536,9 @@ export class ClaudeService {
 
   public stopCurrentProcess(): void {
     if (this.currentProcess) {
-      console.log("Terminating Claude process...");
       this.currentProcess.kill("SIGTERM");
       this.currentProcess = undefined;
       this.isProcessing = false;
-
-      // The session ID is maintained to allow resuming
 
       this.messageHandler({
         type: "error",
@@ -555,5 +553,19 @@ export class ClaudeService {
 
   public getIsProcessing(): boolean {
     return this.isProcessing;
+  }
+
+  public clearSession(): void {
+    this.currentSessionId = undefined;
+    if (this.context) {
+      this.context.workspaceState.update("claude.currentSessionId", undefined);
+    }
+  }
+
+  public restoreSession(sessionId: string): void {
+    this.currentSessionId = sessionId;
+    if (this.context) {
+      this.context.workspaceState.update("claude.currentSessionId", sessionId);
+    }
   }
 }

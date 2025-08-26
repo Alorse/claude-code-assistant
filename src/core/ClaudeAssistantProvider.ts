@@ -514,6 +514,11 @@ export class ClaudeAssistantProvider {
       this.draftMessage = "";
       this.conversationService?.setDraftMessage("");
 
+      // Ensure Claude service has the current session ID before sending
+      if (this.currentSessionId && !this.claudeService.getCurrentSessionId()) {
+        this.claudeService.restoreSession(this.currentSessionId);
+      }
+
       // Send message through Claude service
       await this.claudeService.sendMessage(message, {
         planMode,
@@ -550,6 +555,12 @@ export class ClaudeAssistantProvider {
     // Clear current session
     this.currentSessionId = undefined;
     this.setProcessing(false);
+
+    // Clear session in Claude service
+    this.claudeService?.clearSession();
+
+    // Clear conversation service session
+    this.conversationService?.clearCurrentConversation();
 
     // Initialize conversation service with required arguments
     const conversationsDir = path.join(
@@ -657,6 +668,17 @@ export class ClaudeAssistantProvider {
           "Loading conversation with session ID:",
           this.currentSessionId,
         );
+        
+        // Update the Claude service with the restored session ID
+        if (this.claudeService) {
+          // Restore the session ID in the service so it can resume
+          this.claudeService.restoreSession(this.currentSessionId);
+          
+          // Also update the conversation service to track this session
+          if (this.conversationService) {
+            this.conversationService.setCurrentSessionId(this.currentSessionId);
+          }
+        }
       } else {
         // If no session ID, start fresh
         this.currentSessionId = undefined;
