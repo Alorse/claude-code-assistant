@@ -77,7 +77,7 @@ export class ClaudeAssistantProvider {
     // Forward the message to the webview
     this.sendAndSaveMessage({
       type: message.type,
-      data: message.data || {}
+      data: message.data || {},
     });
   }
 
@@ -86,15 +86,16 @@ export class ClaudeAssistantProvider {
     const workspacePath = workspaceFolder
       ? workspaceFolder.uri.fsPath
       : process.cwd();
-      
+
     // Use extension's global storage for conversations
-    const storagePath = this.context.globalStorageUri.fsPath || 
-                       (this.context.globalStorageUri.scheme === 'file' ? 
-                        this.context.globalStorageUri.fsPath : 
-                        path.join(this.context.globalStorageUri.path, '..'));
-    
-    const conversationsDir = path.join(storagePath, 'conversations');
-    
+    const storagePath =
+      this.context.globalStorageUri.fsPath ||
+      (this.context.globalStorageUri.scheme === "file"
+        ? this.context.globalStorageUri.fsPath
+        : path.join(this.context.globalStorageUri.path, ".."));
+
+    const conversationsDir = path.join(storagePath, "conversations");
+
     // Create the directory if it doesn't exist
     if (!fs.existsSync(conversationsDir)) {
       fs.mkdirSync(conversationsDir, { recursive: true });
@@ -105,7 +106,7 @@ export class ClaudeAssistantProvider {
       (message) => this.handleClaudeMessage(message),
       workspacePath,
       this.getMCPConfigPath(),
-      this.context // Pass the extension context
+      this.context, // Pass the extension context
     );
 
     // Initialize conversation service
@@ -181,8 +182,10 @@ export class ClaudeAssistantProvider {
     this.initializePermissions();
 
     // Resume session from latest conversation
-    const latestConversation = this.conversationService?.getLatestConversation();
-    this.currentSessionId = this.currentSessionId || latestConversation?.sessionId;
+    const latestConversation =
+      this.conversationService?.getLatestConversation();
+    this.currentSessionId =
+      this.currentSessionId || latestConversation?.sessionId;
 
     // Load latest conversation history if available
     if (latestConversation) {
@@ -340,7 +343,9 @@ export class ClaudeAssistantProvider {
   private initializeWebview() {
     let conversationData = null;
     if (this.currentSessionId) {
-      conversationData = this.conversationService?.getConversationBySessionId(this.currentSessionId);
+      conversationData = this.conversationService?.getConversationBySessionId(
+        this.currentSessionId,
+      );
     }
 
     // Load latest conversation history if available
@@ -476,7 +481,7 @@ export class ClaudeAssistantProvider {
     // Save to conversation - ensure data is always an object
     const messageToSave = {
       type: message.type,
-      data: message.data || {}
+      data: message.data || {},
     };
     this.conversationService?.addMessage(messageToSave);
 

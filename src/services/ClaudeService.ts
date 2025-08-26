@@ -42,7 +42,7 @@ export class ClaudeService {
     this._currentSessionId = value;
     // Save to context if available
     if (this.context) {
-      this.context.workspaceState.update('claude.currentSessionId', value);
+      this.context.workspaceState.update("claude.currentSessionId", value);
     }
   }
   private isProcessing = false;
@@ -53,11 +53,13 @@ export class ClaudeService {
     private messageHandler: (message: ClaudeMessage) => void,
     private workspacePath: string,
     private mcpConfigPath?: string,
-    private context?: vscode.ExtensionContext
+    private context?: vscode.ExtensionContext,
   ) {
     // Restore session ID from context if available
     if (this.context) {
-      this.currentSessionId = this.context.workspaceState.get('claude.currentSessionId');
+      this.currentSessionId = this.context.workspaceState.get(
+        "claude.currentSessionId",
+      );
     }
   }
 

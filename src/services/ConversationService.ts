@@ -52,15 +52,19 @@ export class ConversationService {
 
   saveConversation(sessionId?: string, userMessage?: string): void {
     if (this.currentConversation.length === 0 || !this.conversationStartTime) {
-      console.log('No conversation to save or missing start time');
+      console.log("No conversation to save or missing start time");
       return;
     }
 
     try {
-      console.log(`Attempting to save conversation to directory: ${this.conversationsDir}`);
+      console.log(
+        `Attempting to save conversation to directory: ${this.conversationsDir}`,
+      );
       // Create conversations directory if it doesn't exist
       if (!fs.existsSync(this.conversationsDir)) {
-        console.log(`Directory does not exist, creating: ${this.conversationsDir}`);
+        console.log(
+          `Directory does not exist, creating: ${this.conversationsDir}`,
+        );
         fs.mkdirSync(this.conversationsDir, { recursive: true });
         console.log(`Directory created successfully`);
       }
@@ -91,13 +95,17 @@ export class ConversationService {
       // Save conversation file
       try {
         const dataToWrite = JSON.stringify(conversationData, null, 2);
-        fs.writeFileSync(filepath, dataToWrite, 'utf8');
-        console.log(`Successfully wrote ${dataToWrite.length} bytes to ${filepath}`);
-        
+        fs.writeFileSync(filepath, dataToWrite, "utf8");
+        console.log(
+          `Successfully wrote ${dataToWrite.length} bytes to ${filepath}`,
+        );
+
         // Verify file was written
         if (fs.existsSync(filepath)) {
           const stats = fs.statSync(filepath);
-          console.log(`File verification: ${filepath} exists and is ${stats.size} bytes`);
+          console.log(
+            `File verification: ${filepath} exists and is ${stats.size} bytes`,
+          );
         } else {
           console.error(`ERROR: File was not created at ${filepath}`);
         }
@@ -155,9 +163,10 @@ export class ConversationService {
   }
 
   getConversationBySessionId(sessionId: string): ConversationData | null {
-    return this.conversationIndex.find(
-      (conv) => conv.sessionId === sessionId,
-    ) || null;
+    return (
+      this.conversationIndex.find((conv) => conv.sessionId === sessionId) ||
+      null
+    );
   }
 
   getConversationList(): ConversationData[] {
@@ -210,15 +219,20 @@ export class ConversationService {
       );
 
       // If no conversations in index, try to load from disk
-      if (this.conversationIndex.length === 0 && fs.existsSync(this.conversationsDir)) {
-        console.log(`Scanning directory for conversation files: ${this.conversationsDir}`);
+      if (
+        this.conversationIndex.length === 0 &&
+        fs.existsSync(this.conversationsDir)
+      ) {
+        console.log(
+          `Scanning directory for conversation files: ${this.conversationsDir}`,
+        );
         const files = fs.readdirSync(this.conversationsDir);
-        
+
         for (const file of files) {
-          if (file.endsWith('.json')) {
+          if (file.endsWith(".json")) {
             try {
               const filepath = path.join(this.conversationsDir, file);
-              const data = fs.readFileSync(filepath, 'utf8');
+              const data = fs.readFileSync(filepath, "utf8");
               const conversation = JSON.parse(data);
               this.conversationIndex.push(conversation);
             } catch (error) {
@@ -226,10 +240,13 @@ export class ConversationService {
             }
           }
         }
-        
+
         // Save the index to global state for next time
         if (this.conversationIndex.length > 0) {
-          this.context.globalState.update('claude.conversationIndex', this.conversationIndex);
+          this.context.globalState.update(
+            "claude.conversationIndex",
+            this.conversationIndex,
+          );
         }
       }
 
