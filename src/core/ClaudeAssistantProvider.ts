@@ -528,7 +528,7 @@ export class ClaudeAssistantProvider {
       // Get active file context and enhance the message
       const fileContext = this.getActiveFileContext();
       let enhancedMessage = message;
-      
+
       if (fileContext.filePath && fileContext.selectedText) {
         enhancedMessage = `\n\`\`\`\n${fileContext.selectedText}\n\`\`\`\n\n${message}`;
       }
@@ -655,24 +655,24 @@ export class ClaudeAssistantProvider {
     try {
       // Get all files from workspace
       const files = await vscode.workspace.findFiles(
-        '**/*',
-        '{**/node_modules/**,**/.git/**,**/dist/**,**/build/**,**/.next/**,**/.nuxt/**,**/target/**,**/bin/**,**/obj/**}',
-        500
+        "**/*",
+        "{**/node_modules/**,**/.git/**,**/dist/**,**/build/**,**/.next/**,**/.nuxt/**,**/target/**,**/bin/**,**/obj/**}",
+        500,
       );
 
-      let fileList = files.map(file => {
+      let fileList = files.map((file) => {
         const relativePath = vscode.workspace.asRelativePath(file);
         return {
-          name: file.path.split('/').pop() || '',
+          name: file.path.split("/").pop() || "",
           path: relativePath,
-          fsPath: file.fsPath
+          fsPath: file.fsPath,
         };
       });
 
       // Filter results based on search term
       if (searchTerm && searchTerm.trim()) {
         const term = searchTerm.toLowerCase();
-        fileList = fileList.filter(file => {
+        fileList = fileList.filter((file) => {
           const fileName = file.name.toLowerCase();
           const filePath = file.path.toLowerCase();
           return fileName.includes(term) || filePath.includes(term);
@@ -685,19 +685,23 @@ export class ClaudeAssistantProvider {
         .slice(0, 50);
 
       this.postMessage({
-        type: 'workspaceFiles',
-        data: fileList
+        type: "workspaceFiles",
+        data: fileList,
       });
     } catch (error) {
-      console.error('Error getting workspace files:', error);
+      console.error("Error getting workspace files:", error);
       this.postMessage({
-        type: 'workspaceFiles',
-        data: []
+        type: "workspaceFiles",
+        data: [],
       });
     }
   }
 
-  public getActiveFileContext(): { filePath?: string; selectedText?: string; fullContent?: string } {
+  public getActiveFileContext(): {
+    filePath?: string;
+    selectedText?: string;
+    fullContent?: string;
+  } {
     const activeEditor = vscode.window.activeTextEditor;
     if (!activeEditor) {
       return {};
@@ -705,26 +709,26 @@ export class ClaudeAssistantProvider {
 
     const document = activeEditor.document;
     const selection = activeEditor.selection;
-    
-    let selectedText = '';
-    let fullContent = '';
-    
+
+    let selectedText = "";
+    let fullContent = "";
+
     try {
       // Get selected text if there's a selection
       if (!selection.isEmpty) {
         selectedText = document.getText(selection);
       }
-      
+
       // Get full file content
       fullContent = document.getText();
-      
+
       return {
         filePath: vscode.workspace.asRelativePath(document.uri),
         selectedText: selectedText || undefined,
-        fullContent: fullContent || undefined
+        fullContent: fullContent || undefined,
       };
     } catch (error) {
-      console.error('Error getting active file context:', error);
+      console.error("Error getting active file context:", error);
       return {};
     }
   }
@@ -732,8 +736,8 @@ export class ClaudeAssistantProvider {
   private sendActiveFileContext(): void {
     const context = this.getActiveFileContext();
     this.postMessage({
-      type: 'activeFileContext',
-      data: context
+      type: "activeFileContext",
+      data: context,
     });
   }
 
@@ -763,12 +767,12 @@ export class ClaudeAssistantProvider {
           "Loading conversation with session ID:",
           this.currentSessionId,
         );
-        
+
         // Update the Claude service with the restored session ID
         if (this.claudeService) {
           // Restore the session ID in the service so it can resume
           this.claudeService.restoreSession(this.currentSessionId);
-          
+
           // Also update the conversation service to track this session
           if (this.conversationService) {
             this.conversationService.setCurrentSessionId(this.currentSessionId);

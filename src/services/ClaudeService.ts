@@ -57,9 +57,9 @@ export class ClaudeService {
   ) {
     // Restore session ID from context if available
     if (this.context) {
-      const savedSessionId = this.context.workspaceState.get<string | undefined>(
-        "claude.currentSessionId"
-      );
+      const savedSessionId = this.context.workspaceState.get<
+        string | undefined
+      >("claude.currentSessionId");
       if (savedSessionId) {
         this.currentSessionId = savedSessionId;
         console.log("Session ID restored from context:", savedSessionId);
