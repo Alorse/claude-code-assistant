@@ -72,6 +72,11 @@
         "command": "claude-code-assistant.openSettings",
         "title": "Settings",
         "icon": "$(gear)"
+      },
+      {
+        "command": "claude-code-assistant.getFileContext",
+        "title": "Get Active File Context",
+        "icon": "$(file-code)"
       }
     ],
     "keybindings": [
@@ -79,6 +84,11 @@
         "command": "claude-code-assistant.openChat",
         "key": "ctrl+shift+c",
         "mac": "cmd+shift+c"
+      },
+      {
+        "command": "claude-code-assistant.getFileContext",
+        "key": "ctrl+shift+f",
+        "mac": "cmd+shift+f"
       }
     ],
     "menus": {

@@ -394,6 +394,12 @@ export class ClaudeAssistantProvider {
       case "getWorkspaceFiles":
         this.sendWorkspaceFiles(message.searchTerm);
         return;
+      case "getActiveFileContext":
+        this.sendActiveFileContext();
+        return;
+      case "getFileContext":
+        this.sendActiveFileContext();
+        return;
       case "selectImageFile":
         this.selectImageFile();
         return;
@@ -519,8 +525,16 @@ export class ClaudeAssistantProvider {
         this.claudeService.restoreSession(this.currentSessionId);
       }
 
-      // Send message through Claude service
-      await this.claudeService.sendMessage(message, {
+      // Get active file context and enhance the message
+      const fileContext = this.getActiveFileContext();
+      let enhancedMessage = message;
+      
+      if (fileContext.filePath && fileContext.selectedText) {
+        enhancedMessage = `\n\`\`\`\n${fileContext.selectedText}\n\`\`\`\n\n${message}`;
+      }
+
+      // Send enhanced message through Claude service
+      await this.claudeService.sendMessage(enhancedMessage, {
         planMode,
         thinkingMode,
         selectedModel: this.selectedModel,
@@ -638,8 +652,89 @@ export class ClaudeAssistantProvider {
   }
 
   private async sendWorkspaceFiles(searchTerm?: string) {
-    console.log("Sending workspace files with search term:", searchTerm);
-    // TODO: Implement workspace files logic
+    try {
+      // Get all files from workspace
+      const files = await vscode.workspace.findFiles(
+        '**/*',
+        '{**/node_modules/**,**/.git/**,**/dist/**,**/build/**,**/.next/**,**/.nuxt/**,**/target/**,**/bin/**,**/obj/**}',
+        500
+      );
+
+      let fileList = files.map(file => {
+        const relativePath = vscode.workspace.asRelativePath(file);
+        return {
+          name: file.path.split('/').pop() || '',
+          path: relativePath,
+          fsPath: file.fsPath
+        };
+      });
+
+      // Filter results based on search term
+      if (searchTerm && searchTerm.trim()) {
+        const term = searchTerm.toLowerCase();
+        fileList = fileList.filter(file => {
+          const fileName = file.name.toLowerCase();
+          const filePath = file.path.toLowerCase();
+          return fileName.includes(term) || filePath.includes(term);
+        });
+      }
+
+      // Sort and limit results
+      fileList = fileList
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .slice(0, 50);
+
+      this.postMessage({
+        type: 'workspaceFiles',
+        data: fileList
+      });
+    } catch (error) {
+      console.error('Error getting workspace files:', error);
+      this.postMessage({
+        type: 'workspaceFiles',
+        data: []
+      });
+    }
+  }
+
+  public getActiveFileContext(): { filePath?: string; selectedText?: string; fullContent?: string } {
+    const activeEditor = vscode.window.activeTextEditor;
+    if (!activeEditor) {
+      return {};
+    }
+
+    const document = activeEditor.document;
+    const selection = activeEditor.selection;
+    
+    let selectedText = '';
+    let fullContent = '';
+    
+    try {
+      // Get selected text if there's a selection
+      if (!selection.isEmpty) {
+        selectedText = document.getText(selection);
+      }
+      
+      // Get full file content
+      fullContent = document.getText();
+      
+      return {
+        filePath: vscode.workspace.asRelativePath(document.uri),
+        selectedText: selectedText || undefined,
+        fullContent: fullContent || undefined
+      };
+    } catch (error) {
+      console.error('Error getting active file context:', error);
+      return {};
+    }
+  }
+
+  private sendActiveFileContext(): void {
+    const context = this.getActiveFileContext();
+    this.postMessage({
+      type: 'activeFileContext',
+      data: context
+    });
   }
 
   private async selectImageFile() {

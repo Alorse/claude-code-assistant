@@ -45,6 +45,10 @@ export function activate(context: vscode.ExtensionContext) {
         "@ext:alorse.claude-code-assistant",
       ),
   );
+  const fileContextCmd = vscode.commands.registerCommand(
+    "claude-code-assistant.getFileContext",
+    () => assistantProvider.getActiveFileContext(),
+  );
 
   // Register webview view provider for sidebar chat
   const webviewProvider = new ClaudeAssistantWebviewProvider(
@@ -73,6 +77,7 @@ export function activate(context: vscode.ExtensionContext) {
     newChatCmd,
     historyCmd,
     settingsCmd,
+    fileContextCmd,
     configChangeDisposable,
   );
 
