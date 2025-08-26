@@ -96,17 +96,9 @@ export class ConversationService {
       try {
         const dataToWrite = JSON.stringify(conversationData, null, 2);
         fs.writeFileSync(filepath, dataToWrite, "utf8");
-        console.log(
-          `Successfully wrote ${dataToWrite.length} bytes to ${filepath}`,
-        );
 
         // Verify file was written
-        if (fs.existsSync(filepath)) {
-          const stats = fs.statSync(filepath);
-          console.log(
-            `File verification: ${filepath} exists and is ${stats.size} bytes`,
-          );
-        } else {
+        if (!fs.existsSync(filepath)) {
           console.error(`ERROR: File was not created at ${filepath}`);
         }
       } catch (writeError) {
