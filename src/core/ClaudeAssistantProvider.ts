@@ -1,6 +1,4 @@
 import * as vscode from "vscode";
-import * as cp from "child_process";
-import * as util from "util";
 import * as path from "path";
 import * as fs from "fs";
 import { getHtmlForWebview } from "../utils/webviewUtils";
@@ -9,8 +7,6 @@ import { getValidModelValues, getModelByValue } from "../utils/models";
 import { ClaudeService } from "../services/ClaudeService";
 import { ConversationService } from "../services/ConversationService";
 import { BackupService } from "../services/BackupService";
-
-const exec = util.promisify(cp.exec);
 
 export class ClaudeAssistantProvider {
   private panel: vscode.WebviewPanel | undefined;
@@ -75,10 +71,6 @@ export class ClaudeAssistantProvider {
 
     // Initialize services
     this.initializeServices();
-
-    // Resume session from latest conversation
-    // const latestConversation = this.conversationService?.getLatestConversation();
-    // this.currentSessionId = latestConversation?.sessionId;
   }
 
   private handleClaudeMessage(message: ClaudeMessage): void {
@@ -188,11 +180,9 @@ export class ClaudeAssistantProvider {
     this.setupWebviewMessageHandler(this.panel.webview);
     this.initializePermissions();
 
-    console.log("Current session ID:", this.currentSessionId);
     // Resume session from latest conversation
     const latestConversation = this.conversationService?.getLatestConversation();
     this.currentSessionId = this.currentSessionId || latestConversation?.sessionId;
-    console.log("Current session ID after resume:", this.currentSessionId);
 
     // Load latest conversation history if available
     if (latestConversation) {
@@ -350,19 +340,13 @@ export class ClaudeAssistantProvider {
   private initializeWebview() {
     let conversationData = null;
     if (this.currentSessionId) {
-      console.log("Current session ID:", this.currentSessionId);
       conversationData = this.conversationService?.getConversationBySessionId(this.currentSessionId);
-    }else {
-      conversationData = this.conversationService?.getLatestConversation();
-      this.currentSessionId = conversationData?.sessionId;
     }
-    console.log("Current session ID after resume:", this.currentSessionId);
 
     // Load latest conversation history if available
     if (conversationData) {
       this.loadConversationHistory(conversationData.filename);
     } else {
-      // If no conversation to load, send ready immediately
       setTimeout(() => {
         this.sendReadyMessage();
       }, 100);
