@@ -12,6 +12,21 @@ export default [
         ecmaVersion: 2020,
         sourceType: "module",
       },
+      globals: {
+        // Node.js globals
+        process: "readonly",
+        setTimeout: "readonly",
+        clearTimeout: "readonly",
+        setInterval: "readonly",
+        clearInterval: "readonly",
+        console: "readonly",
+        Buffer: "readonly",
+        TextEncoder: "readonly",
+        TextDecoder: "readonly",
+        NodeJS: "readonly",
+        // VSCode globals
+        vscode: "readonly",
+      },
     },
     plugins: {
       "@typescript-eslint": tseslint,
@@ -28,6 +43,7 @@ export default [
       eqeqeq: "warn",
       "no-throw-literal": "warn",
       semi: "off",
+      "no-console": "off", // Allow console.log for VSCode extension debugging
     },
   },
   {
