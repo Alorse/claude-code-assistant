@@ -26,13 +26,10 @@ const MessageList: React.FC<MessageListProps> = memo(
           <div className="text-center text-description">
             <h3 className="text-lg font-medium text-foreground mb-2">
               <span>
-                <span style={{ color: "#DE7356" }}>✻</span> Welcome to Claude
+                <span style={{ color: CLAUDE_CODE_COLOR }}>✻</span> Welcome to Claude
                 Code Assistant!
               </span>
             </h3>
-            <p className="text-sm">
-              /help for help, /status for your current setup, ? for shortcuts
-            </p>
           </div>
         </div>
       );

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useVSCode } from "../context/VSCodeContext";
 import ModelDropdown from "./ModelDropdown";
 // import StatusBar from "./StatusBar";
-import { HINT_TEMPLATES } from "../utils/constants";
+import { CLAUDE_CODE_COLOR, HINT_TEMPLATES } from "../utils/constants";
 import OptionsDropdown from "./OptionsDropdown";
 
 interface InputAreaProps {
@@ -106,7 +106,7 @@ const InputArea: React.FC<InputAreaProps> = ({
   return (
     <div
       className="border-t border-border p-2 pb-0"
-      style={{ borderColor: "#DE7356" }}
+      style={{ borderColor: CLAUDE_CODE_COLOR }}
     >
       {/* Input Container */}
       <div className="flex gap-3 items-end">
