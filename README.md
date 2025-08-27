@@ -1,61 +1,55 @@
-# 🤖 Claude Code Assistant
+# Claude Code Assistant
 
 **An advanced extension for VS Code, Cursor, and Windsurf that integrates Claude Code with a modern interface, intelligent permission system, and comprehensive conversation management.**
 
+<p align="center">
+  <video src="assets/video.mp4"/>
+</p>
+
 ---
 
-## 🌟 **Key Features**
+## Key Features
 
-### 💬 **Advanced Chat Interface**
+### Advanced Chat Interface
 
 - **Modern React UI**: Interface completely built with React 18, TypeScript and Tailwind CSS
 - **Intelligent Messages**: Support for different message types (user, Claude, tools, errors)
 - **Syntax Highlighting**: Automatic code highlighting using Shiki with dynamic themes
 - **Collapsible Content**: Long results auto-collapse for better UX
-- **Reminder System**: Intelligent handling of `<system-reminder>` tags
 
-### 🔧 **Tool System**
+### Tool System
 
 - **Tool Execution**: Detailed visualization of tool use with technical information
 - **Structured Results**: Intelligent formatting of tool outputs
-- **Action Buttons**: Integrated "Open file" and "Copy content" buttons
-- **Status Monitoring**: Visual indicators of execution and results
 
-### 🛡️ **Advanced Permission System**
+### Advanced Permission System
 
 - **Granular Permissions**: Fine control over which tools Claude can execute
 - **Interactive Dialogs**: Modern interface for approving/denying permissions
 - **Always Allow**: Option to permanently allow tools
 - **Smart Patterns**: Automatic recognition of similar commands
-- **MCP Integration**: Complete integration with Model Context Protocol
+- **[Soon] MCP Integration**: Complete integration with Model Context Protocol
 
-### 📚 **Conversation Management**
+### Conversation Management
 
 - **Complete History**: All conversations are automatically saved
 - **Search and Filter**: Find conversations by content or date
 - **Context Switching**: Load previous conversations with complete context
 - **Persistent Sessions**: Claude maintains context between sessions
 
-### 🎨 **User Experience**
+---
 
-- **Automatic Theming**: Automatically adapts to VS Code/Cursor/Windsurf themes
-- **Optimized Performance**: Smart re-renders and memoization
-- **Visual States**: Loading, processing, and error indicators
-- **Keyboard Shortcuts**: Complete support for keyboard shortcuts
+## **Compatibility**
+
+| Editor       | Status      |
+| ------------ | ----------- |
+| **VS Code**  | ✅ Complete |
+| **Cursor**   | ✅ Complete |
+| **Windsurf** | ✅ Complete |
 
 ---
 
-## 🚀 **Compatibility**
-
-| Editor       | Status      | Features                            |
-| ------------ | ----------- | ----------------------------------- |
-| **VS Code**  | ✅ Complete | All features available              |
-| **Cursor**   | ✅ Complete | Native integration with AI features |
-| **Windsurf** | ✅ Complete | Full support for Codeium X          |
-
----
-
-## 📦 **Installation**
+## **Installation**
 
 ### **Local Development**
 
@@ -71,73 +65,35 @@ pnpm install
 pnpm dlx @vscode/vsce package --no-dependencies
 ```
 
+### **VSIX Installation**
+
+1. Open your editor
+2. Go to the Extensions view: `Ctrl+Shift+X`
+3. Click on the "..." button in the top-right corner
+4. Select "Install from VSIX"
+5. Select the generated `.vsix` file
+
 ---
 
-## 🔧 **Configuration**
+## **Configuration**
 
 ### **Prerequisites**
 
 - **Claude CLI** installed and configured
 - **Node.js 18+**
-- **Git** (for automatic backups)
-
-### **Initial Setup**
-
-1. Install Claude CLI: `npm install -g @anthropic-ai/claude-3-5-sonnet`
-2. Configure your API key: `claude config`
-3. Restart VS Code/Cursor/Windsurf
-4. Open the extension with `Ctrl+Shift+C`
 
 ---
 
-## 🎯 **Advanced Usage**
+## **Advanced Usage**
 
 ### **Operation Modes**
 
-- **🤔 Thinking Mode**: Claude "thinks out loud" before responding
-- **📋 Plan Mode**: Claude creates a detailed plan before executing
-
-### **Permission Management**
-
-```typescript
-// Automatic permission configuration
-{
-  "alwaysAllow": {
-    "Write": true,           // Always allow file writing
-    "Read": true,            // Always allow reading
-    "Bash": ["git add *", "npm install *"]  // Specific commands
-  }
-}
-```
+- **Thinking Mode**: Claude "thinks out loud" before responding
+- **Plan Mode**: Claude creates a detailed plan before executing
 
 ---
 
-## 🔄 **Migration and Compatibility**
-
-### **From claude-code-router-chat**
-
-This extension is a **complete migration** with substantial improvements:
-
-#### ✅ **Migrated Features**
-
-- ✅ Basic chat with Claude
-- ✅ Session and model management
-- ✅ Plan and Thinking modes
-- ✅ Workspace integration
-- ✅ Backup system
-
-#### 🆕 **New Features**
-
-- 🆕 **Visual permission system**
-- 🆕 **Complete conversation management**
-- 🆕 **Modern React UI**
-- 🆕 **Syntax highlighting**
-- 🆕 **Tool components**
-- 🆕 **Optimized performance**
-
----
-
-## 🤝 **Contributing**
+## **Contributing**
 
 ### **Guidelines**
 
@@ -149,23 +105,23 @@ This extension is a **complete migration** with substantial improvements:
 
 ---
 
-## 📄 **License**
+## **License**
 
 **MIT License** - See [LICENSE](https://github.com/Alorse/claude-code-assistant/blob/main/LICENSE) for complete details.
 
 ---
 
-## 🙏 **Acknowledgments**
+## **Acknowledgments**
 
 - **Anthropic** for Claude and the incredible API
+- **Andre Pimenta** for the original [claude-code-chat](https://github.com/andrepimenta/claude-code-chat)
 
 ---
 
-## 📧 **Support**
+## **Support**
 
 - **Issues**: [GitHub Issues](https://github.com/Alorse/claude-code-assistant/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/Alorse/claude-code-assistant/discussions)
-- **Documentation**: [Complete Wiki](https://github.com/Alorse/claude-code-assistant/wiki)
 
 ---
 
@@ -173,6 +129,6 @@ This extension is a **complete migration** with substantial improvements:
 
 **⭐ If this extension is useful to you, consider giving it a star on GitHub ⭐**
 
-[🐛 Report Bug](https://github.com/Alorse/claude-code-assistant/issues) • [✨ Request Feature](https://github.com/Alorse/claude-code-assistant/issues) • [📖 Documentation](https://github.com/Alorse/claude-code-assistant/wiki)
+[🐛 Report Bug](https://github.com/Alorse/claude-code-assistant/issues) • [✨ Request Feature](https://github.com/Alorse/claude-code-assistant/issues)
 
 </div>
