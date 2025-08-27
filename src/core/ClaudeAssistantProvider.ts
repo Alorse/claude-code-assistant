@@ -87,14 +87,25 @@ export class ClaudeAssistantProvider {
       ? workspaceFolder.uri.fsPath
       : process.cwd();
 
-    // Use extension's global storage for conversations
+    // Use global storage but organize by workspace/project
     const storagePath =
       this.context.globalStorageUri.fsPath ||
       (this.context.globalStorageUri.scheme === "file"
         ? this.context.globalStorageUri.fsPath
         : path.join(this.context.globalStorageUri.path, ".."));
 
-    const conversationsDir = path.join(storagePath, "conversations");
+    let conversationsDir: string;
+    
+    if (workspaceFolder) {
+      // Create a subdirectory for each workspace using its name
+      const workspaceName = workspaceFolder.name || 'default';
+      // Sanitize workspace name to be filesystem-safe
+      const safeWorkspaceName = workspaceName.replace(/[^a-zA-Z0-9-_]/g, '_');
+      conversationsDir = path.join(storagePath, "conversations", safeWorkspaceName);
+    } else {
+      // Fallback to default conversations directory if no workspace
+      conversationsDir = path.join(storagePath, "conversations", "default");
+    }
 
     // Create the directory if it doesn't exist
     if (!fs.existsSync(conversationsDir)) {

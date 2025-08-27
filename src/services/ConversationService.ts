@@ -210,7 +210,7 @@ export class ConversationService {
 
   private loadConversationIndex(): void {
     try {
-      // First try to load from workspace state
+      // First try to load from global state
       this.conversationIndex = this.context.globalState.get(
         "claude.conversationIndex",
         [],
