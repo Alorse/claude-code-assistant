@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useVSCode } from "../context/VSCodeContext";
 import ModelDropdown from "./ModelDropdown";
-// import StatusBar from "./StatusBar";
 import { CLAUDE_CODE_COLOR, HINT_TEMPLATES } from "../utils/constants";
 import OptionsDropdown from "./OptionsDropdown";
 

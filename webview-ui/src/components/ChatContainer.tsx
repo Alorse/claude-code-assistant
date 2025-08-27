@@ -8,7 +8,7 @@ import React, {
 import { useVSCode } from "../context/VSCodeContext";
 import MessageList from "./MessageList";
 import InputArea from "./InputArea";
-import ChatHistoryModal from "./ChatHistoryModal";
+import ChatHistoryFloatingMenu from "./ChatHistoryFloatingMenu";
 import { useMessageHandler } from "../hooks/useMessageHandler";
 
 import { UIMessage } from "../utils/messageTypes";
@@ -194,12 +194,13 @@ const ChatContainer: React.FC = () => {
     <div className="h-full flex flex-col bg-editor-background text-foreground font-vscode">
       {/* Top actions moved to view/title commands */}
 
-      <ChatHistoryModal
+      <ChatHistoryFloatingMenu
         open={historyOpen}
         loading={historyLoading}
         items={historyOptions}
         onClose={() => setHistoryOpen(false)}
         onSelect={handleSelectHistory}
+        triggerRef={messagesEndRef}
       />
 
       <div className="flex-1 flex flex-col overflow-hidden">

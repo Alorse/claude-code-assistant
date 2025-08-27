@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, ReactNode } from "react";
-import { createPortal } from "react-dom";
+import FloatingMenu from "./FloatingMenu";
 
 export interface DropdownOption {
   value: string;
@@ -32,20 +32,10 @@ const GenericDropdown: React.FC<GenericDropdownProps> = ({
   icon,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   const selectedOption =
     options?.find((opt) => opt.value === selectedValue) || null;
-
-  // Calculate dropdown position
-  const updateDropdownPosition = () => {
-    // Position logic can be added back if needed
-    if (triggerRef.current) {
-      // const rect = triggerRef.current.getBoundingClientRect();
-      // Use rect for positioning logic when needed
-    }
-  };
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -64,9 +54,6 @@ const GenericDropdown: React.FC<GenericDropdownProps> = ({
 
   const handleToggle = () => {
     if (!disabled) {
-      if (!isOpen) {
-        updateDropdownPosition();
-      }
       setIsOpen(!isOpen);
     }
   };
@@ -76,7 +63,7 @@ const GenericDropdown: React.FC<GenericDropdownProps> = ({
   };
 
   return (
-    <div className={`relative inline-block ${className}`} ref={dropdownRef}>
+    <div className={`relative inline-block ${className}`}>
       <button
         type="button"
         onClick={handleToggle}
@@ -113,47 +100,24 @@ const GenericDropdown: React.FC<GenericDropdownProps> = ({
         )}
       </button>
 
-      {/* Dropdown Menu - Rendered as Portal */}
-      {isOpen &&
-        createPortal(
-          <div
-            className="fixed inset-0 z-50 flex items-start justify-center pt-16 bg-black/50"
-            onClick={handleClickOutside}
-          >
-            <div
-              className={`p-2 rounded-full bg-background border border-border rounded-lg shadow-lg overflow-auto max-h-[calc(100vh-8rem)] ${minWidth}`}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {children || (
-                <>
-                  {options.map((option) => (
-                    <div
-                      key={option.value}
-                      className={`px-2 py-1 text-sm cursor-pointer hover:bg-gray-500/25 dark:hover:bg-gray-500/25 [&:not(:first-child)]:mt-1 rounded-lg ${
-                        selectedValue === option.value
-                          ? "bg-gray-100 dark:bg-gray-500/25 font-medium"
-                          : ""
-                      }`}
-                      onClick={() => {
-                        onSelectionChange(option.value);
-                        setIsOpen(false);
-                      }}
-                      title={option.description}
-                    >
-                      <div className="font-medium">{option.label}</div>
-                      {option.description && (
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          {option.description}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </>
-              )}
-            </div>
-          </div>,
-          document.body,
-        )}
+      {/* Dropdown Menu - Using FloatingMenu */}
+      <FloatingMenu
+        isOpen={isOpen}
+        onClose={handleClickOutside}
+        triggerRef={triggerRef}
+        options={options.map((option) => ({
+          value: option.value,
+          label: option.label,
+          description: option.description,
+        }))}
+        onSelect={(value) => {
+          onSelectionChange(value);
+          setIsOpen(false);
+        }}
+        placement="right"
+        width={minWidth}
+        maxHeight="max-h-48"
+      />
     </div>
   );
 };
