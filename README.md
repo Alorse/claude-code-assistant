@@ -2,9 +2,9 @@
 
 **An advanced extension for VS Code, Cursor, and Windsurf that integrates Claude Code with a modern interface, intelligent permission system, and comprehensive conversation management.**
 
-<p align="center">
-  <video src="assets/video.mp4"/>
-</p>
+
+https://github.com/user-attachments/assets/383b7191-2d78-4b2b-b8c1-91846d892772
+
 
 ---
 
