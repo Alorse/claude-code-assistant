@@ -194,7 +194,7 @@
             "claude",
             "ccr code"
           ],
-          "default": "ccr code",
+          "default": "claude",
           "description": "Select which Claude command to use. Choose 'claude' for the original Claude CLI or 'ccr code' for Claude Code Router."
         }
       }
