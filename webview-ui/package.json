@@ -7,8 +7,8 @@
     "build": "vite build",
     "dev": "vite --port 3000",
     "preview": "vite preview",
-    "lint": "eslint . --max-warnings 0",
-    "lint:fix": "eslint . --fix"
+    "lint": "eslint src/ --max-warnings 0",
+    "lint:fix": "eslint src/ --fix"
   },
   "dependencies": {
     "@types/markdown-it": "^14.1.2",
