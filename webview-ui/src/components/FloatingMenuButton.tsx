@@ -38,9 +38,7 @@ const FloatingMenuButton: React.FC<FloatingMenuButtonProps> = ({
         type="button"
         onClick={openMenu}
         onKeyDown={handleKeyDown}
-        className={`
-          flex items-center gap-2 px-3 py-2 transition-colors cursor-pointer
-          focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2
+        className={`vscode-button flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed
           ${disabled ? "opacity-50 cursor-not-allowed" : ""}
           ${className}
         `}
