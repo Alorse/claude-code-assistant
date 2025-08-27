@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { UIMessage } from "../utils/messageTypes";
 
+/* global React MessageEvent console window */
+
 type Message = UIMessage;
 
 interface UseMessageHandlerProps {
@@ -262,18 +264,20 @@ export const useMessageHandler = ({
         }
 
         case "showRestoreOption": {
-          if (message.data)
+          if (message.data) {
             addMessage(
               "system",
               `Restore available: ${message.data.message || message.data.sha || JSON.stringify(message.data)}`,
               message.timestamp,
             );
+          }
           break;
         }
 
         case "restoreProgress": {
-          if (message.data)
+          if (message.data) {
             addMessage("system", `🔄 ${message.data}`, message.timestamp);
+          }
           break;
         }
 

@@ -1,6 +1,8 @@
 import { useEffect, useCallback } from "react";
 import { useVSCode } from "../context/VSCodeContext";
 
+/* global MessageEvent console window */
+
 export type MessageHandler = (message: any) => void;
 
 export const useVSCodeMessages = (handlers: Record<string, MessageHandler>) => {
@@ -21,7 +23,9 @@ export const useVSCodeMessages = (handlers: Record<string, MessageHandler>) => {
   );
 
   useEffect(() => {
-    if (!isReady) return;
+    if (!isReady) {
+      return;
+    }
 
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
