@@ -24,7 +24,6 @@ export default [
           format: ["camelCase", "PascalCase"],
         },
       ],
-      "@typescript-eslint/semi": "warn",
       curly: "warn",
       eqeqeq: "warn",
       "no-throw-literal": "warn",
@@ -32,6 +31,6 @@ export default [
     },
   },
   {
-    ignores: ["out", "dist", "**/*.d.ts", "webview-ui"],
+    ignores: ["out", "dist", "**/*.d.ts"],
   },
 ];
